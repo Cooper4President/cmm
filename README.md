@@ -2,10 +2,11 @@ CSCI 3308 Group Project
 
 Project Name: chat-- (cmm)
 
-Group Members:  Morgan Allen (Morgan.Allen@colorado.edu)
-          Cooper Matous (Cooper.Matous@colorado.edu)
-          Oliver Ehrhardt (Oliver.Ehrhardt@colorado.edu)
-          Craig Cornett (craig.cornett@colorado.edu)
+Group Members: name, (email) github id
+          Morgan Allen        (Morgan.Allen@colorado.edu)             mochrisal
+          Cooper Matous       (Cooper.Matous@colorado.edu)            Cooper4President
+          Oliver Ehrhardt     (Oliver.Ehrhardt@colorado.edu)          OliverEhrhardt
+          Craig Cornett       (craig.cornett@colorado.edu)            craigcornett
 
 Project Description:
 chat-- is an enhanced, web-based chat service wherein users can both use and 
@@ -32,3 +33,8 @@ The second part of this project would be to provide tools and methods for users
 to easily develop their own custom commands for chat--, which could be added on
 in a similar manner to plugins or browser extensions to give the tool extra 
 functionality.
+
+We will be using Trello for our project tracking:
+https://trello.com/b/aQ3FO6J7
+
+For Project Requirements and Project plan see our Trello board.
