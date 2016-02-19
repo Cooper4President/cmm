@@ -39,7 +39,20 @@ to easily develop their own custom commands for chat--, which could be added on
 in a similar manner to plugins or browser extensions to give the tool extra 
 functionality.
 
-We will be using Trello for our project tracking:
+**Possible Risks to Project Completion:**
+- Team members have varying levels of experience with web programming
+- Lack of previous experience with web-app projects makes estimation of project time and complexity difficult
+
+**Risk Mitigation Strategy:**
+- Start small, don't bite off more than you can chew
+- Break down project into small, manageable goals
+- Minimize number of new technologies / frameworks for team members to learn
+
+**Process Methodology:**
+Agile
+
+**Project Tracking:**
+We will be using Trello.
 https://trello.com/b/aQ3FO6J7
 
 For Project Requirements and Project plan see our Trello board.
