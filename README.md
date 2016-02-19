@@ -12,6 +12,9 @@
 **Vision Statement:**
 An enhanced, extensible, and enjoyable web chat experience.
 
+**Motivation:**
+To fulfill the requirements of the CSCI 3308 semester project, gain practical experience, and produce a fun and useful product.
+
 **Project Description:**
 chat-- is a feature-rich web chat service wherein users can both use and 
 develop customized functions to enhance their chatting experience. Using 
