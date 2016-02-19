@@ -9,8 +9,11 @@
     Oliver Ehrhardt     (Oliver.Ehrhardt@colorado.edu)   OliverEhrhardt
     Craig Cornett       (craig.cornett@colorado.edu)     craigcornett
 
+**Vision Statement:**
+An enhanced, extensible, and enjoyable web chat experience.
+
 **Project Description:**
-chat-- is an enhanced, web-based chat service wherein users can both use and 
+chat-- is a feature-rich web chat service wherein users can both use and 
 develop customized functions to enhance their chatting experience. Using 
 built-in commands specified by a special character, the user can perform 
 special actions to the text they enter, or send terminal-like commands from the
