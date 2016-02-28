@@ -1,6 +1,8 @@
 $(document).ready(function(){
 	$(".sub").on("click", function(cEvent){
-		$(".chat-container").append("<div> USER: " + $(".cmd").val() + "</div>");
-		$(".cmd").val("");	
+		if($(".cmd").val() != ""){
+			$(".chat-container").append("<div> USER: " + $(".cmd").val() + "</div>");
+			$(".cmd").val("");
+		}
 	});
 });
