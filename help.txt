@@ -1,5 +1,0 @@
-Useful Commands:
-
---date : Shows current date
---clear : Clears chat window
---help : shows this help window
