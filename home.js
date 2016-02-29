@@ -5,6 +5,11 @@ $(document).ready(function(){
      });
 });
 
+//update chat function
+function updateChat(prompt, value){
+	$(".chat-container").append("<div>" + prompt +": "+ value + "</div>");
+}
+
 //checks input for command dilimiter
 function commandCheck(val){
 	if(/^--/.test(val)){
@@ -25,7 +30,7 @@ function submit(){
 	var inp = $(".cmd").val();
 	if(inp != ""){
 		if(!commandCheck(inp)){ //checks if command
-			$(".chat-container").append("<div> USER: " + inp + "</div>");
+			updateChat("USER", inp);
 		}else{
 			parseCommand(inp);
 		}
@@ -36,9 +41,14 @@ function submit(){
 //parses command for functionality
 function parseCommand(cmd){
 	command = cmd.replace('--','');
-	if(command == "date"){
+	if(command == "date"){ //date command
 		var date = getTodaysDate();
-		$(".chat-container").append("<div> COMMAND: Current Date: " + date + "</div>");
+		updateChat("COMMAND", date)
+	}
+	else if(command == "clear"){ //clear command
+		$(".chat-container").empty(); 
+	}else{
+
 	}
 }
 
