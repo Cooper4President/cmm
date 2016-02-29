@@ -7,7 +7,7 @@ $(document).ready(function(){
 
 //update chat function
 function updateChat(prompt, value){
-	$(".chat-container").append("<div>" + prompt +": "+ value + "</div>");
+    $(".chat-container").append("<div>" + prompt +": "+ value + "</div>");
 }
 
 //checks input for command dilimiter
@@ -36,6 +36,7 @@ function submit(){
 		}
 		$(".cmd").val("");
 	}
+    $(".cmd").focus();
 };
 
 //parses command for functionality
