@@ -6,7 +6,7 @@ body{
 
 div.user-container{
 	display: flex;
-	width: 100%;
+	width: 35%;
 }
 
 div.chat-container{
