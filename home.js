@@ -20,8 +20,8 @@ function commandCheck(val){
 //Enter key functionality for sumbitting messages
 $(document).delegate('input:text','keypress',function(e) {
     if (e.which === 13) {
-	e.preventDefault();
-	submit();
+		e.preventDefault();
+		submit();
     };
 });
 
@@ -48,7 +48,7 @@ function parseCommand(cmd){
 	else if(command == "clear"){ //clear command
 		$(".chat-container").empty(); 
 	}else{
-
+		updateChat("ERROR", "Command not found")
 	}
 }
 
