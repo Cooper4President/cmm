@@ -14,7 +14,11 @@ var portNum = 3000;
 var numConnections = 0;
 
 app.get('/', function(req, res){
-  res.sendFile(__dirname + 'client/index.html');
+  res.sendFile(__dirname + '/client/index.html');
+});
+
+app.get('/chat.html', function(req, res){
+  res.sendFile(__dirname + '/client/chat.html');
 });
 
 io.on('connection', function(socket){

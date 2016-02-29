@@ -15,5 +15,5 @@ $(document).delegate('body','keypress',function(e) {
 
 //changes URL
 function changeURL(ext){
-	$(location).attr('href',"http://127.0.0.1:8000/"+ext);
+	$(location).attr('href',"http://localhost:3000/"+ext);
 }
