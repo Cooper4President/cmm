@@ -41,15 +41,32 @@ function submit(){
 //parses command for functionality
 function parseCommand(cmd){
 	command = cmd.replace('--','');
-	if(command == "date"){ //date command
+	if(command == "help"){
+		printHelp();
+	}
+	else if(command == "date"){ //date command
 		var date = getTodaysDate();
-		updateChat("COMMAND", date)
+		updateChat("DATE", date)
 	}
 	else if(command == "clear"){ //clear command
 		$(".chat-container").empty(); 
 	}else{
-		updateChat("ERROR", "Command not found")
+		updateChat("ERROR", "Command not found. Type --help for help")
 	}
+}
+
+function printHelp(){
+	$.ajax({
+		url: "help.txt",
+		dataType: "text",
+		success: function (data){
+			data = data.replace(/\n/g, "<br />");
+			updateChat("HELP", data);
+		},
+		error: function(){
+			updateChat("ERROR","Server is down");
+		}
+	});
 }
 
 //parses today's date
