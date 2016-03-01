@@ -13,7 +13,7 @@ function parseCommand(cmd){
 	else if(command == "clear"){ //clear command
 		$(".chat-container").empty(); 
 	}
-	else if(/\w*\s*--color=\s*\w*/.test(cmd)){
+	else if(/--color\s*=\s*(\w+)\s*/.test(cmd)){
 		changeColor(cmd);
 	}
 	else{

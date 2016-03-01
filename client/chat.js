@@ -72,9 +72,10 @@ function getTodaysDate(){
 }
 
 function changeColor(cmd){
-	var colorMatches = cmd.match(/\w*\s*--color=\s*([^\n\r]*)/);
+	var regex = /--\w+\s*=\s*(\w+)\s*/
+	var colorMatches = cmd.match(regex);
 	// updateChat("COLOR", colorMatches[1].fontcolor(colorMatches[1]));
-	var command = cmd.replace(colorMatches[0], "");
+	var command = cmd.replace(regex, "");
 
-	$(".chat-container").append("<div>" + command.fontcolor(colorMatches[1]) + "</div>");
+	updateChat("USER",command.fontcolor(colorMatches[1]));
 }
