@@ -70,3 +70,11 @@ function getTodaysDate(){
     var today = mm+'/'+dd+'/'+yyyy;
     return today;
 }
+
+function changeColor(cmd){
+	var colorMatches = cmd.match(/\w*\s*--color=\s*([^\n\r]*)/);
+	// updateChat("COLOR", colorMatches[1].fontcolor(colorMatches[1]));
+	var command = cmd.replace(colorMatches[0], "");
+
+	$(".chat-container").append("<div>" + command.fontcolor(colorMatches[1]) + "</div>");
+}

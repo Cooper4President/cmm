@@ -13,6 +13,9 @@ function parseCommand(cmd){
 	else if(command == "clear"){ //clear command
 		$(".chat-container").empty(); 
 	}
+	else if(/\w*\s*--color=\s*\w*/.test(cmd)){
+		changeColor(cmd);
+	}
 	else{
 		updateChat("ERROR", "Command not found. Type --help for help")
 	}
