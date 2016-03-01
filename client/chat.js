@@ -1,9 +1,20 @@
 //main function
 $(document).ready(function(){
-     $(".sub").on("click", function(cEvent){
-     	submit();
+     $(".add-messenger").on("click",function(clickEvent){
+ 		$.ajax({
+			url: "messenger-template.html",
+			dataType: "html",
+			success: function (data){
+				$("body").append(data)
+			},
+			error: function(){
+				updateChat("ERROR","Server is down");
+			}
+		});
      });
 });
+
+
 
 //update chat function
 function updateChat(prompt, value){

@@ -1,20 +1,28 @@
 body{
 	display: flex;
-	flex-direction: column;
-	justify-content: flex-end;
+    flex-direction: row-reverse;
+    align-items: flex-end;
+    justify-content: flex-end;
 }
 
 div.user-container{
 	display: flex;
-	width: 35%;
+	width: 100%;
 }
 
 div.chat-container{
 	width: 100%;
-	height:300px;
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-end;
+}
+
+div.chat{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    width: 20%;
+    height: 50%;
 }
 
 input.cmd{
