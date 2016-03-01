@@ -1,10 +1,19 @@
 /*
-Run this with command 'node index.js'.
+Run this with command 'node server-main.js'.
 Then, go to 'localhost:####' in browser, where #### is the port number
 */
 
-var app = require('express')();
+//for the 'express' library
+var express = require('express');
+var app = express();
+/*
+tell express to use the 'client' folder as a source of static files such as
+index.html, index.css, etc...
+*/
+app.use(express.static('client'));
+//create nodejs server
 var server = require('http').Server(app);
+//for the 'socket.io' library
 var io = require('socket.io')(server);
 
 
@@ -13,14 +22,8 @@ var portNum = 3000;
 //number of active socket connections
 var numConnections = 0;
 
-app.get('/', function(req, res){
-  res.sendFile(__dirname + '/client/index.html');
-});
 
-app.get('/chat.html', function(req, res){
-  res.sendFile(__dirname + '/client/chat.html');
-});
-
+//this is called when a socket is connected
 io.on('connection', function(socket){
   var socketId = socket.id;
   var userIp = socket.request.connection.remoteAddress;
@@ -29,10 +32,12 @@ io.on('connection', function(socket){
   numConnections++;
   console.log('total connected users: ' + numConnections);
 
+  //called when socket receives a 'chat message' event
   socket.on('chat message', function(msg){
     io.emit('chat message', '[' + userIp + '] ' + msg);
   });
 
+  //called when socket is disconnected
   socket.on('disconnect', function(){
     console.log('user disconnected from ' + userIp);
     numConnections--;
@@ -40,6 +45,8 @@ io.on('connection', function(socket){
   });
 });
 
+
+//start the server
 server.listen(portNum, function(){
   console.log('server listening on port ' + portNum);
 });
