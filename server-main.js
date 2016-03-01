@@ -5,6 +5,7 @@ Then, go to 'localhost:####' in browser, where #### is the port number
 
 //for the 'express' library
 var express = require('express');
+var fs = require('fs');
 var app = express();
 /*
 tell express to use the 'client' folder as a source of static files such as
@@ -15,6 +16,8 @@ app.use(express.static('client'));
 var server = require('http').Server(app);
 //for the 'socket.io' library
 var io = require('socket.io')(server);
+
+var fs = require('fs');
 
 
 //port number that the server listens on
@@ -31,11 +34,6 @@ io.on('connection', function(socket){
   console.log('user connected from ' + userIp);
   numConnections++;
   console.log('total connected users: ' + numConnections);
-
-  //called when socket receives a 'chat message' event
-  socket.on('chat message', function(msg){
-    io.emit('chat message', '[' + userIp + '] ' + msg);
-  });
 
   //called when socket is disconnected
   socket.on('disconnect', function(){

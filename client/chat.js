@@ -30,7 +30,11 @@ function submit(){
 	var inp = $(".cmd").val();
 	if(inp != ""){
 		if(!commandCheck(inp)){ //checks if command
-			updateChat("USER", inp);
+			//uses cookie for username Note: should store in database once implimented
+			var cookie = document.cookie.split(';');
+			var login = cookie[0].split('=');
+			var user = login[1];
+			updateChat(user, inp);
 		}else{
 			parseCommand(inp);
 		}
