@@ -17,6 +17,7 @@ var server = require('http').Server(app);
 //for the 'socket.io' library
 var io = require('socket.io')(server);
 
+var fs = require('fs');
 
 //port number that the server listens on
 var portNum = 3000;
@@ -29,9 +30,15 @@ io.on('connection', function(socket){
   var socketId = socket.id;
   var userIp = socket.request.connection.remoteAddress;
 
-  console.log('user connected from ' + userIp);
+  console.log('user connected from ' + userIp +' to socket ' + socketId);
   numConnections++;
   console.log('total connected users: ' + numConnections);
+
+  socket.on('login',function(data){
+    console.log(data);
+    fs.writeFile('client/user.txt', data, function(err){err ? console.log(err) : console.log('user file saved')});
+    io.emit('page load');
+  });
 
   //called when socket is disconnected
   socket.on('disconnect', function(){

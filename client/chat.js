@@ -21,7 +21,6 @@ function appendMessenger(rec){
 
 //update chat function
 function updateChat(prompt, rec, value){
-	console.log(rec);
 	$(".chat-container."+rec).append("<div>" +prompt+": "+value+ "</div>");
 }
 
@@ -30,13 +29,6 @@ function commandCheck(val){
 	if(/\w*\s*--\s*\w*/.test(val)){
 		return true;
 	}else return false;
-}
-
-function getUser(){
-	var cookie = document.cookie.split(';');
-	var login = cookie[0].split('=');
-	if(login[0] == 'login') return login[1];
-	else return null;
 }
 
 function getReciever(obj){
@@ -48,9 +40,17 @@ function getReciever(obj){
 $(document).delegate('input.cmd','keypress',function(e) {
     if (e.which === 13) {
 		e.preventDefault();
-		var user = getUser();
 		var reciever = getReciever(this);
-		submit(user, reciever);
+		$.ajax({
+			url: "user.txt",
+			dataType: "text",
+			success: function(user){
+				submit(user, reciever);
+			},
+			error: function(){
+				console.log('could not read user file');
+			}
+		});
     };
 });
 
