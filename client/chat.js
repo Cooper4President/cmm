@@ -58,8 +58,8 @@ $(document).delegate('input.cmd','keypress',function(e) {
 $(document).delegate('input.reciever','keypress',function(e) {
     if (e.which === 13) {
 		e.preventDefault();
-		if(reciever.val() != "") appendMessenger($('.reciever').val());
-    };
+		if($('.reciever').val() != "")appendMessenger($('.reciever').val());
+    }
 });
 
 //client side submit function
