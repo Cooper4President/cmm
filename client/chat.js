@@ -1,19 +1,21 @@
 //main function
 $(document).ready(function(){
      $(".add-messenger").on("click",function(clickEvent){
-     	$(".add-messenger").text("").append("<input type='text' class='reciever'>");
+     	$(".add-messenger").text("").append("<input type='text' class='reciever' placeHolder='Press Enter to submit'>");
      	$(".reciever").focus();
-     	//NOTE: make button for reciever field
      });
 });
 
 function appendMessenger(rec){
 	var context = {reciever : rec};
-	var html = Handlebars.templates['messenger-template'](context);
-	$('body').append(html);
+	var html = $(Handlebars.templates['messenger-template'](context));
+	$('.messenger-container').append(html);
 	$('.reciever').remove();
 	$('.add-messenger').text("+");
 	$('.cmd.'+rec).focus();
+	html.find(".remove-messenger").on("click",function(clickEvent){
+     	html.remove()
+     });
 }
 
 
@@ -56,7 +58,7 @@ $(document).delegate('input.cmd','keypress',function(e) {
 $(document).delegate('input.reciever','keypress',function(e) {
     if (e.which === 13) {
 		e.preventDefault();
-		appendMessenger($('.reciever').val());
+		if(reciever.val() != "") appendMessenger($('.reciever').val());
     };
 });
 
