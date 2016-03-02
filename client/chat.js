@@ -1,3 +1,6 @@
+cmdLog = [];
+logLocation
+
 //main function
 $(document).ready(function(){
      $(".sub").on("click", function(cEvent){
@@ -73,14 +76,4 @@ function getTodaysDate(){
     } 
     var today = mm+'/'+dd+'/'+yyyy;
     return today;
-}
-
-function getColor(inp){
-	var regex = /--color\s*=\s*(\w+)\s*/
-	var colorMatches = cmd.match(regex);
-	// updateChat("COLOR", colorMatches[1].fontcolor(colorMatches[1]));
-	var command = cmd.replace(regex, "");
-	command = command.fontcolor(colorMatches[1])
-	command = command.bold();
-	updateChat("USER", command);
 }

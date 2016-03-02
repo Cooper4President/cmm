@@ -27,15 +27,51 @@ function parseCommand(inp){
 			case "color":
 				//find color
 				var matchColor = inp.match(/--color\s*=\s*(\w+)\s*/);
-				var color = matchColor[1];
-				//set color
-				msg = msg.fontcolor(color);
-				//update chat
-				updateChat("USER", msg);
+
+				if(color){
+					var color = matchColor[1];
+					//set color
+					msg = msg.fontcolor(color);
+				}
+				else{
+					updateChat("ERROR", "Invalid color");
+				}
+				break;
+			case "fontsize":
+				//find font size
+				var matchSize = inp.match(/--fontsize\s*=\s*([0-9]+)\s*/);
+				if(matchSize){
+					var size = matchSize[1];
+					//set size
+					msg = msg.fontsize(size);
+				}
+				else{
+					updateChat("ERROR", "Invalid font size");
+				}
+				break;
+			case "bold":
+				msg = msg.bold();
+				break;
+			case "italic":
+				cmd = "italics";
+			case "italics":
+				msg = msg.italics();
+				break;
+			case "big":
+				msg = msg.big();
+				break;
+			case "small":
+				msg = msg.small();
 				break;
 			default:
 				updateChat("ERROR", "Command " + cmd.bold() + " not found. Type --help for help");
 				break;
 		}
 	});
+
+	//if the message is not blank, send it to chat
+	if(msg != ""){
+		//send message to chat window
+		updateChat("USER", msg);
+	}	
 }
