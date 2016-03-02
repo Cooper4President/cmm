@@ -1,7 +1,7 @@
 //login main
 $(document).ready(function(){
 	$(".login").on("click",function(){
-		changeURL("chat.html");
+		storeUserData();
 	});
 });
 
@@ -9,29 +9,19 @@ $(document).ready(function(){
 $(document).delegate('body','keypress',function(e) {
     if (e.which === 13) {
 		e.preventDefault();
-		changeURL("chat.html");
+		storeUserData();
     };
 });
 
 //changes URL
-function changeURL(ext){
+function storeUserData(){
 	var username = $(".username").val();
-	console.log(username);
+	var password = $(".password").val();
 	if(!/\s+/g.test(username)){ //test for valid user name
-		setCookie("login", username, 1);
-		$(location).attr('href',"http://localhost:3000/"+ext);
+		sendUser(username, password);
 	}else{
 		alert("Username Invalid");
 	}
 }
 
 
-//cookie function
-function setCookie(c_name,c_value,exdays) {
-   var exdate=new Date();
-   exdate.setDate(exdate.getDate() + exdays);
-   document.cookie=encodeURIComponent(c_name) 
-     + "=" + encodeURIComponent(c_value)
-     + (!exdays ? "" : "; expires="+exdate.toUTCString());
-     ;
-}
