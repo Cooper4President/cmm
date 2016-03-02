@@ -5,6 +5,7 @@ Then, go to 'localhost:####' in browser, where #### is the port number
 
 //for the 'express' library
 var express = require('express');
+var handlebars = require('handlebars');
 var app = express();
 /*
 tell express to use the 'client' folder as a source of static files such as

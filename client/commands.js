@@ -1,17 +1,17 @@
 //parses command for functionality
-function parseCommand(cmd){
+function parseCommand(cmd, rec){
 	command = cmd.replace('--','');
 
 	//NOTE: might want to impliment jump table later
 	if(command == "help"){
-		printHelp();
+		printHelp(rec);
 	}
 	else if(command == "date"){ //date command
 		var date = getTodaysDate();
-		updateChat("DATE", date)
+		updateChat("DATE", rec, date)
 	}
 	else if(command == "clear"){ //clear command
-		$(".chat-container").empty(); 
+		$(".chat-container."+rec).empty(); 
 	}
 	else{
 		updateChat("ERROR", "Command not found. Type --help for help")
