@@ -1,5 +1,6 @@
 //login main
 $(document).ready(function(){
+	//submit button event
 	$(".login").on("click",function(){
 		storeUserData();
 	});

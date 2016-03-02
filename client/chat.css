@@ -5,45 +5,46 @@ body{
     justify-content: flex-end;
 }
 
-div.messenger-container{
+.messenger-container{
 	display: flex;
 
 }
 
-div.chat-head {
+.chat-head {
     display: flex;
     background-color: rgb(221, 221, 221);
 }
 
-div.chat-title{
+.chat-title{
 	width: 100%;
 	height: 18px;
 	background-color: grey;
     background-color: rgb(221, 221, 221);
+    text-align: center;
 }
 
-div.user-container{
+.user-container{
 	display: flex;
 	width: 100%;
 }
 
-div.chat-container{
+.chat-container{
+	position: relative;
 	width: 100%;
 	height: 100%;
 	display: flex;
-	flex-direction: column;
-	justify-content: flex-end;
-	overflow: auto;
+	flex-direction: column-reverse;
+	overflow-y: scroll;
     background-color: rgb(221, 221, 221);
 }
 
-div.chat{
+.chat{
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     width: 300px;
-    height: 50%;
-
+    height: 500px;
+    border: 1px solid #ABA7A7;
 }
 
 input.cmd{

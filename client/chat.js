@@ -21,7 +21,7 @@ function appendMessenger(rec){
 
 //update chat function
 function updateChat(prompt, rec, value){
-	$(".chat-container."+rec).append("<div>" +prompt+": "+value+ "</div>");
+	$(".chat-container."+rec).prepend("<div>"+prompt + ": " + value + "</div>");
 }
 
 //checks input for command dilimiter

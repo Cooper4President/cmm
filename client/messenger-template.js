@@ -7,7 +7,7 @@ templates['messenger-template'] = template({"compiler":[7,">= 4.0.0"],"main":fun
     + alias4(((helper = (helper = helpers.reciever || (depth0 != null ? depth0.reciever : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"reciever","hash":{},"data":data}) : helper)))
     + "</div>\n		<div class=\"remove-messenger\">X</div>\n	</div>\n	<div class=\"chat-container "
     + alias4(((helper = (helper = helpers.reciever || (depth0 != null ? depth0.reciever : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"reciever","hash":{},"data":data}) : helper)))
-    + "\"></div>\n	<div class=\"user-container\">\n		<input type=\"text\" class=\"cmd "
+    + "\">\n	</div>\n	<div class=\"user-container\">\n		<input type=\"text\" class=\"cmd "
     + alias4(((helper = (helper = helpers.reciever || (depth0 != null ? depth0.reciever : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"reciever","hash":{},"data":data}) : helper)))
     + "\" placeholder=\"Press Enter to send\">\n	</div>\n<div>";
 },"useData":true});
