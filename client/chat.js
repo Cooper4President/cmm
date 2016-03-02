@@ -12,7 +12,7 @@ function updateChat(prompt, value){
 
 //checks input for command dilimiter
 function commandCheck(val){
-	if(/\w*\s*--\s*\w*/.test(val)){
+	if(/--\w+/.test(val)){
 		return true;
 	}else return false;
 }
@@ -30,7 +30,7 @@ function submit(){
 	var inp = $(".cmd").val();
 	if(inp != ""){
 		if(!commandCheck(inp)){ //checks if command
-			//uses cookie for username Note: should store in database once implimented
+			//uses cookie for username Note: should store in database once implemented
 			var cookie = document.cookie.split(';');
 			var login = cookie[0].split('=');
 			var user = login[1];
@@ -75,11 +75,12 @@ function getTodaysDate(){
     return today;
 }
 
-function changeColor(cmd){
-	var regex = /--\w+\s*=\s*(\w+)\s*/
+function getColor(inp){
+	var regex = /--color\s*=\s*(\w+)\s*/
 	var colorMatches = cmd.match(regex);
 	// updateChat("COLOR", colorMatches[1].fontcolor(colorMatches[1]));
 	var command = cmd.replace(regex, "");
-
-	updateChat("USER",command.fontcolor(colorMatches[1]));
+	command = command.fontcolor(colorMatches[1])
+	command = command.bold();
+	updateChat("USER", command);
 }

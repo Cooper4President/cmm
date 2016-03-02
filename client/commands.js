@@ -1,22 +1,41 @@
 //parses command for functionality
-function parseCommand(cmd){
-	command = cmd.replace('--','');
+function parseCommand(inp){
+	//match the -- delimiter to find all commands in the input
+	var matchList = inp.match(/--\w+/g);
 
-	//NOTE: might want to impliment jump table later
-	if(command == "help"){
-		printHelp();
-	}
-	else if(command == "date"){ //date command
-		var date = getTodaysDate();
-		updateChat("DATE", date)
-	}
-	else if(command == "clear"){ //clear command
-		$(".chat-container").empty(); 
-	}
-	else if(/--color\s*=\s*(\w+)\s*/.test(cmd)){
-		changeColor(cmd);
-	}
-	else{
-		updateChat("ERROR", "Command not found. Type --help for help")
-	}
+	//remove all the commands from the message, to get just the text
+	var msg = inp.replace(/--\w+/g,'');
+	var msg = msg.replace(/\s*=\s*\w+/g,'');
+
+	//iterate through the list of matches
+	matchList.forEach(function(cmd){
+		//parse out the -- delimiter
+		cmd = cmd.replace('--','');
+
+		//match the command name, and execute command accordingly
+		switch(cmd){
+			case "help":
+				printHelp();
+				break;
+			case "date":
+				var date = getTodaysDate();
+				updateChat("DATE", date)	
+				break;
+			case "clear":
+				$(".chat-container").empty();
+				break;
+			case "color":
+				//find color
+				var matchColor = inp.match(/--color\s*=\s*(\w+)\s*/);
+				var color = matchColor[1];
+				//set color
+				msg = msg.fontcolor(color);
+				//update chat
+				updateChat("USER", msg);
+				break;
+			default:
+				updateChat("ERROR", "Command " + cmd.bold() + " not found. Type --help for help");
+				break;
+		}
+	});
 }
