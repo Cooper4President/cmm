@@ -5,21 +5,27 @@ $(document).ready(function(){
      	$(".reciever").focus();
      	$(".reciever").keydown(function(e) {
 		    if (e.keyCode == 13) {
+		    	e.preventDefault();
 				if($('.reciever').val() != "")appendMessenger($('.reciever').val());
 		    }
 		    else if(e.keyCode == 27){
+		    	e.preventDefault();
 		    	revertMessengerButton();
 		    }
      	});
 	});
 });
 function appendMessenger(rec){
+	if(/\s+/g.test(rec)){
+		alert("username cannot have spaces");
+		return;
+	}
 	if(!$('.chat-container').hasClass(rec)){
 		var context = {reciever : rec};
 		var html = $(Handlebars.templates['messenger-template'](context));
 		$('.messenger-container').append(html);
 		revertMessengerButton();
-		$('.cmd.'+rec).focus();
+		$('.cmd.'+rec).focus().autogrow();
 		html.find(".remove-messenger").on("click",function(clickEvent){
 	     	html.remove()
 	    });
