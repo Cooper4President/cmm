@@ -1,6 +1,3 @@
-cmdLog = [];
-logLocation
-
 //main function
 $(document).ready(function(){
      $(".sub").on("click", function(cEvent){
@@ -11,13 +8,6 @@ $(document).ready(function(){
 //update chat function
 function updateChat(prompt, value){
 	$(".chat-container").append("<div>" + prompt +": "+ value + "</div>");
-}
-
-//checks input for command dilimiter
-function commandCheck(val){
-	if(/--\w+/.test(val)){
-		return true;
-	}else return false;
 }
 
 //Enter key functionality for sumbitting messages
@@ -31,20 +21,17 @@ $(document).delegate('input:text','keypress',function(e) {
 //client side submit function
 function submit(){
 	var inp = $(".cmd").val();
-	if(inp != ""){
-		if(!commandCheck(inp)){ //checks if command
-			//uses cookie for username Note: should store in database once implemented
-			var cookie = document.cookie.split(';');
-			var login = cookie[0].split('=');
-			var user = login[1];
-			updateChat(user, inp);
-		}else{
-			parseCommand(inp);
-		}
-		$(".cmd").val("");		
-	}
+
+	//uses cookie for username Note: should store in database once implemented
+	var cookie = document.cookie.split(';');
+	var login = cookie[0].split('=');
+	var user = login[1];
+
+	parseCommand(user, inp);
+
+	$(".cmd").val("");		
 	$(".cmd").focus();
-};
+}
 
 //prints help
 function printHelp(){
