@@ -7,15 +7,20 @@ $(document).ready(function(){
 });
 
 function appendMessenger(rec){
-	var context = {reciever : rec};
-	var html = $(Handlebars.templates['messenger-template'](context));
-	$('.messenger-container').append(html);
-	$('.reciever').remove();
-	$('.add-messenger').text("+");
-	$('.cmd.'+rec).focus();
-	html.find(".remove-messenger").on("click",function(clickEvent){
-     	html.remove()
-     });
+	if(!$('.chat-container').hasClass(rec)){
+		var context = {reciever : rec};
+		var html = $(Handlebars.templates['messenger-template'](context));
+		$('.messenger-container').append(html);
+		$('.reciever').remove();
+		$('.add-messenger').text("+");
+		$('.cmd.'+rec).focus();
+		html.find(".remove-messenger").on("click",function(clickEvent){
+	     	html.remove()
+	     });
+	}else{
+		alert("chat box already open for that username");
+	}
+	
 }
 
 
