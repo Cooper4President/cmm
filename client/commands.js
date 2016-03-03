@@ -1,5 +1,5 @@
 //parses command for functionality
-function parseCommand(user, inp){
+function parseCommand(user, rec ,inp){
 	//match the -- delimiter to find all commands in the input
 	var matchList = inp.match(/--\w+/g);
 
@@ -21,10 +21,10 @@ function parseCommand(user, inp){
 					break;
 				case "date":
 					var date = getTodaysDate();
-					updateChat("DATE", date)	
+					updateChat("DATE", rec ,date)	
 					break;
 				case "clear":
-					$(".chat-container").empty();
+					$(".chat-container."+rec).empty();
 					break;
 				case "color":
 					//find color
@@ -36,7 +36,7 @@ function parseCommand(user, inp){
 						msg = msg.fontcolor(color);
 					}
 					else{
-						updateChat("ERROR", "Invalid color");
+						updateChat("ERROR", rec,"Invalid color");
 					}
 					break;
 
@@ -49,7 +49,7 @@ function parseCommand(user, inp){
 						msg = msg.fontsize(size);
 					}
 					else{
-						updateChat("ERROR", "Invalid font size");
+						updateChat("ERROR", rec,"Invalid font size");
 					}
 					break;
 				case "bold":
@@ -67,13 +67,10 @@ function parseCommand(user, inp){
 					msg = msg.small();
 					break;
 				default:
-					updateChat("ERROR", "Command " + cmd.bold() + " not found. Type --help for help");
+					updateChat("ERROR", rec,"Command " + cmd.bold() + " not found. Type --help for help");
 					break;
 			}
 		});
-	}
-
-	if(msg){
-		updateChat(user, msg);
+		updateChat(user, rec, msg);
 	}
 }
