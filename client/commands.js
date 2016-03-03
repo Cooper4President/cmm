@@ -1,5 +1,7 @@
 //parses command for functionality
 function parseCommand(user, rec ,inp){
+
+	var chatContainerClass = ".chat-container."+rec;
 	//match the -- delimiter to find all commands in the input
 	var matchList = inp.match(/--\w+/g);
 
@@ -24,7 +26,7 @@ function parseCommand(user, rec ,inp){
 					updateChat("DATE", rec ,date)	
 					break;
 				case "clear":
-					$(".chat-container."+rec).empty();
+					$(chatContainerClass).empty();
 					break;
 				case "color":
 					//find color

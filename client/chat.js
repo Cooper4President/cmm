@@ -1,8 +1,11 @@
+var chatLog = [];
+
 //main function
 $(document).ready(function(){
      $(".add-messenger").on("click",function(clickEvent){
      	$(".add-messenger").text("").append("<input type='text' class='reciever' placeHolder='Press Enter to submit'>");
      	$(".reciever").focus();
+     	//keydown function for reciever input
      	$(".reciever").keydown(function(e) {
 		    if (e.keyCode == 13) {
 		    	e.preventDefault();
@@ -15,28 +18,34 @@ $(document).ready(function(){
      	});
 	});
 });
+
+//injects messenger on addition
 function appendMessenger(rec){
 	if(/\s+/g.test(rec)){
 		alert("username cannot have spaces");
 		return;
 	}
 	if(!$('.chat-container').hasClass(rec)){
+		var thisClass = '.cmd.'+rec;
 		var context = {reciever : rec};
 		var html = $(Handlebars.templates['messenger-template'](context));
 		$('.messenger-container').append(html);
 		revertMessengerButton();
-		$('.cmd.'+rec).focus().autogrow();
+		$(thisClass).focus().autogrow();
 		html.find(".remove-messenger").on("click",function(clickEvent){
 	     	html.remove()
 	    });
-	    $(".cmd."+rec).keydown(function(e) {
-		    if (e.which == 13) {
+	    //keydown function for chat input
+	    $(thisClass).keydown(function(e) {
+	    	//enter key submit
+		    if (e.keyCode == 13) {
 				e.preventDefault();
 				var reciever = getReciever(this);
 				$.ajax({
 					url: "user.txt",
 					dataType: "text",
 					success: function(user){
+						chatLog.unshift($(thisClass).val());
 						submit(user, reciever);
 					},
 					error: function(){
@@ -44,13 +53,33 @@ function appendMessenger(rec){
 					}
 				});
 		    }
+		    //up and down arrows to go through chat log
+		    if(e.keyCode == 38){
+	    		var index = chatLog.indexOf($(thisClass).val());
+	    		console.log(index);
+				if(index > -1){
+					if(index < chatLog.length-1) $(thisClass).val(chatLog[index+1]);
+				}else{
+					$(thisClass).val(chatLog[0]);
+				}
+		    }
+		    if(e.keyCode == 40){
+		    	var index = chatLog.indexOf($(thisClass).val());
+		    	console.log(index);
+				if(index > -1){
+					if(index < chatLog.length) $(thisClass).val(chatLog[index-1]);
+				}else{
+					$(thisClass).val("");
+				}
+		    }
 		});
 	}else{
 		alert("chat box already open for that username");
 	}
 }
-	
 
+	
+//reverts messenger add button to original state
 function revertMessengerButton(){
 	$('.reciever').remove();
 	$('.add-messenger').text("+");
@@ -58,7 +87,8 @@ function revertMessengerButton(){
 
 //update chat function
 function updateChat(prompt, rec, value){
-	$(".chat-container."+rec).prepend("<div>"+prompt + ": " + value + "</div>");
+	var thisClass = ".chat-container."+rec;
+	$(thisClass).prepend("<div>"+prompt + ": " + value + "</div>");
 }
 
 //checks input for command dilimiter
@@ -68,6 +98,7 @@ function commandCheck(val){
 	}else return false;
 }
 
+//gets reciever of current chat window
 function getReciever(obj){
 	var cl = $(obj).attr('class').split(" ");
 	return cl[1];
@@ -81,7 +112,8 @@ function getReciever(obj){
 
 //client side submit function
 function submit(user, rec){
-	var inp = $(".cmd."+rec).val();
+	var thisClass = ".cmd."+rec;
+	var inp = $(thisClass).val();
 	if(inp != ""){
 		if(!commandCheck(inp)){ //checks if command
 			//uses cookie for username Note: should store in database once implimented
@@ -89,9 +121,9 @@ function submit(user, rec){
 		}else{
 			parseCommand(user, rec, inp);
 		}
-		$(".cmd."+rec).val("");		
+		$(thisClass).val("");		
 	}
-	$(".cmd."+rec).focus();
+	$(thisClass).focus();
 }
 
 //prints help
