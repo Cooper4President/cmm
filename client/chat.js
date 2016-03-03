@@ -84,15 +84,17 @@ function submit(user, rec){
 
 //prints help
 function printHelp(rec){
+	console.log("call");
 	$.ajax({
 		url: "help.txt",
 		dataType: "text",
 		success: function (data){
 			data = data.replace(/\n/g, "<br />");
+			console.log(data);
 			updateChat("HELP", rec, data);
 		},
 		error: function(){
-			updateChat("ERROR","Server is down");
+			updateChat("ERROR",rec,"Server is down");
 		}
 	});
 }

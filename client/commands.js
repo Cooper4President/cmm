@@ -17,7 +17,7 @@ function parseCommand(user, rec ,inp){
 			//match the command name, and execute command accordingly
 			switch(cmd){
 				case "help":
-					printHelp();
+					printHelp(rec);
 					break;
 				case "date":
 					var date = getTodaysDate();
@@ -71,6 +71,6 @@ function parseCommand(user, rec ,inp){
 					break;
 			}
 		});
-		updateChat(user, rec, msg);
+		if(msg != "") updateChat(user, rec, msg);
 	}
 }
