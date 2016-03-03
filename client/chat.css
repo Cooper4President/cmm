@@ -36,6 +36,7 @@ body{
 	flex-direction: column-reverse;
 	overflow-y: scroll;
     background-color: rgb(221, 221, 221);
+    word-wrap: break-word;
 }
 
 .chat{

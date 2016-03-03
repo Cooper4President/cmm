@@ -3,26 +3,52 @@ $(document).ready(function(){
      $(".add-messenger").on("click",function(clickEvent){
      	$(".add-messenger").text("").append("<input type='text' class='reciever' placeHolder='Press Enter to submit'>");
      	$(".reciever").focus();
-     });
+     	$(".reciever").keydown(function(e) {
+		    if (e.keyCode == 13) {
+				if($('.reciever').val() != "")appendMessenger($('.reciever').val());
+		    }
+		    else if(e.keyCode == 27){
+		    	revertMessengerButton();
+		    }
+     	});
+	});
 });
-
 function appendMessenger(rec){
 	if(!$('.chat-container').hasClass(rec)){
 		var context = {reciever : rec};
 		var html = $(Handlebars.templates['messenger-template'](context));
 		$('.messenger-container').append(html);
-		$('.reciever').remove();
-		$('.add-messenger').text("+");
+		revertMessengerButton();
 		$('.cmd.'+rec).focus();
 		html.find(".remove-messenger").on("click",function(clickEvent){
 	     	html.remove()
-	     });
+	    });
+	    $(".cmd."+rec).keydown(function(e) {
+		    if (e.which == 13) {
+				e.preventDefault();
+				var reciever = getReciever(this);
+				$.ajax({
+					url: "user.txt",
+					dataType: "text",
+					success: function(user){
+						submit(user, reciever);
+					},
+					error: function(){
+						console.log('could not read user file');
+					}
+				});
+		    }
+		});
 	}else{
 		alert("chat box already open for that username");
 	}
-	
 }
+	
 
+function revertMessengerButton(){
+	$('.reciever').remove();
+	$('.add-messenger').text("+");
+}
 
 //update chat function
 function updateChat(prompt, rec, value){
@@ -42,30 +68,10 @@ function getReciever(obj){
 }
 
 //Enter key functionality for submitting messages
-$(document).delegate('input.cmd','keypress',function(e) {
-    if (e.which === 13) {
-		e.preventDefault();
-		var reciever = getReciever(this);
-		$.ajax({
-			url: "user.txt",
-			dataType: "text",
-			success: function(user){
-				submit(user, reciever);
-			},
-			error: function(){
-				console.log('could not read user file');
-			}
-		});
-    };
-});
+
 
 //Enter key functionality for submitting chat windows
-$(document).delegate('input.reciever','keypress',function(e) {
-    if (e.which === 13) {
-		e.preventDefault();
-		if($('.reciever').val() != "")appendMessenger($('.reciever').val());
-    }
-});
+
 
 //client side submit function
 function submit(user, rec){
@@ -80,7 +86,7 @@ function submit(user, rec){
 		$(".cmd."+rec).val("");		
 	}
 	$(".cmd."+rec).focus();
-};
+}
 
 //prints help
 function printHelp(rec){
