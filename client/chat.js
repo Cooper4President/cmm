@@ -24,6 +24,7 @@ function updateChatLog(rec, mess){
 	var found = false;
 	for(i=0; i<chatLog.length;i++){
 		if(chatLog[i].reciever == rec){
+			chatLog[i].currentMessage = -1;
 			var size = chatLog[i].messages.length;
 			chatLog[i].messages.unshift({message:mess, index:0});
 			for(j=1;j<size;j++){
@@ -144,6 +145,7 @@ function submit(user, rec){
 	var inp = $(thisClass).val();
 	if(inp != ""){
 		updateChatLog(rec, inp);
+		console.log(chatLog);
 		if(!commandCheck(inp)){ //checks if command
 			//uses cookie for username Note: should store in database once implimented
 			updateChat(user, rec, inp);
