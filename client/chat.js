@@ -2,7 +2,7 @@ var chatLog = [];
 
 //main function
 $(document).ready(function(){
-	$('.messenger-container').sortable();
+	$('.messenger-container').sortable({axis:'x'});
     $(".add-messenger").on("click",function(clickEvent){
      	$(".add-messenger").text("").append("<input type='text' class='reciever' placeHolder='Press Enter to submit'>");
      	$(".reciever").focus();
