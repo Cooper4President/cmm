@@ -19,6 +19,24 @@ $(document).ready(function(){
 	});
 });
 
+//updates chatlog, adds new entry if reciever not found
+function updateChatLog(rec, mess){
+	var found = false;
+	for(i=0; i<chatLog.length;i++){
+		if(chatLog[i].reciever == rec){
+			var size = chatLog[i].messages.length;
+			chatLog[i].messages.unshift({message:mess, index:0});
+			for(j=1;j<size;j++){
+				chatLog[i].messages[j].index++;
+			}
+			found = true;
+		}
+	}
+	if(!found){ //create new chat log entry
+		chatLog.push({reciever:rec, messages:[{message:mess, index:0}], currentMessage:-1});
+	}
+}
+
 //injects messenger on addition
 function appendMessenger(rec){
 	if(/\s+/g.test(rec)){
@@ -37,16 +55,16 @@ function appendMessenger(rec){
 	    });
 	    //keydown function for chat input
 	    $(thisClass).keydown(function(e) {
+	    	//console.log(this);
 	    	//enter key submit
 		    if (e.keyCode == 13) {
 				e.preventDefault();
-				var reciever = getReciever(this);
+				var rec = getReciever(this);
 				$.ajax({
 					url: "user.txt",
 					dataType: "text",
 					success: function(user){
-						chatLog.unshift($(thisClass).val());
-						submit(user, reciever);
+						submit(user, rec);
 					},
 					error: function(){
 						console.log('could not read user file');
@@ -55,22 +73,32 @@ function appendMessenger(rec){
 		    }
 		    //up and down arrows to go through chat log
 		    if(e.keyCode == 38){
-	    		var index = chatLog.indexOf($(thisClass).val());
-	    		console.log(index);
-				if(index > -1){
-					if(index < chatLog.length-1) $(thisClass).val(chatLog[index+1]);
-				}else{
-					$(thisClass).val(chatLog[0]);
-				}
+		    	var rec = getReciever(this);
+		    	for(i=0;i<chatLog.length;i++){
+		    		if(chatLog[i].reciever == rec){
+		    			var index = chatLog[i].currentMessage;
+		    			if(index > -1){
+		    				if(index < chatLog[i].messages.length-1) $(this).val(chatLog[i].messages[index+1].message);
+		    			}else{
+		    				$(this).val(chatLog[i].messages[0].message);
+		    			}
+	    				chatLog[i].currentMessage++;
+		    		}
+		    	}
 		    }
 		    if(e.keyCode == 40){
-		    	var index = chatLog.indexOf($(thisClass).val());
-		    	console.log(index);
-				if(index > -1){
-					if(index < chatLog.length) $(thisClass).val(chatLog[index-1]);
-				}else{
-					$(thisClass).val("");
-				}
+		    	var rec = getReciever(this);
+		    	for(i=0;i<chatLog.length;i++){
+		    		if(chatLog[i].reciever == rec){
+		    			var index = chatLog[i].currentMessage;
+		    			if(index == 0){
+		    				$(this).val("");
+		    			}else if((index > -1)){
+		    				if(index < chatLog[i].messages.length) $(this).val(chatLog[i].messages[index-1].message);
+		    			}
+	    				chatLog[i].currentMessage--;
+		    		}
+		    	}		    
 		    }
 		});
 	}else{
@@ -115,6 +143,7 @@ function submit(user, rec){
 	var thisClass = ".cmd."+rec;
 	var inp = $(thisClass).val();
 	if(inp != ""){
+		updateChatLog(rec, inp);
 		if(!commandCheck(inp)){ //checks if command
 			//uses cookie for username Note: should store in database once implimented
 			updateChat(user, rec, inp);
