@@ -2,7 +2,8 @@ var chatLog = [];
 
 //main function
 $(document).ready(function(){
-     $(".add-messenger").on("click",function(clickEvent){
+	$('.messenger-container').sortable();
+    $(".add-messenger").on("click",function(clickEvent){
      	$(".add-messenger").text("").append("<input type='text' class='reciever' placeHolder='Press Enter to submit'>");
      	$(".reciever").focus();
      	//keydown function for reciever input
@@ -56,7 +57,6 @@ function appendMessenger(rec){
 	    });
 	    //keydown function for chat input
 	    $(thisClass).keydown(function(e) {
-	    	//console.log(this);
 	    	//enter key submit
 		    if (e.keyCode == 13) {
 				e.preventDefault();
@@ -133,19 +133,12 @@ function getReciever(obj){
 	return cl[1];
 }
 
-//Enter key functionality for submitting messages
-
-
-//Enter key functionality for submitting chat windows
-
-
 //client side submit function
 function submit(user, rec){
 	var thisClass = ".cmd."+rec;
 	var inp = $(thisClass).val();
 	if(inp != ""){
 		updateChatLog(rec, inp);
-		console.log(chatLog);
 		if(!commandCheck(inp)){ //checks if command
 			//uses cookie for username Note: should store in database once implimented
 			updateChat(user, rec, inp);
@@ -157,19 +150,17 @@ function submit(user, rec){
 	$(thisClass).focus();
 }
 
-//prints help
-function printHelp(rec){
-	console.log("call");
+//help text handler
+function getHelp(rec){
 	$.ajax({
-		url: "help.txt",
-		dataType: "text",
-		success: function (data){
-			data = data.replace(/\n/g, "<br />");
-			console.log(data);
+		url: 'help.txt',
+		dataType: 'text',
+		success: function(data){
+			data = data.replace(/\n/g, '<br />');
 			updateChat("HELP", rec, data);
 		},
-		error: function(){
-			updateChat("ERROR",rec,"Server is down");
+		error: function(data){
+			console.log("Error with help");
 		}
 	});
 }

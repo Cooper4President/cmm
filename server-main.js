@@ -34,8 +34,8 @@ io.on('connection', function(socket){
   numConnections++;
   console.log('total connected users: ' + numConnections);
 
+  //login event
   socket.on('login',function(data){
-    console.log(data);
     fs.writeFile('client/user.txt', data, function(err){err ? console.log(err) : console.log('user file saved')});
     io.emit('page load');
   });

@@ -19,11 +19,11 @@ function parseCommand(user, rec ,inp){
 			//match the command name, and execute command accordingly
 			switch(cmd){
 				case "help":
-					printHelp(rec);
+					getHelp(rec);
 					break;
 				case "date":
 					var date = getTodaysDate();
-					updateChat("DATE", rec ,date)	
+					msg = msg + " " + date;
 					break;
 				case "clear":
 					$(chatContainerClass).empty();
