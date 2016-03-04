@@ -4,13 +4,11 @@ function parseCommand(user, rec ,inp){
 	var chatContainerClass = ".chat-container."+rec;
 	//match the -- delimiter to find all commands in the input
 	var matchList = inp.match(/--\w+/g);
-
-	//remove all the commands from the message, to get just the text
-	var msg = inp.replace(/--\w+/g,'');
-	var msg = msg.replace(/\s*=\s*\w+/g,'');
-
 	//check that there is a command in the input
 	if(matchList){
+		//remove all the commands from the message, to get just the text
+		var msg = inp.replace(/--\w+/g,'');
+		var msg = msg.replace(/\s*=\s*\w+/g,'');
 		//iterate through the list of matches
 		matchList.forEach(function(cmd){
 			//parse out the -- delimiter
@@ -74,5 +72,5 @@ function parseCommand(user, rec ,inp){
 			}
 		});
 		if(msg != "") updateChat(user, rec, msg);
-	}
+	}else updateChat(user, rec, inp);
 }

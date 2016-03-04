@@ -119,13 +119,6 @@ function updateChat(prompt, rec, value){
 	$(thisClass).prepend("<div>"+prompt + ": " + value + "</div>");
 }
 
-//checks input for command dilimiter
-function commandCheck(val){
-	if(/\w*\s*--\s*\w*/.test(val)){
-		return true;
-	}else return false;
-}
-
 //gets reciever of current chat window
 function getReciever(obj){
 	var cl = $(obj).attr('class').split(" ");
@@ -138,12 +131,7 @@ function submit(user, rec){
 	var inp = $(thisClass).val();
 	if(inp != ""){
 		updateChatLog(rec, inp);
-		if(!commandCheck(inp)){ //checks if command
-			//uses cookie for username Note: should store in database once implimented
-			updateChat(user, rec, inp);
-		}else{
-			parseCommand(user, rec, inp);
-		}
+		parseCommand(user, rec, inp);
 		$(thisClass).val("");		
 	}
 	$(thisClass).focus();
