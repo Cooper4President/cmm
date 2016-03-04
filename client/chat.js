@@ -2,10 +2,11 @@ var chatLog = [];
 
 //main function
 $(document).ready(function(){
+	$('.chat-container').attr('background-color: blue;')
 	$('.messenger-container').sortable({axis:'x'});
     $(".add-messenger").on("click",function(clickEvent){
      	$(".add-messenger").text("").append("<textarea type='text' class='reciever' placeHolder='Press Enter to submit'></textarea>");
-     	$(".reciever").focus().autogrow();
+     	$(".reciever").focus().autogrow(); //scroll at certain height?
      	//keydown function for reciever input
      	$(".reciever").keydown(function(e) {
 		    if (e.keyCode == 13) {
@@ -50,7 +51,7 @@ function appendMessenger(rec){
 		html.find(".remove-messenger").on("click",function(clickEvent){
 	     	html.remove()
 	    });
-
+		//keydown fucntions for command line
 	    $(cmdClass).keydown(function(e) {
 	    	//enter key submit
 		    if (e.keyCode == 13) {
