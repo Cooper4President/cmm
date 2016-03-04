@@ -15,6 +15,15 @@ body{
     padding: 0;
 }
 
+.add-messenger{
+	cursor: pointer;
+	margin: 5px;
+}
+
+.remove-messenger{
+	cursor: pointer;
+}
+
 .messenger-container{
 	display: flex;
 
