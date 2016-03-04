@@ -1,7 +1,7 @@
 //parses command for functionality
 function parseCommand(user, rec ,inp){
 
-	var chatContainerClass = ".chat-container."+rec;
+	var chatContainerClass = "[class = 'chat-container "+rec+"']";
 	//match the -- delimiter to find all commands in the input
 	var matchList = inp.match(/--\w+/g);
 	//check that there is a command in the input

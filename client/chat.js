@@ -4,13 +4,13 @@ var chatLog = [];
 $(document).ready(function(){
 	$('.messenger-container').sortable({axis:'x'});
     $(".add-messenger").on("click",function(clickEvent){
-     	$(".add-messenger").text("").append("<input type='text' class='reciever' placeHolder='Press Enter to submit'>");
-     	$(".reciever").focus();
+     	$(".add-messenger").text("").append("<textarea type='text' class='reciever' placeHolder='Press Enter to submit'></textarea>");
+     	$(".reciever").focus().autogrow();
      	//keydown function for reciever input
      	$(".reciever").keydown(function(e) {
 		    if (e.keyCode == 13) {
 		    	e.preventDefault();
-				if($('.reciever').val() != "")appendMessenger($('.reciever').val());
+				if($('.reciever').val() != "") appendMessenger($('.reciever').val());
 		    }
 		    else if(e.keyCode == 27){
 		    	e.preventDefault();
@@ -38,26 +38,26 @@ function updateChatLog(rec, mess){
 
 //injects messenger on addition
 function appendMessenger(rec){
-	if(/\s+/g.test(rec)){
-		alert("username cannot have spaces");
-		return;
-	}
-	if(!$('.chat-container').hasClass(rec)){
-		var thisClass = '.cmd.'+rec;
-		var context = {reciever : rec};
+	recClass = rec.replace(/,/g,' ').replace(/\s*$/, '').replace(/^\s*/, '').replace(/\s+/g,'.');
+	recClass = '.' + recClass;
+	recList = rec.replace(/,/g,' ').replace(/\s*$/, '').replace(/^\s*/, '').replace(/\s+/g,' ');
+	if($("[class = 'cmd " +recList+ "']").length == 0){
+		var recFormated = rec.replace(/\s*,\s*/g, ', ').replace(/,\s*$/, '').replace(/^\s*,\s*/, '');
+		var cmdClass = '.cmd'+recClass;
+		var context = {reciever : recList, formated: recFormated};
 		var html = $(Handlebars.templates['messenger-template'](context));
 		$('.messenger-container').append(html);
 		revertMessengerButton();
-		$(thisClass).focus().autogrow();
+		$(cmdClass).focus().autogrow();
 		html.find(".remove-messenger").on("click",function(clickEvent){
 	     	html.remove()
 	    });
-	    //keydown function for chat input
-	    $(thisClass).keydown(function(e) {
+
+	    $(cmdClass).keydown(function(e) {
 	    	//enter key submit
 		    if (e.keyCode == 13) {
 				e.preventDefault();
-				var rec = getReciever(this);
+				var rec = getRecieverClass(this);
 				$.ajax({
 					url: "user.txt",
 					dataType: "text",
@@ -69,41 +69,46 @@ function appendMessenger(rec){
 					}
 				});
 		    }
-		    //up and down arrows to go through chat log
+		    //up arrow to go through chat log
 		    if(e.keyCode == 38){
 		    	e.preventDefault();
-		    	var rec = getReciever(this);
+		    	var rec = getRecieverClass(this);
 		    	for(i=0;i<chatLog.length;i++){
 		    		if(chatLog[i].reciever == rec){
 		    			var index = chatLog[i].currentMessage;
 		    			if(index > -1){
-		    				if(index < chatLog[i].messages.length-1) $(this).val(chatLog[i].messages[index+1]);
+		    				if(index < chatLog[i].messages.length-1) {
+		    					$(this).val(chatLog[i].messages[index+1]);
+		    					chatLog[i].currentMessage++;
+		    				}
 		    			}else{
 		    				$(this).val(chatLog[i].messages[0]);
+		    				chatLog[i].currentMessage=0;
 		    			}
-	    				chatLog[i].currentMessage++;
 		    		}
 		    	}
 		    }
+		    //down arrow to go through chat log
 		    if(e.keyCode == 40){
 		    	e.preventDefault();
-		    	var rec = getReciever(this);
+		    	var rec = getRecieverClass(this);
 		    	for(i=0;i<chatLog.length;i++){
 		    		if(chatLog[i].reciever == rec){
 		    			var index = chatLog[i].currentMessage;
 		    			if(index == 0){
 		    				$(this).val("");
+		    				chatLog[i].currentMessage = -1;
 		    			}else if((index > -1)){
-		    				if(index < chatLog[i].messages.length) $(this).val(chatLog[i].messages[index-1]);
+		    				if(index < chatLog[i].messages.length){ 
+		    					$(this).val(chatLog[i].messages[index-1]);
+		    					chatLog[i].currentMessage--;
+		    				}
 		    			}
-	    				chatLog[i].currentMessage--;
 		    		}
 		    	}		    
 		    }
 		});
-	}else{
-		alert("chat box already open for that username");
-	}
+	}else alert("chat box already open for that username");
 }
 
 	
@@ -115,19 +120,19 @@ function revertMessengerButton(){
 
 //update chat function
 function updateChat(prompt, rec, value){
-	var thisClass = ".chat-container."+rec;
+	var thisClass = "[class = 'chat-container "+rec+"']";
 	$(thisClass).prepend("<div>"+prompt + ": " + value + "</div>");
 }
 
 //gets reciever of current chat window
-function getReciever(obj){
-	var cl = $(obj).attr('class').split(" ");
-	return cl[1];
+function getRecieverClass(obj){
+	var cl = $(obj).attr('class').replace('cmd ', '');
+	return cl;
 }
 
 //client side submit function
 function submit(user, rec){
-	var thisClass = ".cmd."+rec;
+	var thisClass = "[class = 'cmd "+rec+"']";
 	var inp = $(thisClass).val();
 	if(inp != ""){
 		updateChatLog(rec, inp);
