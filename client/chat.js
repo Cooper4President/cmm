@@ -27,15 +27,12 @@ function updateChatLog(rec, mess){
 		if(chatLog[i].reciever == rec){
 			chatLog[i].currentMessage = -1;
 			var size = chatLog[i].messages.length;
-			chatLog[i].messages.unshift({message:mess, index:0});
-			for(j=1;j<size;j++){
-				chatLog[i].messages[j].index++;
-			}
+			chatLog[i].messages.unshift(mess);
 			found = true;
 		}
 	}
 	if(!found){ //create new chat log entry
-		chatLog.push({reciever:rec, messages:[{message:mess, index:0}], currentMessage:-1});
+		chatLog.push({reciever:rec, messages:[mess], currentMessage:-1});
 	}
 }
 
@@ -74,20 +71,22 @@ function appendMessenger(rec){
 		    }
 		    //up and down arrows to go through chat log
 		    if(e.keyCode == 38){
+		    	e.preventDefault();
 		    	var rec = getReciever(this);
 		    	for(i=0;i<chatLog.length;i++){
 		    		if(chatLog[i].reciever == rec){
 		    			var index = chatLog[i].currentMessage;
 		    			if(index > -1){
-		    				if(index < chatLog[i].messages.length-1) $(this).val(chatLog[i].messages[index+1].message);
+		    				if(index < chatLog[i].messages.length-1) $(this).val(chatLog[i].messages[index+1]);
 		    			}else{
-		    				$(this).val(chatLog[i].messages[0].message);
+		    				$(this).val(chatLog[i].messages[0]);
 		    			}
 	    				chatLog[i].currentMessage++;
 		    		}
 		    	}
 		    }
 		    if(e.keyCode == 40){
+		    	e.preventDefault();
 		    	var rec = getReciever(this);
 		    	for(i=0;i<chatLog.length;i++){
 		    		if(chatLog[i].reciever == rec){
@@ -95,7 +94,7 @@ function appendMessenger(rec){
 		    			if(index == 0){
 		    				$(this).val("");
 		    			}else if((index > -1)){
-		    				if(index < chatLog[i].messages.length) $(this).val(chatLog[i].messages[index-1].message);
+		    				if(index < chatLog[i].messages.length) $(this).val(chatLog[i].messages[index-1]);
 		    			}
 	    				chatLog[i].currentMessage--;
 		    		}
