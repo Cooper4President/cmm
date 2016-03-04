@@ -38,12 +38,10 @@ function updateChatLog(rec, mess){
 
 //injects messenger on addition
 function appendMessenger(rec){
-	recClass = rec.replace(/,/g,' ').replace(/\s*$/, '').replace(/^\s*/, '').replace(/\s+/g,'.');
-	recClass = '.' + recClass;
 	recList = rec.replace(/,/g,' ').replace(/\s*$/, '').replace(/^\s*/, '').replace(/\s+/g,' ');
 	if($("[class = 'cmd " +recList+ "']").length == 0){
 		var recFormated = rec.replace(/\s*,\s*/g, ', ').replace(/,\s*$/, '').replace(/^\s*,\s*/, '');
-		var cmdClass = '.cmd'+recClass;
+		var cmdClass = "[class = 'cmd " +recList+ "']";
 		var context = {reciever : recList, formated: recFormated};
 		var html = $(Handlebars.templates['messenger-template'](context));
 		$('.messenger-container').append(html);
