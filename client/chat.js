@@ -2,29 +2,41 @@ var chatLog = [];
 
 //main function
 $(document).ready(function(){
-	$('.chat-container').attr('background-color: blue;')
 	$('.messenger-container').sortable({axis:'x'});
     $(".add-messenger").on("click",function(clickEvent){
-     	$(".add-messenger").text("").append("<textarea type='text' class='reciever' placeHolder='Press Enter to submit'></textarea>");
+     	addRecieverField();
+	});
+});
+
+//replaces add messenger button with reciever field
+function addRecieverField(){
+
+	//adds reciever field and focuses cursor
+	$(".add-messenger").text("").append("<div class='error'></div><textarea type='text' class='reciever' placeHolder='Press Enter to submit'></textarea>");
      	$(".reciever").focus().autogrow(); //scroll at certain height?
+
      	//keydown function for reciever input
      	$(".reciever").keydown(function(e) {
 		    if (e.keyCode == 13) {
 		    	e.preventDefault();
-				if($('.reciever').val() != "") appendMessenger($('.reciever').val());
+		    	//pulls reciever value and tests if valid
+		    	var rec = $('.reciever').val();
+				if((rec != "") && !(/\w+\s+\w+/.test(rec))) appendMessenger(rec);
+				else alert("a username is invalid");
 		    }
+		    //esc out of reciever window
 		    else if(e.keyCode == 27){
 		    	e.preventDefault();
 		    	revertMessengerButton();
 		    }
      	});
-	});
-});
+}
 
 //updates chatlog, adds new entry if reciever not found
 function updateChatLog(rec, mess){
+	//finds reciever and updates messages
 	var found = false;
-	for(i=0; i<chatLog.length;i++){
+	for(i=0; i<chatLog.length;i++){ 
 		if(chatLog[i].reciever == rec){
 			chatLog[i].currentMessage = -1;
 			var size = chatLog[i].messages.length;
@@ -32,25 +44,39 @@ function updateChatLog(rec, mess){
 			found = true;
 		}
 	}
-	if(!found){ //create new chat log entry
+
+	//creates new chat log entry if not reciever found
+	if(!found){ 
 		chatLog.push({reciever:rec, messages:[mess], currentMessage:-1});
 	}
 }
 
 //injects messenger on addition
 function appendMessenger(rec){
+	//compiling space seperated list of recievers
 	recList = rec.replace(/,/g,' ').replace(/\s*$/, '').replace(/^\s*/, '').replace(/\s+/g,' ');
 	if($("[class = 'cmd " +recList+ "']").length == 0){
+
+		//formats recievers for chat head title
 		var recFormated = rec.replace(/\s*,\s*/g, ', ').replace(/,\s*$/, '').replace(/^\s*,\s*/, '');
+
+		//base class for chat box input
 		var cmdClass = "[class = 'cmd " +recList+ "']";
+
+		//pulling precompiled handlebars template
 		var context = {reciever : recList, formated: recFormated};
 		var html = $(Handlebars.templates['messenger-template'](context));
+
+		//appending to message container of body
 		$('.messenger-container').append(html);
+
+		//reverts
 		revertMessengerButton();
 		$(cmdClass).focus().autogrow();
 		html.find(".remove-messenger").on("click",function(clickEvent){
 	     	html.remove()
 	    });
+
 		//keydown fucntions for command line
 	    $(cmdClass).keydown(function(e) {
 	    	//enter key submit
@@ -68,6 +94,7 @@ function appendMessenger(rec){
 					}
 				});
 		    }
+
 		    //up arrow to go through chat log
 		    if(e.keyCode == 38){
 		    	e.preventDefault();
@@ -87,6 +114,7 @@ function appendMessenger(rec){
 		    		}
 		    	}
 		    }
+
 		    //down arrow to go through chat log
 		    if(e.keyCode == 40){
 		    	e.preventDefault();
@@ -143,6 +171,7 @@ function submit(user, rec){
 
 //help text handler
 function getHelp(rec){
+	//ajax call gets help info from help.txt
 	$.ajax({
 		url: 'help.txt',
 		dataType: 'text',
