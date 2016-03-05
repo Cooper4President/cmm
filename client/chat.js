@@ -2,6 +2,9 @@ var chatLog = [];
 
 //main function
 $(document).ready(function(){
+	
+	//send authentication token to server
+	sendAuthToken();
 	$('.messenger-container').sortable({axis:'x'});
     $(".add-messenger").on("click",function(clickEvent){
      	addRecieverField();
@@ -126,19 +129,19 @@ function appendMessenger(rec){
 		    				$(this).val("");
 		    				chatLog[i].currentMessage = -1;
 		    			}else if((index > -1)){
-		    				if(index < chatLog[i].messages.length){ 
+		    				if(index < chatLog[i].messages.length){
 		    					$(this).val(chatLog[i].messages[index-1]);
 		    					chatLog[i].currentMessage--;
 		    				}
 		    			}
 		    		}
-		    	}		    
+		    	}
 		    }
 		});
 	}else alert("chat box already open for that username");
 }
 
-	
+
 //reverts messenger add button to original state
 function revertMessengerButton(){
 	$('.reciever').remove();
@@ -164,7 +167,7 @@ function submit(user, rec){
 	if(inp != ""){
 		updateChatLog(rec, inp);
 		parseCommand(user, rec, inp);
-		$(thisClass).val("");		
+		$(thisClass).val("");
 	}
 	$(thisClass).focus();
 }
@@ -194,10 +197,10 @@ function getTodaysDate(){
     var yyyy = today.getFullYear();
     if(dd<10){
         dd='0'+dd
-    } 
+    }
     if(mm<10){
         mm='0'+mm
-    } 
+    }
     var today = mm+'/'+dd+'/'+yyyy;
     return today;
 }
