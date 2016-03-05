@@ -24,10 +24,17 @@ var fs = require('fs');
 
 //port number that the server listens on
 var portNum = 3000;
-//number of active socket connections
-var numConnections = 0;
-//active session tokens and their associated usernames
+//list of active session tokens and their associated usernames
+//usage: activeUsers[token] = username;
 var activeUsers = {};
+var numActiveUsers = 0;
+/*list of connected socket IDs, their authentication status, client IP address,
+and associated username (if authenticated)*/
+//usage: activeSockets[socketId].authenticated = true/false;
+//usage: activeSockets[socketId].clientIp = ipAddress;
+//usage: activeSockets[socketId].username = username;
+var activeSockets = {};
+var numActiveSockets = 0;
 
 //TEMPORARY. Used for testing until the actual database is ready.
 var TESTINGuserAccounts = {};
@@ -40,14 +47,37 @@ TESTINGuserAccounts['student3'] = 'thisISaPASSWORD';
 //this is called when a socket is connected
 io.on('connection', function(socket){
   var socketId = socket.id;
-  var userIp = socket.request.connection.remoteAddress;
+  var clientIp = socket.request.connection.remoteAddress;
 
-  console.log('user connected from ' + userIp +' to socket ' + socketId);
-  numConnections++;
-  console.log('total connected users: ' + numConnections);
+  //add socket to list of connected sockets
+  activeSockets[socketId] = {};
+  activeSockets.authenticated = false;
+  activeSockets.clientIp = clientIp;
+  activeSockets.username = null;
 
-  //login event
-  socket.on('login attempt',function(userInfo){
+  numActiveSockets++;
+  console.log('connected: ' + clientIp);
+  console.log('total connected sockets: ' + numActiveSockets);
+
+  //event functions
+
+  //authentication event (NOT to be confused with login event)
+  socket.on('auth attempt', function(token){
+    for(var key in activeUsers){
+      //if the token represents a currently logged-in user...
+      if(key == token){
+        //mark the socket as authenticated and associate a username with it
+        activeSockets[socketId].authenticated = true;
+        activeSockets[socketId].username = activeUsers[token];
+        console.log('socket: ' + socketId + ' authenticated by token: ' +
+        token + ' for username: ' + activeUsers[token]);
+        break;
+      }
+    }
+  });
+
+  //login event (NOT to be confused with authentication event)
+  socket.on('login attempt', function(userInfo){
     console.log('user attempting to login...\n' +
     'user: ' + userInfo.username + ' pass: ' + userInfo.password);
 
@@ -69,26 +99,48 @@ io.on('connection', function(socket){
       var token = crypto.createHash('md5').update(randStr).digest('hex');
       //add user to list of active sessions
       activeUsers[token] = userInfo.username;
-      console.log('generated token: ' + token +
+
+      console.log('user login. generated token: ' + token +
       ' for user: ' + userInfo.username);
+      numActiveUsers++;
+      console.log('total logged-in users: ' + numActiveUsers);
+
       //give client the token
-      io.emit('login success', token);
+      socket.emit('login success', token);
       //redirect client to chat page
-      io.emit('page load');
+      socket.emit('page load');
     }
     else{
       //login failed
-      io.emit('login fail');
+      socket.emit('login fail');
       console.log('login failed...\n' + 'user: ' + userInfo.username +
       ' pass: ' + userInfo.password);
     }
   });
 
+  //used when a user requests to be logged out
+  socket.on('logout', function(token){
+    for(var key in activeUsers){
+      //if user is in list of active users...
+      if(key == token){
+        //remove user from list of active users
+        delete activeUsers[token];
+        //set the socket status to not-authenticated
+        activeSockets[socketId].authenticated = false;
+
+        break;
+      }
+    }
+  });
+
   //called when socket is disconnected
   socket.on('disconnect', function(){
-    console.log('user disconnected from ' + userIp);
-    numConnections--;
-    console.log('total connected users: ' + numConnections);
+    //remove socket from list of connected sockets
+    delete activeSockets[socketId];
+
+    numActiveSockets--;
+    console.log('socket disconnected: ' + clientIp);
+    console.log('total connected sockets: ' + numActiveSockets);
   });
 });
 
