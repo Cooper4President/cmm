@@ -68,7 +68,7 @@ function appendMessenger(rec){
 
 		//pulling precompiled handlebars template
 		var context = {reciever : recList, formated: recFormated};
-		var html = $(Handlebars.templates['messenger-template'](context));
+		var html = $(Handlebars.templates['client/messenger-template.handlebars'](context));
 
 		//appending to message container of body
 		$('.messenger-container').append(html);
