@@ -1,3 +1,7 @@
+/*
+    To use grunt file, first run 'npm install -g grunt-cli' to install globally 
+    and then run 'npm install grunt' to install locally
+*/
 module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -13,20 +17,20 @@ module.exports = function(grunt) {
     	},
 
     	postcss: {
-                options: {
-                    processors: [
-                        require('autoprefixer')
-                    ]
-                },
-                chat: {
-                    src: 'client/css/chat.css',
-                    dest: 'client/css/chat-prefix.css'
-                },
-                index: {
-                    src: 'client/css/index.css',
-                    dest: 'client/css/index-prefix.css'
-                }
+            options: {
+                processors: [
+                    require('autoprefixer')
+                ]
+            },
+            chat: {
+                src: 'client/css/chat.css',
+                dest: 'client/css/chat-prefix.css'
+            },
+            index: {
+                src: 'client/css/index.css',
+                dest: 'client/css/index-prefix.css'
             }
+        }
 
 });
 
