@@ -37,7 +37,7 @@ function addRecieverField(){
 //check if reciever is legit
 function checkReciever(rec){
 	if(rec === "" || /\w+\s+\w+/g.test(rec)) return false;
-	else if($('.chat').length == 0) return true;
+	else if($('.chat').length === 0) return true;
 	else{
 		var recArray = rec.split(' ');
 		var found = false;
@@ -128,7 +128,7 @@ function appendMessenger(rec){
 		//keydown fucntions for command line
 	    $(cmdClass).keydown(function(e) {
 	    	//enter key submit
-		    if (e.keyCode == 13) {
+		    if (e.keyCode === 13) {
 				e.preventDefault();
 				var rec = getRecieverClass(this);
 				$.ajax({
@@ -144,7 +144,7 @@ function appendMessenger(rec){
 		    }
 
 		    //up arrow to go through chat log
-		    if(e.keyCode == 38){
+		    if(e.keyCode === 38){
 		    	e.preventDefault();
 		    	var rec = getRecieverClass(this);
 		    	for(i=0;i<chatLog.length;i++){
@@ -164,7 +164,7 @@ function appendMessenger(rec){
 		    }
 
 		    //down arrow to go through chat log
-		    if(e.keyCode == 40){
+		    if(e.keyCode === 40){
 		    	e.preventDefault();
 		    	var rec = getRecieverClass(this);
 		    	for(i=0;i<chatLog.length;i++){
