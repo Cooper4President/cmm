@@ -24,8 +24,7 @@ function addRecieverField(){
 		    	e.preventDefault();
 		    	//pulls reciever value and tests if valid
 		    	var rec = $('.reciever').val();
-				if((rec != "") && !(/\w+\s+\w+/.test(rec))) appendMessenger(rec);
-				else alert("a username is invalid");
+				appendMessenger(rec);
 		    }
 		    //esc out of reciever window
 		    else if(e.keyCode == 27){
@@ -35,8 +34,47 @@ function addRecieverField(){
      	});
 }
 
+//check if reciever is legit
+function checkReciever(rec){
+	if($('.chat').length == 0){
+		return true;
+	}else{
+		var recArray = rec.split(' ');
+		var found = false;
+		chatLog.forEach(function(log){
+			var recTemp = log.reciever.split(' ');
+			if(checkIfEqual(recArray, recTemp)){
+				found = true;
+				return;
+			}
+
+		});
+		if(found) return false;
+	}
+	return true;
+}
+
+//checks if two arrays are equal
+function checkIfEqual(arr1, arr2){
+	arr1.sort(); arr2.sort();
+	var match;
+	if(arr1.length != arr2.length){
+		return false;
+	}
+	for(i=0;i<arr1.length;i++){
+		if(arr1[i] !== arr2[i]){
+			return false;
+		}
+	}
+	return true;
+}	
+
 //updates chatlog, adds new entry if reciever not found
 function updateChatLog(rec, mess){
+
+	if(mess === undefined){
+		chatLog.push({reciever:rec, messages:[], currentMessage:-1});
+	}
 	//finds reciever and updates messages
 	var found = false;
 	for(i=0; i<chatLog.length;i++){ 
@@ -58,7 +96,9 @@ function updateChatLog(rec, mess){
 function appendMessenger(rec){
 	//compiling space seperated list of recievers
 	recList = rec.replace(/,/g,' ').replace(/\s*$/, '').replace(/^\s*/, '').replace(/\s+/g,' ');
-	if($("[class = 'cmd " +recList+ "']").length == 0){
+
+	if(checkReciever(recList)){
+		updateChatLog(recList);
 
 		//formats recievers for chat head title
 		var recFormated = rec.replace(/\s*,\s*/g, ', ').replace(/,\s*$/, '').replace(/^\s*,\s*/, '');
@@ -138,7 +178,8 @@ function appendMessenger(rec){
 		    	}
 		    }
 		});
-	}else alert("chat box already open for that username");
+	}else alert('a username is invalid or this chat window already exsists');
+	
 }
 
 
