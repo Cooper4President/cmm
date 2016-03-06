@@ -36,9 +36,9 @@ function addRecieverField(){
 
 //check if reciever is legit
 function checkReciever(rec){
-	if($('.chat').length == 0){
-		return true;
-	}else{
+	if(rec === "" || /\w+\s+\w+/g.test(rec)) return false;
+	else if($('.chat').length == 0) return true;
+	else{
 		var recArray = rec.split(' ');
 		var found = false;
 		chatLog.forEach(function(log){
@@ -106,6 +106,9 @@ function appendMessenger(rec){
 		//base class for chat box input
 		var cmdClass = "[class = 'cmd " +recList+ "']";
 
+		//base class for chat container
+		var chatClass = "[class = 'chat-container " +recList+ "']";
+
 		//pulling precompiled handlebars template
 		var context = {reciever : recList, formated: recFormated};
 		var html = $(Handlebars.templates['client/messenger-template.handlebars'](context));
@@ -116,6 +119,8 @@ function appendMessenger(rec){
 		//reverts
 		revertMessengerButton();
 		$(cmdClass).focus().autogrow();
+
+
 		html.find(".remove-messenger").on("click",function(clickEvent){
 	     	html.remove()
 	    });

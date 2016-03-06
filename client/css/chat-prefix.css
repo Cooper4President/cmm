@@ -86,6 +86,7 @@ body{
 	    -ms-flex-direction: column-reverse;
 	        flex-direction: column-reverse;
 	overflow-y: scroll;
+	overflow-x: hidden;
     background-color: rgb(221, 221, 221);
     word-wrap: break-word;
 }
