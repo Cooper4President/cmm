@@ -120,6 +120,9 @@ function appendMessenger(rec){
 		revertMessengerButton();
 		$(cmdClass).focus().autogrow();
 
+		//for chat container scroll bar
+		$(chatClass).slimScroll({height : '262px'});
+
 
 		html.find(".remove-messenger").on("click",function(clickEvent){
 	     	html.remove()
