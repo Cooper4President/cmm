@@ -1,0 +1,3 @@
+node_modules/*
+cmm.db
+bower_components/*
