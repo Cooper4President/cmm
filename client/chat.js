@@ -35,11 +35,11 @@ function addRecieverField(){
 }
 
 //check if reciever is legit
-function checkReciever(rec){
+function checkReciever(rec, recList){
 	if(rec === "" || /\w+\s+\w+/g.test(rec)) return false;
 	else if($('.chat').length === 0) return true;
 	else{
-		var recArray = rec.split(' ');
+		var recArray = recList.split(' ');
 		var found = false;
 		chatLog.forEach(function(log){
 			var recTemp = log.reciever.split(' ');
@@ -97,7 +97,7 @@ function appendMessenger(rec){
 	//compiling space seperated list of recievers
 	recList = rec.replace(/,/g,' ').replace(/\s*$/, '').replace(/^\s*/, '').replace(/\s+/g,' ');
 
-	if(checkReciever(recList)){
+	if(checkReciever(rec, recList)){
 		updateChatLog(recList);
 
 		//formats recievers for chat head title
