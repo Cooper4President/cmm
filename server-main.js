@@ -19,8 +19,14 @@ app.use(express.static('client'));
 var server = require('http').Server(app);
 //for the 'socket.io' library
 var io = require('socket.io')(server);
-
+//filesystem
 var fs = require('fs');
+
+//the sql database interface
+var cmmsql = require('./cmmsql.js');
+//create new object for the sql database
+var db = new cmmsql('cmm.db');
+
 
 //port number that the server listens on
 var portNum = 3000;
@@ -143,6 +149,10 @@ io.on('connection', function(socket){
     console.log('total connected sockets: ' + numActiveSockets);
   });
 });
+
+
+//TESTING for the sql db
+db.listusers('mainroom');
 
 
 //start the server

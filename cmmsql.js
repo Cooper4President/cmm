@@ -48,23 +48,26 @@ Example:
 
 */
 
+//allow this file to be imported as a 'module' using the NodeJS 'require'
+module.exports = cmmsql;
+
 
 function cmmsql(database) {
     var sqlite3 = require("sqlite3").verbose();
     var db = new sqlite3.Database(database);
-    
-    
+
+
     db.serialize(function(){
 	createtable('mainroom','time','user, messsage');
 	createtable('users','user','password');
 	createtable('rooms','room','priv,creator');
     });
-    
-    
+
+
     function checkpassword(username,password){
 	// need to implement
     }
-    
+
     function createtable(name,uniqueid,collumnlist){
 	db.run('CREATE TABLE '+name+'('+uniqueid+' UNIQUE, '+collumnlist+' )',function(err){
 	    if (err){
@@ -76,7 +79,7 @@ function cmmsql(database) {
 	    console.log('Table '+name+' has been created');
 	});
     }
-    
+
     function additem(table,columns,values){
 	db.run('INSERT into '+table+'('+columns+') VALUES ( ? )',[values],function(err){
 	    console.log("additem")
@@ -88,7 +91,7 @@ function cmmsql(database) {
 	    // need to tell the client success
 	});
     }
-    
+
     function getitem(table,columnlist,req){
 	db.all('SELECT ?? From ? WHERE ?',[columnlist,table,req],function(err,results){
 	    if (err){
@@ -99,7 +102,7 @@ function cmmsql(database) {
 	    console.log(results);
 	});
     }
-    
+
     function listcolumn(table,column){
 	db.all('SELECT '+column+' FROM '+table,function(err,results){
 	    if (err){
@@ -111,15 +114,15 @@ function cmmsql(database) {
 	    console.log(results);
 	});
     }
-    
+
     function addusertoroom(roomname,username,isowner,who){
 	db.serialize(function(){
 	    db.all('SELECT priv FROM rooms WHERE room==?',[roomname],function(err,result){
 		if (err) {
-		    // need to tell client there was an error 
+		    // need to tell client there was an error
 		    console.log('Error: '+err.errno+'   '+err);
 		    return;
-		}		
+		}
 		//need to parse result
 		var priv=result;
 		console.log(priv);
@@ -137,7 +140,7 @@ function cmmsql(database) {
 			    return;
 			}
 			isowner=='false';
-		    }			    
+		    }
 		    db.run('INSERT into '+roomname+'users (user,owner) VALUES (?,?)',[username,isowner],function(err){
 			if (err){
 			    if (err.errno==19){
@@ -152,18 +155,18 @@ function cmmsql(database) {
 	    });
 	});
     }
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
     cmmsql.prototype.listtable = function(table){
 	listcolumn(table,'*');
     }
-    
-    
+
+
     cmmsql.prototype.adduser=function(username,password){
 	db.run('INSERT into users(user,password) VALUES(?,?)',[username,password],function(err){
 	    if (err){
@@ -179,7 +182,7 @@ function cmmsql(database) {
 	    console.log('User '+username+' has been added.');
 	});
     }
-    
+
     cmmsql.prototype.listusers = function(room){
 	if (room=='mainroom'){
 	    listcolumn('users','user');
@@ -187,8 +190,8 @@ function cmmsql(database) {
 	}
 	listcolumn(room+'users','user');
     }
-    
-    
+
+
     cmmsql.prototype.createroom=function(roomname,userlist,creator,priv,password){
 	db.serialize(function(){
 	    createtable(roomname,'time','user,message');
@@ -209,19 +212,19 @@ function cmmsql(database) {
 		// need to tell the client success
 		console.log('Room '+roomname+' created')
 	    });
-	    
+
 	});
     }
-    
-    
+
+
     cmmsql.prototype.logroom=function(roomname,username,message){
 	additem(roomname,'time,user,message',Date.now()+','+username+','+message);
     }
-    
+
     cmmsql.prototype.getroomlog=function(roomname){
 	listtable(roomname);
     }
-    
+
     cmmsql.prototype.joinroom=function(roomname,username,isowner,who){
 	if (roomname=='mainroom'){
 	    // tell the user they are a moron
@@ -229,28 +232,28 @@ function cmmsql(database) {
 	}
 	addusertoroom(roomname,username,isowner,who);
     }
-    
+
     cmmsql.prototype.leaveroom=function(roomname,username){
 	// need to implement this
     }
-    
+
     cmmsql.prototype.listowners=function(roomname){
 	// need to implement this
     }
-    
+
     cmmsql.prototype.kickout=function(roomnae,userkicked,kicker){
 	// need to implement this
     }
-    
-    
-    
-    
+
+
+
+
 }
 //##########################  END OF THE CLASS  ##########################
 
 // This is for testing and sample code
 
-
+/*
 // create a new database named cmm.db
 var sql=new cmmsql('cmm.db');
 
@@ -291,7 +294,7 @@ sql.adduser('user2','pass2');
 sql.adduser('user3','pass3');
 sql.listusers('mainroom');
 
-
+*/
 
 
 
