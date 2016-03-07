@@ -106,8 +106,6 @@ function appendMessenger(rec){
 		//base class for chat box input
 		var cmdClass = "[class = 'cmd " +recList+ "']";
 
-		//base class for chat container
-		var chatClass = "[class = 'chat-container " +recList+ "']";
 
 		//pulling precompiled handlebars template
 		var context = {reciever : recList, formated: recFormated};
@@ -120,7 +118,11 @@ function appendMessenger(rec){
 		revertMessengerButton();
 		$(cmdClass).focus().autogrow();
 
+		$('.chat').resizable({
+			handles: 'e'
+		});
 
+		//handles close button
 		html.find(".remove-messenger").on("click",function(clickEvent){
 	     	html.remove()
 	    });
@@ -202,6 +204,7 @@ function updateChat(prompt, rec, value){
 	checkScrollbar(thisClass);
 }
 
+//checks if chat box is overflowed
 function checkScrollbar(thisClass){
 	var elt, hasOverflow = (elt = $(thisClass)).innerWidth() > elt[0].scrollWidth;
 	if(hasOverflow){
