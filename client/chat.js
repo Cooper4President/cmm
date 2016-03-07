@@ -120,9 +120,6 @@ function appendMessenger(rec){
 		revertMessengerButton();
 		$(cmdClass).focus().autogrow();
 
-		//for chat container scroll bar
-		$(chatClass).slimScroll({height : '262px'});
-
 
 		html.find(".remove-messenger").on("click",function(clickEvent){
 	     	html.remove()
@@ -144,6 +141,7 @@ function appendMessenger(rec){
 						console.log('could not read user file');
 					}
 				});
+
 		    }
 
 		    //up arrow to go through chat log
@@ -200,7 +198,15 @@ function revertMessengerButton(){
 //update chat function
 function updateChat(prompt, rec, value){
 	var thisClass = "[class = 'chat-container "+rec+"']";
-	$(thisClass).prepend("<div>"+prompt + ": " + value + "</div>");
+	$(thisClass).append("<div>"+prompt + ": " + value + "</div>");
+	checkScrollbar(thisClass);
+}
+
+function checkScrollbar(thisClass){
+	var elt, hasOverflow = (elt = $(thisClass)).innerWidth() > elt[0].scrollWidth;
+	if(hasOverflow){
+		$(thisClass).scrollTop($(thisClass)[0].scrollHeight);
+	}
 }
 
 //gets reciever of current chat window
