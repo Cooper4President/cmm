@@ -45,7 +45,7 @@ body{
 	display: -webkit-flex;
 	display: -ms-flexbox;
 	display: flex;
-
+	height: 100%;
 }
 
 .chat-head {

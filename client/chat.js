@@ -92,7 +92,7 @@ function updateChatLog(rec, mess){
 	}
 }
 
-function initChatHanlders(){
+function initResizableChat(){
 	var container;
 	$('.chat').resizable({
 		handles: 'e',
