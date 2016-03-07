@@ -92,6 +92,78 @@ function updateChatLog(rec, mess){
 	}
 }
 
+function initChatHandlers(){
+	var container;
+	$('.chat').resizable({
+		handles: 'e',
+		start: function (event, ui){
+			container = ui.originalSize.width + ui.element.next().width();
+		},
+		resize: function (event, ui){
+			ui.element.next().width(container - ui.size.width);
+		}
+	});
+	//keydown fucntions for command line
+    $('.cmd').keydown(function(e) {
+    	//enter key submit
+	    if (e.keyCode === 13) {
+			e.preventDefault();
+			var rec = getRecieverClass(this);
+			$.ajax({
+				url: "user.txt",
+				dataType: "text",
+				success: function(user){
+					submit(user, rec);
+				},
+				error: function(){
+					console.log('could not read user file');
+				}
+			});
+
+	    }
+
+	    //up arrow to go through chat log
+	    if(e.keyCode === 38){
+	    	e.preventDefault();
+	    	var rec = getRecieverClass(this);
+	    	for(i=0;i<chatLog.length;i++){
+	    		if(chatLog[i].reciever == rec){
+	    			var index = chatLog[i].currentMessage;
+	    			if(index > -1){
+	    				if(index < chatLog[i].messages.length-1) {
+	    					$(this).val(chatLog[i].messages[index+1]);
+	    					chatLog[i].currentMessage++;
+	    				}
+	    			}else{
+	    				$(this).val(chatLog[i].messages[0]);
+	    				chatLog[i].currentMessage=0;
+	    			}
+	    		}
+	    	}
+	    }
+
+	    //down arrow to go through chat log
+	    if(e.keyCode === 40){
+	    	e.preventDefault();
+	    	var rec = getRecieverClass(this);
+	    	for(i=0;i<chatLog.length;i++){
+	    		if(chatLog[i].reciever == rec){
+	    			var index = chatLog[i].currentMessage;
+	    			if(index == 0){
+	    				$(this).val("");
+	    				chatLog[i].currentMessage = -1;
+	    			}else if((index > -1)){
+	    				if(index < chatLog[i].messages.length){
+	    					$(this).val(chatLog[i].messages[index-1]);
+	    					chatLog[i].currentMessage--;
+	    				}
+	    			}
+	    		}
+	    	}
+	    }
+	});
+}
+
 //injects messenger on addition
 function appendMessenger(rec){
 	//compiling space seperated list of recievers
@@ -118,74 +190,14 @@ function appendMessenger(rec){
 		revertMessengerButton();
 		$(cmdClass).focus().autogrow();
 
-		$('.chat').resizable({
-			handles: 'e'
-		});
-
 		//handles close button
 		html.find(".remove-messenger").on("click",function(clickEvent){
 	     	html.remove()
 	    });
 
-		//keydown fucntions for command line
-	    $(cmdClass).keydown(function(e) {
-	    	//enter key submit
-		    if (e.keyCode === 13) {
-				e.preventDefault();
-				var rec = getRecieverClass(this);
-				$.ajax({
-					url: "user.txt",
-					dataType: "text",
-					success: function(user){
-						submit(user, rec);
-					},
-					error: function(){
-						console.log('could not read user file');
-					}
-				});
+	    initChatHanlders
 
-		    }
-
-		    //up arrow to go through chat log
-		    if(e.keyCode === 38){
-		    	e.preventDefault();
-		    	var rec = getRecieverClass(this);
-		    	for(i=0;i<chatLog.length;i++){
-		    		if(chatLog[i].reciever == rec){
-		    			var index = chatLog[i].currentMessage;
-		    			if(index > -1){
-		    				if(index < chatLog[i].messages.length-1) {
-		    					$(this).val(chatLog[i].messages[index+1]);
-		    					chatLog[i].currentMessage++;
-		    				}
-		    			}else{
-		    				$(this).val(chatLog[i].messages[0]);
-		    				chatLog[i].currentMessage=0;
-		    			}
-		    		}
-		    	}
-		    }
-
-		    //down arrow to go through chat log
-		    if(e.keyCode === 40){
-		    	e.preventDefault();
-		    	var rec = getRecieverClass(this);
-		    	for(i=0;i<chatLog.length;i++){
-		    		if(chatLog[i].reciever == rec){
-		    			var index = chatLog[i].currentMessage;
-		    			if(index == 0){
-		    				$(this).val("");
-		    				chatLog[i].currentMessage = -1;
-		    			}else if((index > -1)){
-		    				if(index < chatLog[i].messages.length){
-		    					$(this).val(chatLog[i].messages[index-1]);
-		    					chatLog[i].currentMessage--;
-		    				}
-		    			}
-		    		}
-		    	}
-		    }
-		});
+		
 	}else alert('a username is invalid or this chat window already exsists');
 	
 }
