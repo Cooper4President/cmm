@@ -1,0 +1,9 @@
+{
+  "name": "cmm",
+  "homepage": "https://github.com/Cooper4President/cmm",
+  "private": true,
+  "dependencies": {
+    "autogrow": "^1.0.3",
+    "jquery.cookie": "^1.4.1"
+  }
+}
