@@ -35,11 +35,11 @@ function addRecieverField(){
 }
 
 //check if reciever is legit
-function checkReciever(rec){
+function checkReciever(rec, recList){
 	if(rec === "" || /\w+\s+\w+/g.test(rec)) return false;
 	else if($('.chat').length === 0) return true;
 	else{
-		var recArray = rec.split(' ');
+		var recArray = recList.split(' ');
 		var found = false;
 		chatLog.forEach(function(log){
 			var recTemp = log.reciever.split(' ');
@@ -92,12 +92,25 @@ function updateChatLog(rec, mess){
 	}
 }
 
+function initResizableChat(){
+	var container;
+	$('.chat').resizable({
+		handles: 'e',
+		start: function (event, ui){
+			container = ui.originalSize.width + ui.element.next().width();
+		},
+		resize: function (event, ui){
+			ui.element.next().width(container - ui.size.width);
+		}
+	});
+}
+
 //injects messenger on addition
 function appendMessenger(rec){
 	//compiling space seperated list of recievers
 	recList = rec.replace(/,/g,' ').replace(/\s*$/, '').replace(/^\s*/, '').replace(/\s+/g,' ');
 
-	if(checkReciever(recList)){
+	if(checkReciever(rec, recList)){
 		updateChatLog(recList);
 
 		//formats recievers for chat head title
@@ -106,21 +119,22 @@ function appendMessenger(rec){
 		//base class for chat box input
 		var cmdClass = "[class = 'cmd " +recList+ "']";
 
-		//base class for chat container
-		var chatClass = "[class = 'chat-container " +recList+ "']";
 
 		//pulling precompiled handlebars template
 		var context = {reciever : recList, formated: recFormated};
 		var html = $(Handlebars.templates['client/messenger-template.handlebars'](context));
 
 		//appending to message container of body
-		$('.messenger-container').append(html);
+		$('.messenger-container').prepend(html);
 
 		//reverts
 		revertMessengerButton();
 		$(cmdClass).focus().autogrow();
 
+		initResizableChat();
 
+
+		//handles close button
 		html.find(".remove-messenger").on("click",function(clickEvent){
 	     	html.remove()
 	    });
@@ -141,6 +155,7 @@ function appendMessenger(rec){
 						console.log('could not read user file');
 					}
 				});
+
 		    }
 
 		    //up arrow to go through chat log
@@ -197,7 +212,16 @@ function revertMessengerButton(){
 //update chat function
 function updateChat(prompt, rec, value){
 	var thisClass = "[class = 'chat-container "+rec+"']";
-	$(thisClass).prepend("<div>"+prompt + ": " + value + "</div>");
+	$(thisClass).append("<div>"+prompt + ": " + value + "</div>");
+	checkScrollbar(thisClass);
+}
+
+//checks if chat box is overflowed
+function checkScrollbar(thisClass){
+	var elt, hasOverflow = (elt = $(thisClass)).innerWidth() > elt[0].scrollWidth;
+	if(hasOverflow){
+		$(thisClass).scrollTop($(thisClass)[0].scrollHeight);
+	}
 }
 
 //gets reciever of current chat window
