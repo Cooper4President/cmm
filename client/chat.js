@@ -11,6 +11,21 @@ $(document).ready(function(){
 	});
 });
 
+//parses raw text of reciever field
+function parseReciever(recRaw){
+	var recList = _.map(_.split(recRaw, ","), function(n){return _.trim(n)});
+	var found = false
+	_(recList).forEach(function(entry){
+		if(_.includes(entry, " "))found = true;
+	});
+	_(chatLog).forEach(function(entry){
+		if(checkIfEqual(entry.reciever, recList)) found = true;
+	});
+
+	if(found) return null;
+	else return recList.sort();
+}
+
 //replaces add messenger button with reciever field
 function addRecieverField(){
 
@@ -24,7 +39,7 @@ function addRecieverField(){
 		    	e.preventDefault();
 		    	//pulls reciever value and tests if valid
 		    	var rec = $('.reciever').val();
-				appendMessenger(rec);
+				appendMessenger(parseReciever(rec));
 		    }
 		    //esc out of reciever window
 		    else if(e.keyCode == 27){
@@ -32,26 +47,6 @@ function addRecieverField(){
 		    	revertMessengerButton();
 		    }
      	});
-}
-
-//check if reciever is legit
-function checkReciever(rec, recList){
-	if(rec === "" || /\w+\s+\w+/g.test(rec)) return false;
-	else if($('.chat').length === 0) return true;
-	else{
-		var recArray = recList.split(' ');
-		var found = false;
-		chatLog.forEach(function(log){
-			var recTemp = log.reciever.split(' ');
-			if(checkIfEqual(recArray, recTemp)){
-				found = true;
-				return;
-			}
-
-		});
-		if(found) return false;
-	}
-	return true;
 }
 
 //checks if two arrays are equal
@@ -72,24 +67,20 @@ function checkIfEqual(arr1, arr2){
 //updates chatlog, adds new entry if reciever not found
 function updateChatLog(rec, mess){
 
-	if(mess === undefined){
-		chatLog.push({reciever:rec, messages:[], currentMessage:-1});
-	}
 	//finds reciever and updates messages
 	var found = false;
-	for(i=0; i<chatLog.length;i++){ 
-		if(chatLog[i].reciever == rec){
-			chatLog[i].currentMessage = -1;
-			var size = chatLog[i].messages.length;
-			chatLog[i].messages.unshift(mess);
+	_(chatLog).forEach(function(entry){
+		if(checkIfEqual(entry.reciever, rec)){
 			found = true;
-		}
-	}
+			if(mess) entry.messages.unshift(mess);
+		};
+	});
 
 	//creates new chat log entry if not reciever found
 	if(!found){ 
-		chatLog.push({reciever:rec, messages:[mess], currentMessage:-1});
-	}
+		if(mess) chatLog.push({reciever:rec, messages:[mess], currentMessage:-1});
+		else chatLog.push({reciever:rec, messages:[], currentMessage:-1});
+	}	
 }
 
 function initResizableChat(){
@@ -108,20 +99,20 @@ function initResizableChat(){
 //injects messenger on addition
 function appendMessenger(rec){
 	//compiling space seperated list of recievers
-	recList = rec.replace(/,/g,' ').replace(/\s*$/, '').replace(/^\s*/, '').replace(/\s+/g,' ');
 
-	if(checkReciever(rec, recList)){
-		updateChatLog(recList);
+	if(rec){
+		updateChatLog(rec);
 
 		//formats recievers for chat head title
-		var recFormated = rec.replace(/\s*,\s*/g, ', ').replace(/,\s*$/, '').replace(/^\s*,\s*/, '');
+		var recFormated = _.join(rec, ', ');
+
+		var recList = _.join(rec,' ');
 
 		//base class for chat box input
-		var cmdClass = "[class = 'cmd " +recList+ "']";
-
+		var chatId = chatLog.length;
 
 		//pulling precompiled handlebars template
-		var context = {reciever : recList, formated: recFormated};
+		var context = {id : 'chat-' + chatId, formated: recFormated};
 		var html = $(Handlebars.templates['client/messenger-template.handlebars'](context));
 
 		//appending to message container of body
@@ -129,7 +120,7 @@ function appendMessenger(rec){
 
 		//reverts
 		revertMessengerButton();
-		$(cmdClass).focus().autogrow();
+		html.find('.cmd').focus().autogrow();
 
 		initResizableChat();
 
@@ -140,11 +131,12 @@ function appendMessenger(rec){
 	    });
 
 		//keydown fucntions for command line
-	    $(cmdClass).keydown(function(e) {
+	    $('.cmd').keydown(function(e) {
 	    	//enter key submit
 		    if (e.keyCode === 13) {
 				e.preventDefault();
-				var rec = getRecieverClass(this);
+				//$(this).closest('.chat-container').attr('id')); use closest attribute for chat-container appending
+				/*
 				$.ajax({
 					url: "user.txt",
 					dataType: "text",
@@ -155,6 +147,7 @@ function appendMessenger(rec){
 						console.log('could not read user file');
 					}
 				});
+				*/
 
 		    }
 
@@ -222,12 +215,6 @@ function checkScrollbar(thisClass){
 	if(hasOverflow){
 		$(thisClass).scrollTop($(thisClass)[0].scrollHeight);
 	}
-}
-
-//gets reciever of current chat window
-function getRecieverClass(obj){
-	var cl = $(obj).attr('class').replace('cmd ', '');
-	return cl;
 }
 
 //client side submit function
