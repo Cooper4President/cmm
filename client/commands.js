@@ -1,7 +1,7 @@
-//parses command for functionality
-function parseCommand(user, rec ,inp){
+//parses command and updates the chat
+function parseCommand(chatId ,inp){
 
-	var chatContainerClass = "[class = 'chat-container "+rec+"']";
+	var container = $("#"+chatId).find('.chat-container');
 	//match the -- delimiter to find all commands in the input
 	var matchList = inp.match(/--\w+/g);
 	//check that there is a command in the input
@@ -10,21 +10,21 @@ function parseCommand(user, rec ,inp){
 		var msg = inp.replace(/--\w+/g,'');
 		var msg = msg.replace(/\s*=\s*\w+/g,'');
 		//iterate through the list of matches
-		matchList.forEach(function(cmd){
+		_(matchList).forEach(function(cmd){
 			//parse out the -- delimiter
 			cmd = cmd.replace('--','');
 
 			//match the command name, and execute command accordingly
 			switch(cmd){
 				case "help":
-					getHelp(rec);
+					getHelp(chatId);
 					break;
 				case "date":
 					var date = getTodaysDate();
 					msg = msg + " " + date;
 					break;
 				case "clear":
-					$(chatContainerClass).empty();
+					container.empty();
 					break;
 				case "color":
 					//find color
@@ -36,7 +36,7 @@ function parseCommand(user, rec ,inp){
 						msg = msg.fontcolor(color);
 					}
 					else{
-						updateChat("ERROR", rec,"Invalid color");
+						updateChat(chatId ,"Error: Invalid color");
 					}
 					break;
 
@@ -49,7 +49,7 @@ function parseCommand(user, rec ,inp){
 						msg = msg.fontsize(size);
 					}
 					else{
-						updateChat("ERROR", rec,"Invalid font size");
+						updateChat(chatId ,"Error: Invalid font size");
 					}
 					break;
 				case "bold":
@@ -67,10 +67,10 @@ function parseCommand(user, rec ,inp){
 					msg = msg.small();
 					break;
 				default:
-					updateChat("ERROR", rec,"Command " + cmd.bold() + " not found. Type --help for help");
+					updateChat(chatId,"Error: Command " + cmd.bold() + " not found. Type --help for help");
 					break;
 			}
 		});
-		if(msg != "") updateChat(user, rec, msg);
-	}else updateChat(user, rec, inp);
+		if(msg != "") updateChat(chatId, msg);
+	}else updateChat(chatId, inp);
 }

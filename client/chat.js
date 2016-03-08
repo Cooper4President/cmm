@@ -1,4 +1,58 @@
+/*
+	chat.js houses all the cmm website's interactive elements, such as chat windows, menu options, etc...
+	Here is a quick guide to some useful globals and methods
+
+
+######################~GLOBALS~######################
+
+	chatLog: holds all messages of each chat window
+
+	messagengerCount: number of chat windows on the screen currently
+
+	var user: user of current client
+
+######################~METHODS~######################
+
+	function appendMessenger(rec) 
+		Description: appends a messenger to the messenger container
+			rec: Array of recievers the the messenger will be sending to.
+			return: id of the new chat window (no # attatched);
+
+	function updateChat(chatId, value) 
+		Description: updates chat container of associated chat window
+			chatId: id of the chat window you are posting to (no # attatched)
+			value: string of message you are posting
+
+	function updateChatLog(chatId[, value]) 
+		Description: updates the chat log (chatLog) with the chatId if it is not currently in the log, if you want to
+		update the messeges, simply supply the chatId and the message you want to append. If the chatLog was found, it will
+		append the message (if any) and return the object at the chat id.
+			chatId: chat id of log entry (no # attatched)
+			value: (optional) message you wish to append to log entry
+			return: object associated with chatId
+
+	function submit(chatId, value) 
+		Description: like updateChat, but also updates the Log and parses the value as a command instead of a raw string
+			chatId: id of the chat window you are posting to (no # attatched)
+			value: string of message you are posting
+
+	function getHelp(chatId)
+		Description: posts the help document on chat window
+			chatId: id of chat window you want to post to (no # attatched)
+
+	function getTodaysDate()
+		Description: returns today's date
+
+*/
+
+// call this in the console to get log of chat window id's paired with messeges history for that window
 var chatLog = [];
+
+//call this in console to get the current number of messengers on screen
+var messengerCount = 0;
+
+//username stored as global for later use
+var user = "Oliver"
 
 //main function
 $(document).ready(function(){
@@ -19,7 +73,8 @@ function parseReciever(recRaw){
 		if(_.includes(entry, " "))found = true;
 	});
 	_(chatLog).forEach(function(entry){
-		if(checkIfEqual(entry.reciever, recList)) found = true;
+		var rec = $("#"+entry.id).data().recievers;
+		if(checkIfEqual(rec, recList)) found = true;
 	});
 
 	if(found) return null;
@@ -52,37 +107,36 @@ function addRecieverField(){
 //checks if two arrays are equal
 function checkIfEqual(arr1, arr2){
 	arr1.sort(); arr2.sort();
-	var match;
-	if(arr1.length != arr2.length){
-		return false;
-	}
-	for(i=0;i<arr1.length;i++){
-		if(arr1[i] !== arr2[i]){
-			return false;
-		}
-	}
+	if(arr1.length != arr2.length) return false;
+	for(i=0;i<arr1.length;i++) if(arr1[i] !== arr2[i]) return false;
 	return true;
 }	
 
 //updates chatlog, adds new entry if reciever not found
-function updateChatLog(rec, mess){
+function updateChatLog(chatId, mess){
 
 	//finds reciever and updates messages
 	var found = false;
+	var retVar;
 	_(chatLog).forEach(function(entry){
-		if(checkIfEqual(entry.reciever, rec)){
+		if(entry.id === chatId){ 
 			found = true;
-			if(mess) entry.messages.unshift(mess);
-		};
+			if(mess !== undefined) entry.messages.unshift(mess);
+			retVar = entry;
+		}
 	});
 
-	//creates new chat log entry if not reciever found
-	if(!found){ 
-		if(mess) chatLog.push({reciever:rec, messages:[mess], currentMessage:-1});
-		else chatLog.push({reciever:rec, messages:[], currentMessage:-1});
-	}	
+	//if not found make a new entry
+	if(!found){
+		if(mess !== undefined) chatLog.push({id:chatId, messages:[mess], currentMessage:-1});
+		else chatLog.push({id:chatId, messages:[], currentMessage:-1});
+		retVar = _.last(chatLog);
+	}
+
+	return retVar;
 }
 
+//initializes the resize event
 function initResizableChat(){
 	var container;
 	$('.chat').resizable({
@@ -101,22 +155,28 @@ function appendMessenger(rec){
 	//compiling space seperated list of recievers
 
 	if(rec){
-		updateChatLog(rec);
+		messengerCount++;
+
+		var chatId = "chat-" + messengerCount;
 
 		//formats recievers for chat head title
 		var recFormated = _.join(rec, ', ');
 
 		var recList = _.join(rec,' ');
 
-		//base class for chat box input
-		var chatId = chatLog.length;
-
 		//pulling precompiled handlebars template
-		var context = {id : 'chat-' + chatId, formated: recFormated};
+		var context = {id : chatId, formated: recFormated};
 		var html = $(Handlebars.templates['client/messenger-template.handlebars'](context));
 
 		//appending to message container of body
 		$('.messenger-container').prepend(html);
+
+		//append data to chat box
+
+		$("#"+chatId).data("recievers", rec);
+
+		//update chatLog
+		updateChatLog(chatId);
 
 		//reverts
 		revertMessengerButton();
@@ -124,73 +184,51 @@ function appendMessenger(rec){
 
 		initResizableChat();
 
-
 		//handles close button
-		html.find(".remove-messenger").on("click",function(clickEvent){
-	     	html.remove()
-	    });
+		html.find(".remove-messenger").on("click",function(clickEvent){html.remove()});
 
 		//keydown fucntions for command line
-	    $('.cmd').keydown(function(e) {
+	    html.find('.cmd').keydown(function(e) {
 	    	//enter key submit
 		    if (e.keyCode === 13) {
 				e.preventDefault();
-				//$(this).closest('.chat-container').attr('id')); use closest attribute for chat-container appending
-				/*
-				$.ajax({
-					url: "user.txt",
-					dataType: "text",
-					success: function(user){
-						submit(user, rec);
-					},
-					error: function(){
-						console.log('could not read user file');
-					}
-				});
-				*/
-
+				var chatId = $(this).closest('.chat').attr('id'); 
+				submit(chatId);
 		    }
 
 		    //up arrow to go through chat log
 		    if(e.keyCode === 38){
 		    	e.preventDefault();
-		    	var rec = getRecieverClass(this);
-		    	for(i=0;i<chatLog.length;i++){
-		    		if(chatLog[i].reciever == rec){
-		    			var index = chatLog[i].currentMessage;
-		    			if(index > -1){
-		    				if(index < chatLog[i].messages.length-1) {
-		    					$(this).val(chatLog[i].messages[index+1]);
-		    					chatLog[i].currentMessage++;
-		    				}
-		    			}else{
-		    				$(this).val(chatLog[i].messages[0]);
-		    				chatLog[i].currentMessage=0;
-		    			}
-		    		}
-		    	}
+				var chatId = $(this).closest('.chat').attr('id');
+				_(chatLog).forEach(function(entry){
+					if(entry.id === chatId){
+						var cmd = $("#"+entry.id).find('.cmd');
+						var index = entry.currentMessage;
+						if(index < entry.messages.length-1){
+							cmd.val(entry.messages[index+1]);
+							entry.currentMessage++;
+						}
+					}
+				}); 
 		    }
 
 		    //down arrow to go through chat log
 		    if(e.keyCode === 40){
 		    	e.preventDefault();
-		    	var rec = getRecieverClass(this);
-		    	for(i=0;i<chatLog.length;i++){
-		    		if(chatLog[i].reciever == rec){
-		    			var index = chatLog[i].currentMessage;
-		    			if(index == 0){
-		    				$(this).val("");
-		    				chatLog[i].currentMessage = -1;
-		    			}else if((index > -1)){
-		    				if(index < chatLog[i].messages.length){
-		    					$(this).val(chatLog[i].messages[index-1]);
-		    					chatLog[i].currentMessage--;
-		    				}
-		    			}
-		    		}
-		    	}
+		    	var chatId = $(this).closest('.chat').attr('id');
+				_(chatLog).forEach(function(entry){
+					if(entry.id === chatId){
+						var cmd = $("#"+entry.id).find('.cmd');
+						var index = entry.currentMessage;
+						if(index > -1){
+							cmd.val(entry.messages[index-1]);
+							entry.currentMessage--;
+						}
+					}
+				}); 
 		    }
 		});
+		return chatId;
 	}else alert('a username is invalid or this chat window already exsists');
 	
 }
@@ -203,41 +241,43 @@ function revertMessengerButton(){
 }
 
 //update chat function
-function updateChat(prompt, rec, value){
-	var thisClass = "[class = 'chat-container "+rec+"']";
-	$(thisClass).append("<div>"+prompt + ": " + value + "</div>");
-	checkScrollbar(thisClass);
+function updateChat(chatId, value){
+	var container = $("#"+chatId).find('.chat-container');
+	var chat = "<div>"+user + ": " + value + "</div>"
+	container.append(chat);
+	checkScrollbar(chatId);
 }
 
 //checks if chat box is overflowed
-function checkScrollbar(thisClass){
-	var elt, hasOverflow = (elt = $(thisClass)).innerWidth() > elt[0].scrollWidth;
-	if(hasOverflow){
-		$(thisClass).scrollTop($(thisClass)[0].scrollHeight);
-	}
+function checkScrollbar(chatId){
+	var container = $("#"+chatId).find('.chat-container');
+	var elt, hasOverflow = (elt = container).innerWidth() > elt[0].scrollWidth;
+	if(hasOverflow) container.scrollTop(container[0].scrollHeight);
 }
 
 //client side submit function
-function submit(user, rec){
-	var thisClass = "[class = 'cmd "+rec+"']";
-	var inp = $(thisClass).val();
+function submit(id, inp){
+	var chatId = "#"+id;
+	var container = $(chatId).find('.chat-container');
+	var cmd = $(chatId).find('.cmd');
+	if(inp === undefined) var inp = cmd.val();
 	if(inp != ""){
-		updateChatLog(rec, inp);
-		parseCommand(user, rec, inp);
-		$(thisClass).val("");
+		updateChatLog(id, inp);
+		parseCommand(id, inp);
+		cmd.val("");
 	}
-	$(thisClass).focus();
+	cmd.focus();
 }
 
 //help text handler
-function getHelp(rec){
+function getHelp(chatId){
 	//ajax call gets help info from help.txt
 	$.ajax({
 		url: 'help.txt',
 		dataType: 'text',
 		success: function(data){
 			data = data.replace(/\n/g, '<br />');
-			updateChat("HELP", rec, data);
+			updateChat(chatId, data);
 		},
 		error: function(data){
 			console.log("Error with help");
@@ -250,14 +290,9 @@ function getTodaysDate(){
 	var today = new Date();
     var dd = today.getDate();
     var mm = today.getMonth()+1; //January is 0!
-
     var yyyy = today.getFullYear();
-    if(dd<10){
-        dd='0'+dd
-    }
-    if(mm<10){
-        mm='0'+mm
-    }
+    if(dd<10)dd='0'+dd
+    if(mm<10)mm='0'+mm
     var today = mm+'/'+dd+'/'+yyyy;
     return today;
 }
