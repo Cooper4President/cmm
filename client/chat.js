@@ -125,7 +125,7 @@ function appendMessenger(rec){
 		var html = $(Handlebars.templates['client/messenger-template.handlebars'](context));
 
 		//appending to message container of body
-		$('.messenger-container').append(html);
+		$('.messenger-container').prepend(html);
 
 		//reverts
 		revertMessengerButton();
