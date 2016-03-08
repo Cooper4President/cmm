@@ -1,0 +1,11 @@
+Useful Commands:
+
+--date : Shows current date
+--clear : Clears chat window
+--help : Shows this help window
+--color=<color> : Displays message in specified color
+--fontsize : Displays message in specified font size (default size is 3)
+--bold : Displays message in bold
+--italic(s) : Displays message in italics
+--big : Displays message in one size larger font
+--small : Displays message in one size smaller font
