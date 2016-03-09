@@ -142,7 +142,7 @@ function initResizableChat(){
 	$('.chat').resizable({
 		handles: 'e',
 		start: function (event, ui){
-			container = ui.originalSize.width + ui.element.next().width();
+			container = ui.element.width() + ui.element.next().width();
 		},
 		resize: function (event, ui){
 			ui.element.next().width(container - ui.size.width);

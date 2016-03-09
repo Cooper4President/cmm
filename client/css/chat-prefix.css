@@ -21,6 +21,12 @@ body{
     overflow: hidden;
 }
 
+.option-container {
+    box-shadow: 4px 0px 5px 0px rgba(0,0,0,0.75);
+    z-index: 1;
+    width: 35px;
+}
+
 .reciever{
 	height: 20px;
 }
