@@ -63,6 +63,9 @@ $(document).ready(function(){
     $(".add-messenger").on("click",function(clickEvent){
      	addRecieverField();
 	});
+	$("body").on("change", function(event){
+		refreshChats();
+	});
 });
 
 //parses raw text of reciever field
@@ -136,16 +139,26 @@ function updateChatLog(chatId, mess){
 	return retVar;
 }
 
+function refreshChats(){
+	$('.chat').css({
+			'width': $(window).width()/messengerCount
+	});
+}
+
 //initializes the resize event
-function initResizableChat(){
+function initResizableChat(chatId){
+	//fixes width bug
+	refreshChats();
+
+	//initializes resizable chat
 	var container;
-	$('.chat').resizable({
+	$("#"+chatId).resizable({
 		handles: 'e',
-		start: function (event, ui){
-			container = ui.element.width() + ui.element.next().width();
+		start: function(event, ui){
+			container = ui.size.width + ui.element.next().outerWidth();
 		},
-		resize: function (event, ui){
-			ui.element.next().width(container - ui.size.width);
+		resize: function(event, ui){
+			ui.element.next().width(container - ui.size.width);	
 		}
 	});
 }
@@ -171,6 +184,7 @@ function appendMessenger(rec){
 		//appending to message container of body
 		$('.messenger-container').prepend(html);
 
+
 		//append data to chat box
 
 		$("#"+chatId).data("recievers", rec);
@@ -182,7 +196,7 @@ function appendMessenger(rec){
 		revertMessengerButton();
 		html.find('.cmd').focus().autogrow();
 
-		initResizableChat();
+		initResizableChat(chatId);
 
 		//handles close button
 		html.find(".remove-messenger").on("click",function(clickEvent){html.remove()});
@@ -296,3 +310,4 @@ function getTodaysDate(){
     var today = mm+'/'+dd+'/'+yyyy;
     return today;
 }
+

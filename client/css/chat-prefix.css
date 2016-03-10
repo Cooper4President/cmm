@@ -135,6 +135,10 @@ body{
     -webkit-justify-content: flex-end;
         -ms-flex-pack: end;
             justify-content: flex-end;
+    -webkit-box-align: stretch;
+    -webkit-align-items: stretch;
+        -ms-flex-align: stretch;
+            align-items: stretch;
     height: 100%;
     border: 1px solid #ABA7A7;
     width: 100%;
