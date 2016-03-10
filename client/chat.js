@@ -59,12 +59,49 @@ $(document).ready(function(){
 	
 	//send authentication token to server
 	sendAuthToken();
+
+	//initializes sortable chat windows
 	$('.messenger-container').sortable({axis:'x'});
+
+	//adds reciever input
     $(".add-messenger").on("click",function(clickEvent){
      	addRecieverField();
 	});
-	$("body").on("change", function(event){
-		refreshChats();
+
+	//delegates menu option enter
+	$(".menu").mouseenter(function(event){
+		$(this).switchClass("menu-unhover","menu-hover");
+		var margin = $(".option-container").width();
+		$(this).animate({
+			left: margin
+		});
+		$(".option-container").animate({
+			left: 0
+		});
+		$(".messenger-container").animate({
+			marginLeft: margin,
+		});
+	});
+
+	//delegates menu optino escape
+	$(".messenger-container").mouseenter(function(event){
+		$(".menu").switchClass("menu-hover","menu-unhover");
+		var margin = $(".option-container").width();
+		$(this).animate({
+			marginLeft: 0,
+		});
+		$(".menu").animate({
+			left: 0
+		});		
+		$(".option-container").animate({
+			left: -margin
+		});
+		revertMessengerButton();
+	});
+
+	//updates chat windows on resize
+	$(window).on("resize", function(event){
+		if(event.target === window) refreshChats();
 	});
 });
 
@@ -73,7 +110,7 @@ function parseReciever(recRaw){
 	var recList = _.map(_.split(recRaw, ","), function(n){return _.trim(n)});
 	var found = false
 	_(recList).forEach(function(entry){
-		if(_.includes(entry, " "))found = true;
+		if(_.includes(entry, " ") || _.includes(entry, "\n"))found = true;
 	});
 	_(chatLog).forEach(function(entry){
 		var rec = $("#"+entry.id).data().recievers;
@@ -88,7 +125,7 @@ function parseReciever(recRaw){
 function addRecieverField(){
 
 	//adds reciever field and focuses cursor
-	$(".add-messenger").text("").append("<div class='error'></div><textarea type='text' class='reciever' placeHolder='Press Enter to submit'></textarea>");
+	$(".add-messenger").removeClass("fa-plus-square-o").append("<div class='error'></div><textarea type='text' class='reciever' placeHolder='Press Enter to submit'></textarea>");
      	$(".reciever").focus().autogrow(); //scroll at certain height?
 
      	//keydown function for reciever input
@@ -139,9 +176,13 @@ function updateChatLog(chatId, mess){
 	return retVar;
 }
 
+//refreshes the chat for style bugs
 function refreshChats(){
+	$('.messenger-container').css({
+		'width': $(window).width()
+	})
 	$('.chat').css({
-			'width': $(window).width()/messengerCount
+		'width': $(window).width()/messengerCount
 	});
 }
 
@@ -154,14 +195,17 @@ function initResizableChat(chatId){
 	var container;
 	$("#"+chatId).resizable({
 		handles: 'e',
+		minWidth: 250,
 		start: function(event, ui){
-			container = ui.size.width + ui.element.next().outerWidth();
+			container = ui.element.width() + ui.element.next().outerWidth();
 		},
 		resize: function(event, ui){
-			ui.element.next().width(container - ui.size.width);	
+			ui.element.next().width(container - ui.element.width());	
 		}
 	});
 }
+
+
 
 //injects messenger on addition
 function appendMessenger(rec){
@@ -199,7 +243,12 @@ function appendMessenger(rec){
 		initResizableChat(chatId);
 
 		//handles close button
-		html.find(".remove-messenger").on("click",function(clickEvent){html.remove()});
+		html.find(".remove-messenger").on("click",function(clickEvent){
+			html.remove()
+			_.remove(chatLog, function(n){return n.id === chatId})
+			messengerCount--;
+			refreshChats();
+		});
 
 		//keydown fucntions for command line
 	    html.find('.cmd').keydown(function(e) {
@@ -251,7 +300,7 @@ function appendMessenger(rec){
 //reverts messenger add button to original state
 function revertMessengerButton(){
 	$('.reciever').remove();
-	$('.add-messenger').text("+");
+	$('.add-messenger').addClass("fa-plus-square-o");
 }
 
 //update chat function
