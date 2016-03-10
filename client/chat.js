@@ -60,43 +60,43 @@ $(document).ready(function(){
 	//send authentication token to server
 	sendAuthToken();
 
+	$(".reciever").keyup(function(e) {
+ 		console.log(e.keyCode);
+	    if (e.keyCode == 13) {
+	    	e.preventDefault();
+	    	//pulls reciever value and tests if valid
+	    	var rec = $('.reciever').val();
+			var noErr = appendMessenger(parseReciever(rec)); //note: focus diverts to new chat
+			if(noErr) hideRecieverField();
+	    }
+	    //esc out of reciever window
+	    else if(e.keyCode == 27){
+	    	e.preventDefault();
+	    	hideRecieverField();
+	    }
+ 	}).autogrow();
+
 	//initializes sortable chat windows
 	$('.messenger-container').sortable({axis:'x'});
 
 	//adds reciever input
     $(".add-messenger").on("click",function(clickEvent){
-     	addRecieverField();
+    	showRecieverField();
 	});
 
+    //delgate for menu hover
+    $(".menu").mouseenter(function(event){
+    	$(this).switchClass("menu-unhover", "menu-hover");
+    });
+
 	//delegates menu option enter
-	$(".menu").mouseenter(function(event){
-		$(this).switchClass("menu-unhover","menu-hover");
-		var margin = $(".option-container").width();
-		$(this).animate({
-			left: margin
-		});
-		$(".option-container").animate({
-			left: 0
-		});
-		$(".messenger-container").animate({
-			marginLeft: margin,
-		});
+	$(".menu").on("click", function(event){
+		showOptions();
 	});
 
 	//delegates menu optino escape
 	$(".messenger-container").mouseenter(function(event){
-		$(".menu").switchClass("menu-hover","menu-unhover");
-		var margin = $(".option-container").width();
-		$(this).animate({
-			marginLeft: 0,
-		});
-		$(".menu").animate({
-			left: 0
-		});		
-		$(".option-container").animate({
-			left: -margin
-		});
-		revertMessengerButton();
+		hideOptions();
 	});
 
 	//updates chat windows on resize
@@ -105,14 +105,40 @@ $(document).ready(function(){
 	});
 });
 
+//shows options menu
+function showOptions(){
+	var margin = $(".option-container").width();
+	$(".menu").animate({
+		top: -$(this).height()
+	});
+	$(".option-container").animate({
+		left: 0
+	});
+}
+
+//hides options menu
+function hideOptions(){
+    $(".menu").switchClass("menu-hover", "menu-unhover");
+	var margin = $(".option-container").width();
+	$(".menu").animate({
+		top: 0
+	});		
+	$(".option-container").animate({
+		left: -margin
+	});
+	hideRecieverField();
+}
+
 //parses raw text of reciever field
 function parseReciever(recRaw){
+	if(recRaw === "") return null;
 	var recList = _.map(_.split(recRaw, ","), function(n){return _.trim(n)});
 	var found = false
-	_(recList).forEach(function(entry){
+	_(recList).each(function(entry){
 		if(_.includes(entry, " ") || _.includes(entry, "\n"))found = true;
+		if(entry === "") found = true;
 	});
-	_(chatLog).forEach(function(entry){
+	_(chatLog).each(function(entry){
 		var rec = $("#"+entry.id).data().recievers;
 		if(checkIfEqual(rec, recList)) found = true;
 	});
@@ -121,27 +147,21 @@ function parseReciever(recRaw){
 	else return recList.sort();
 }
 
-//replaces add messenger button with reciever field
-function addRecieverField(){
+//shows reciever field
+function showRecieverField(){
+ 	$(".reciever").animate({
+ 		top: 20
+ 	}, 500).focus();
 
-	//adds reciever field and focuses cursor
-	$(".add-messenger").removeClass("fa-plus-square-o").append("<div class='error'></div><textarea type='text' class='reciever' placeHolder='Press Enter to submit'></textarea>");
-     	$(".reciever").focus().autogrow(); //scroll at certain height?
+}
 
-     	//keydown function for reciever input
-     	$(".reciever").keydown(function(e) {
-		    if (e.keyCode == 13) {
-		    	e.preventDefault();
-		    	//pulls reciever value and tests if valid
-		    	var rec = $('.reciever').val();
-				appendMessenger(parseReciever(rec));
-		    }
-		    //esc out of reciever window
-		    else if(e.keyCode == 27){
-		    	e.preventDefault();
-		    	revertMessengerButton();
-		    }
-     	});
+//hides reciever field
+function hideRecieverField(){
+	$(".messenger-container").css('cursor','auto')
+	$(".reciever").animate({
+		top: -$(this).height()
+	}, 1000).val("");
+
 }
 
 //checks if two arrays are equal
@@ -158,7 +178,7 @@ function updateChatLog(chatId, mess){
 	//finds reciever and updates messages
 	var found = false;
 	var retVar;
-	_(chatLog).forEach(function(entry){
+	_(chatLog).each(function(entry){
 		if(entry.id === chatId){ 
 			found = true;
 			if(mess !== undefined) entry.messages.unshift(mess);
@@ -237,7 +257,7 @@ function appendMessenger(rec){
 		updateChatLog(chatId);
 
 		//reverts
-		revertMessengerButton();
+		//revertMessengerButton();
 		html.find('.cmd').focus().autogrow();
 
 		initResizableChat(chatId);
@@ -263,7 +283,7 @@ function appendMessenger(rec){
 		    if(e.keyCode === 38){
 		    	e.preventDefault();
 				var chatId = $(this).closest('.chat').attr('id');
-				_(chatLog).forEach(function(entry){
+				_(chatLog).each(function(entry){
 					if(entry.id === chatId){
 						var cmd = $("#"+entry.id).find('.cmd');
 						var index = entry.currentMessage;
@@ -279,7 +299,7 @@ function appendMessenger(rec){
 		    if(e.keyCode === 40){
 		    	e.preventDefault();
 		    	var chatId = $(this).closest('.chat').attr('id');
-				_(chatLog).forEach(function(entry){
+				_(chatLog).each(function(entry){
 					if(entry.id === chatId){
 						var cmd = $("#"+entry.id).find('.cmd');
 						var index = entry.currentMessage;
@@ -292,16 +312,15 @@ function appendMessenger(rec){
 		    }
 		});
 		return chatId;
-	}else alert('a username is invalid or this chat window already exsists');
+	}else{ 
+		alert('a username is invalid or this chat window already exsists');
+		return null;
+	}
 	
 }
 
 
-//reverts messenger add button to original state
-function revertMessengerButton(){
-	$('.reciever').remove();
-	$('.add-messenger').addClass("fa-plus-square-o");
-}
+
 
 //update chat function
 function updateChat(chatId, value){
