@@ -43,8 +43,16 @@ private is text equal to 'true' or 'false' any other values will be replaced wit
 
 sql_object_name.joinroom(
 
-Example:
 
+
+
+Error Codes
+0 Opertaion Completed Successfully
+1 Access Error
+2 Uniqueness Error
+3 Permissions Error
+4
+5
 
 */
 
@@ -55,195 +63,264 @@ function cmmsql(database) {
     
     
     db.serialize(function(){
-	createtable('mainroom','time','user, messsage');
-	createtable('users','user','password');
-	createtable('rooms','room','priv,creator');
+	createtable(null,'mainroom','time','user, messsage',defaultcallback);
+	createtable(null,'users','user','password',defaultcallback);
+	createtable(null,'rooms','room','priv,creator',defaultcallback);
     });
-    
-    
-    function checkpassword(username,password){
-	// need to implement
+
+    function defaultcallback(err,result){
+	if (err){
+	    console.log(err);
+	}
+	if (result){
+	    console.log(result);
+	}
     }
     
-    function createtable(name,uniqueid,collumnlist){
+    function createtable(err,name,uniqueid,collumnlist,cb){
+	if (err){
+	    cb(err,null);
+	    return;
+	}
 	db.run('CREATE TABLE '+name+'('+uniqueid+' UNIQUE, '+collumnlist+' )',function(err){
+	    var error=null;
+	    var result=null;
 	    if (err){
+		error=err; // untill I learn all the possible errors
 		if (err.errno==1){
-		    console.log('Create Table Error: '+err.errno+'  '+err);
-		    return;
+		    error=[{error:'Table Exists',code:'3'}];
+		    result='Table Exists';
 		}
+		
+	    } else {
+		result='Table '+name+' has been created';
 	    }
-	    console.log('Table '+name+' has been created');
+	    cb(error,result);
 	});
     }
     
-    function additem(table,columns,values){
+    function additem(err,table,columns,values,cb){
+	if (err){
+	    cb(err,null);
+	    return;
+	}
 	db.run('INSERT into '+table+'('+columns+') VALUES ( ? )',[values],function(err){
-	    console.log("additem")
+	    var error=null;
+	    var result=null;
 	    if (err){
-		console.log(err);
-		// need to tell the client that the username already exists
-		return;
+		error=err; // until I learn the errors
+		if (err.errno=13){
+		    error=[{error:'Uniqueness Error',code:'2'}];
+		    result='Failled to add '+values+' to '+table;
+		}
+	    } else {
+		result='Sucessfuly added '+values+' to '+table;
 	    }
-	    // need to tell the client success
+	    cb(err,result);
 	});
     }
     
-    function getitem(table,columnlist,req){
+    function getitem(err,table,columnlist,req,cb){
+	if (err){
+	    cb(err,null);
+	    return;
+	}
 	db.all('SELECT ?? From ? WHERE ?',[columnlist,table,req],function(err,results){
+	    var error=null;
 	    if (err){
-		console.log(err);
-		// need to tell the client that there was no response
+		error=err;
 	    }
-	    // need to parse data and return to the client
-	    console.log(results);
+	    cb(error,results);
 	});
     }
     
-    function listcolumn(table,column){
+    function listcolumn(err,table,column,cb){
+	if (err){
+	    cb(err,null);
+	    return;
+	}
 	db.all('SELECT '+column+' FROM '+table,function(err,results){
+	    var error=null;
 	    if (err){
-		console.log('listcolumn error: '+err.errno);
-		console.log(err);
-		return;
+		error=err;
 	    }
-	    // need to parse data and return to the client
-	    console.log(results);
+	    cb(error,results);
 	});
     }
     
-    function addusertoroom(roomname,username,isowner,who){
+    function addusertoroom(err,roomname,username,isowner,who,cb){
+	if (err){
+	    cb(err,null);
+	    return;
+	}
+	var error=null;
+	// need to include check for user existance
 	db.serialize(function(){
 	    db.all('SELECT priv FROM rooms WHERE room==?',[roomname],function(err,result){
 		if (err) {
-		    // need to tell client there was an error 
-		    console.log('Error: '+err.errno+'   '+err);
+		    error=err; // temporary
+		    cb(error,null);
 		    return;
-		}		
-		//need to parse result
-		var priv=result;
-		console.log(priv);
+		}
+		var priv = result.priv
 		db.all('SELECT owner FROM '+roomname+'users WHERE user==?',[who],function(err,result){
 		    if(err){
-			// need to tell client there was an error
-			console.log('Error: '+err.errno+'   '+err);
+			error=err; // temproary
+			cb(error,null);
 			return;
 		    }
-		    var own=result;
+		    var own=result.owner;
 		    if (own=='false'){
 			if(priv='true'){
 			    // tell the client that they cant add users to the room
-			    console.log('lack access privalages to room')
+			    error=[{error:'Permissions Error',code:'3'}];
+			    result=who+' lacks access privalages to room '+roomname;
+			    cb(error,result);
 			    return;
 			}
 			isowner=='false';
 		    }			    
 		    db.run('INSERT into '+roomname+'users (user,owner) VALUES (?,?)',[username,isowner],function(err){
 			if (err){
+			    error=err; // temp fix
 			    if (err.errno==19){
-				console.log('User '+username+' already belongs to room '+roomname);
+				error=[{error:'Uniqueness Error',code:'2'}];
+				result=username+' is already in the room';
 			    }
-			    console.log('Error: '+err.errno+'   '+err);
-			    return;
+			} else {
+			    result=username+' has been added to room';
 			}
-			console.log('User '+username+' has been added to room '+roomname);
+			cb(error,result);
 		    });
 		});
 	    });
 	});
     }
+//#######################################################################    
     
     
+       
     
-    
-    
-    
-    
-    cmmsql.prototype.listtable = function(table){
-	listcolumn(table,'*');
-    }
-    
-    
-    cmmsql.prototype.adduser=function(username,password){
+    cmmsql.prototype.adduser=function(username,password,cb){
+	var error=null;
+	var result=null;
+	if (cb==null){
+	    cb=defaultcallback;
+	}
 	db.run('INSERT into users(user,password) VALUES(?,?)',[username,password],function(err){
 	    if (err){
+		error=err; //tmpfix
 		if (err.errno==19){
-		    // need to return user exists to client
-		    console.log('user exists');
+		    error=[{error:'Uniqueness Error',code:'2'}];
+		    result='User '+username+' already exists'
 		}
-		console.log('Error: '+err.errno+'   '+err);
-		// need to return other errors to user
-		return;
+	    }else{
+		result='User '+uername+' added sucessfully';
 	    }
-	    // need to return success to user
-	    console.log('User '+username+' has been added.');
+	    cb(error,result);
 	});
     }
     
-    cmmsql.prototype.listusers = function(room){
+    cmmsql.prototype.listusers = function(room,cb){
+	if (cb==null){
+	    cb=defaultcallback;
+	}
 	if (room=='mainroom'){
-	    listcolumn('users','user');
+	    listcolumn(null,'users','user',cb);
 	    return;
 	}
-	listcolumn(room+'users','user');
+	listcolumn(null,room+'users','user',cb);
     }
     
     
-    cmmsql.prototype.createroom=function(roomname,userlist,creator,priv,password){
+    cmmsql.prototype.createroom=function(roomname,userlist,creator,priv,password,cb){
+	if (cb==null){
+	    cb=defaultcallback;
+	}
+	var error=null;
+	var result=null;
+	dcb=defaultcallback;
 	db.serialize(function(){
-	    createtable(roomname,'time','user,message');
-	    createtable(roomname+'users','user,owner');
-	    addusertoroom(roomname,creator,'true');
-	    userlist.forEach(function(value,index,array){
-		addusertoroom(roomname,value,isowner,creator);
-	    }),
 	    db.run('INSERT into rooms(room,priv,creator) VALUES (?,?)',[roomname,priv],function(err){
 		if (err){
+		    error=err;
 		    if (err.errno==19){
-			console.log('Room '+roomname+' already exists.');
+			error=[{error:'Uniqueness Error',code:'2'}];
+			result='Room '+roomname+' already exists.';
 		    }
-		    console.log(err);
-		    // need to tell the client that the username already exists
+		    cb(error,result)
 		    return;
 		}
-		// need to tell the client success
-		console.log('Room '+roomname+' created')
+		createtable(null,roomname,'time','user,message',dcb);
+		createtable(null,roomname+'users','user,owner',dcb);
+		addusertoroom(null,roomname,creator,'true',cb);
+		userlist.forEach(function(value,index,array){
+		    addusertoroom(null,roomname,value,isowner,creator,cb);
+		});
 	    });
 	    
 	});
     }
     
     
-    cmmsql.prototype.logroom=function(roomname,username,message){
-	additem(roomname,'time,user,message',Date.now()+','+username+','+message);
+    cmmsql.prototype.logroom=function(roomname,username,message,cb){
+	if (cb==null) {
+	    cb=defaultcallback;
+	}
+	additem(null,roomname,'time,user,message',Date.now()+','+username+','+message,cb);
     }
     
-    cmmsql.prototype.getroomlog=function(roomname){
-	listtable(roomname);
+    cmmsql.prototype.getroomlog=function(roomname,cb){
+	if (cb==null) {
+	    cb=defaultcallback;
+	}
+	listtable(roomname,cb);
     }
     
-    cmmsql.prototype.joinroom=function(roomname,username,isowner,who){
+    cmmsql.prototype.joinroom=function(roomname,username,isowner,who,cb){
+	if (cb==null) {
+	    cb=defaultcallback;
+	}
 	if (roomname=='mainroom'){
 	    // tell the user they are a moron
 	    return;
 	}
-	addusertoroom(roomname,username,isowner,who);
+	addusertoroom(null,roomname,username,isowner,who,cb);
     }
     
-    cmmsql.prototype.leaveroom=function(roomname,username){
+    cmmsql.prototype.leaveroom=function(roomname,username,cb){
+	if (cb==null) {
+	    cb=defaultcallback;
+	}
 	// need to implement this
     }
     
-    cmmsql.prototype.listowners=function(roomname){
+    cmmsql.prototype.listowners=function(roomname,cb){
+	if (cb==null) {
+	    cb=defaultcallback;
+	}
 	// need to implement this
     }
     
-    cmmsql.prototype.kickout=function(roomnae,userkicked,kicker){
+    cmmsql.prototype.kickout=function(roomname,userkicked,kicker,cb){
+	if (cb==null) {
+	    cb=defaultcallback;
+	}
 	// need to implement this
     }
     
-    
-    
+    cmmsql.prototype.getpassword=function(username,cb){
+	if (cb==null) {
+	    cb=defaultcallback;
+	}
+	var error=null;
+	db.all('SELECT password FROM users WHERE username==?',[username],function(err,result){
+	    if (err){
+		error=err;
+	    }
+	    cb(error,result.password);
+	});
+    }
     
 }
 //##########################  END OF THE CLASS  ##########################
