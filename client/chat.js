@@ -54,6 +54,8 @@ var messengerCount = 0;
 //username stored as global for later use
 var user = "Oliver";
 
+var menuOptions = ["add-messenger", "settings", "logout"];
+
 //main function
 $(document).ready(function(){
 	
@@ -68,7 +70,7 @@ $(document).ready(function(){
     	showRecieverField();
 	});
 
-	initHover();
+	hoverEvent(menuOptions);
 
 	$(".reciever").keydown(function(e) {
  		console.log(e.keyCode);
@@ -113,9 +115,22 @@ $(document).ready(function(){
 	});
 });
 
-function hoverEvent(optionId){
+function hoverEvent(cl){
 	var hoverDist = 5;
-	$("."+optionId).mouseenter(function(event){
+	if(Array.isArray(cl)){
+		_(cl).each(function(cls){
+			$("."+cls).mouseenter(function(event){
+				$(this).css({
+					left: hoverDist
+				})
+			}).mouseout(function(event){
+				$(this).css({
+					left: 0
+				});
+			});		
+		});
+	}
+	$("."+cl).mouseenter(function(event){
 		$(this).css({
 			left: hoverDist
 		})
@@ -126,11 +141,11 @@ function hoverEvent(optionId){
 	});	
 }
 
-//menu option hover delgates
-function initHover(){
-	hoverEvent("add-messenger");
-	hoverEvent("settings");
-	hoverEvent("logout");
+function toggleDelay(){
+	var delayOps = _.slice(menuOptions, 1);
+	_(delayOps).each(function(cls){
+		$("."+cls).toggleClass(cls+"-D");
+	});
 }
 
 //shows options menu
@@ -138,19 +153,24 @@ function showOptions(){
 	$(".menu").css({
 		top: -$(this).height()
 	});
-	showAnimations("add-messenger");
-	showAnimations("settings");
-	showAnimations("logout");
+	showAnimations(menuOptions);
 
 	setTimeout(function(){
-		$(".settings").toggleClass("settings-D");
-		$(".logout").toggleClass("logout-D");
+		toggleDelay();
 	}, 100);
 }
 
 function showAnimations(cl){
 	var showMargin = 0;
-	var padding = 350;	
+	var padding = 350;
+	if(Array.isArray(cl)){
+		_(cl).each(function(cls){
+			$("."+cls).css({
+				left: showMargin,
+				paddingRight: padding
+			});
+		})
+	}	
 	$("."+cl).css({
 		left: showMargin,
 		paddingRight: padding
@@ -161,23 +181,28 @@ function showAnimations(cl){
 //hides options menu
 function hideOptions(){
 	if(!$(".settings").hasClass("settings-D")){
-		$(".settings").toggleClass("settings-D");
-		$(".logout").toggleClass("logout-D");
+		toggleDelay();
 	}
 
 
 	$(".menu").css({
 		top: 0
 	});
-	hideAnimations("add-messenger");
-	hideAnimations("settings");	
-	hideAnimations("logout");	
+	hideAnimations(menuOptions);	
 
 	hideRecieverField();
 }
 
 function hideAnimations(cl){
 	var hideMargin = -55;
+	if(Array.isArray(cl)){
+		_(cl).each(function(cls){
+			$("."+cls).css({
+				left: hideMargin,
+				paddingRight: 0
+			});
+		});
+	}
 	$("."+cl).css({
 		left: hideMargin,
 		paddingRight: 0

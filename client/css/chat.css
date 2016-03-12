@@ -31,8 +31,8 @@ body{
 
 }
 
-.logout-noD{
-    transition-delay: 0;
+.settings-D{
+    transition-delay: 0.25s;
 }
 
 .logout-D{
@@ -49,14 +49,6 @@ body{
     top: 40px;
     left: -55px;
     transition: 0.25s all;
-}
-
-.settings-noD{
-    transition-delay: 0;
-}
-
-.settings-D{
-    transition-delay: 0.25s;
 }
 
 .settings.fa.fa-cog {
