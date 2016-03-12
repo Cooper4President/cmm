@@ -93,6 +93,8 @@ $(document).ready(function(){
     //delgate for menu hover
     $(".menu").mouseenter(function(event){
     	$(this).toggleClass("menu-unhover");
+    }).mouseout(function(event){
+    	$(this).toggleClass("menu-unhover");
     });
 
 	//delegates menu option enter
@@ -111,62 +113,48 @@ $(document).ready(function(){
 	});
 });
 
+function hoverEvent(optionId){
+	var hoverDist = 5;
+	$("."+optionId).mouseenter(function(event){
+		$(this).css({
+			left: hoverDist
+		})
+	}).mouseout(function(event){
+		$(this).css({
+			left: 0
+		});
+	});	
+}
+
 //menu option hover delgates
 function initHover(){
-	var hoverDist = 5;
-	$(".add-messenger").mouseenter(function(event){
-		$(this).css({
-			left: hoverDist
-	});
-	}).mouseout(function(event){
-		$(this).css({
-			left: 0
-		});		
-	});
-	$(".settings").mouseenter(function(event){
-		$(this).css({
-			left: hoverDist
-		});
-	}).mouseout(function(event){
-		$(this).css({
-			left: 0
-		});		
-	});
-	$(".logout").mouseenter(function(event){
-		$(this).css({
-			left: hoverDist
-		});
-	}).mouseout(function(event){
-		$(this).css({
-			left: 0
-		});		
-	});
+	hoverEvent("add-messenger");
+	hoverEvent("settings");
+	hoverEvent("logout");
 }
 
 //shows options menu
 function showOptions(){
-	var showMargin = 0;
-	var padding = 350;
 	$(".menu").css({
 		top: -$(this).height()
 	});
-	$(".add-messenger").css({
-		left: showMargin,
-		paddingRight: padding
-	});
-	$(".settings").css({
-		left:  showMargin-2,
-		paddingRight: padding
-	});
-	$(".logout").css({
-		left: showMargin,
-		paddingRight: padding
-	});
+	showAnimations("add-messenger");
+	showAnimations("settings");
+	showAnimations("logout");
 
 	setTimeout(function(){
 		$(".settings").toggleClass("settings-D");
 		$(".logout").toggleClass("logout-D");
 	}, 100);
+}
+
+function showAnimations(cl){
+	var showMargin = 0;
+	var padding = 350;	
+	$("."+cl).css({
+		left: showMargin,
+		paddingRight: padding
+	});
 }
 
 
@@ -178,24 +166,22 @@ function hideOptions(){
 	}
 
 
-	var hideMargin = -55;
-    $(".menu").switchClass("menu-hover", "menu-unhover"); //restore original menu class
 	$(".menu").css({
 		top: 0
 	});
-	$(".add-messenger").css({
-		left: hideMargin,
-		paddingRight: 0
-	});	
-	$(".settings").css({
-		left: hideMargin,
-		paddingRight: 0
-	});	
-	$(".logout").css({
-		left: hideMargin,
-		paddingRight: 0
-	});	
+	hideAnimations("add-messenger");
+	hideAnimations("settings");	
+	hideAnimations("logout");	
+
 	hideRecieverField();
+}
+
+function hideAnimations(cl){
+	var hideMargin = -55;
+	$("."+cl).css({
+		left: hideMargin,
+		paddingRight: 0
+	});	
 }
 
 //parses raw text of reciever field
@@ -231,11 +217,7 @@ function showRecieverField(){
 //hides reciever field
 function hideRecieverField(){
 	//give event delegate back to add messenger button
- 	$(".add-messenger").mouseenter(function(event){
-		$(this).css({
-			left: 10
-		});
-	});
+ 	hoverEvent("add-messenger");
 
 	$(".reciever").css({
 		borderColor: "transparent",
