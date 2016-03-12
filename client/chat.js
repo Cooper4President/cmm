@@ -317,6 +317,7 @@ function appendMessenger(rec){
 	}
 
 	if(rec){
+		//update messenger count
 		messengerCount++;
 
 		var chatId = "chat-" + messengerCount;

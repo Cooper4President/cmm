@@ -88,12 +88,12 @@ body{
 
 
 .option-container {
-    z-index: 0;
-    width: 20 %;
+    z-index: 1;
+    width: 1%;
     position: absolute;
-    height: 35%;
+    height: 20%;
     top: 0;
-    left: 0;
+    left: -5px;
 }
 
 .reciever{
