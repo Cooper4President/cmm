@@ -21,12 +21,65 @@ body{
     overflow: hidden;
 }
 
+.add-messenger, .settings, .logout, .menu{
+    z-index: 2;
+    padding-left: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+}
+
+.logout {
+    position: absolute;
+    top: 82px;
+    left: -55;
+    -webkit-transition:0.25s all;
+    transition: 0.25s all;
+    padding-bottom: 100px;
+
+}
+
+.logout-noD{
+    -webkit-transition-delay: 0;
+            transition-delay: 0;
+}
+
+.logout-D{
+    -webkit-transition-delay: 0.5s;
+            transition-delay: 0.5s;
+}
+
+.logout.fa.fa-sign-out {
+    font-size: 48px;
+    text-align: center;
+}
+
+.settings {
+    position: absolute;
+    top: 40px;
+    left: -55px;
+    -webkit-transition:0.25s all;
+    transition: 0.25s all;
+}
+
+.settings-noD{
+    -webkit-transition-delay: 0;
+            transition-delay: 0;
+}
+
+.settings-D{
+    -webkit-transition-delay: 0.25s;
+            transition-delay: 0.25s;
+}
+
+.settings.fa.fa-cog {
+    font-size: 47px;
+    text-align: right;
+}
 
 .menu.fa.fa-bars {
     font-size: 40px;
     text-align: center;
-    -webkit-transition:0.5s color linear;
-    transition: 0.5s color linear;
 }
 
 .menu-unhover{
@@ -43,26 +96,34 @@ body{
     position: absolute;
     left: 0;
     top: 0;
-    z-index: 1;
-    padding: 10px;
+    -webkit-transition:1s all;
+    transition: 1s all;
 }
 
 
 .option-container {
-    z-index: 1;
-    width: 350px;
+    z-index: 0;
+    width: 20 %;
     position: absolute;
     height: 35%;
-    left: -500px;
+    top: 0;
+    left: 0;
 }
 
 .reciever{
-    height: 20px;
-    width: 195px;
+    height: 36px;
+    width: 0;
+    border-width: 0;
     position: absolute;
     left: 50px;
-    top: -20px;
+    top: 13px;
     z-index: 2;
+    border-radius: 4px;
+    outline: none;
+    border-style: solid;
+    border-color: transparent;
+    -webkit-transition:0.25s all linear;
+    transition: 0.25s all linear;
 }
 
 
@@ -70,12 +131,13 @@ body{
 	cursor: pointer;
     position: absolute;
     top: 0;
-    left: 0;
-    padding: 10px;
+    left: -50px;
+    -webkit-transition:0.25s all;
+    transition: 0.25s all;
 }
 
 .add-messenger.fa.fa-plus-square-o {
-    text-align: center;
+    text-align: right;
     font-size: 47px;
 }
 
@@ -87,10 +149,12 @@ body{
 
 .remove-messenger.fa.fa-times {
     text-align: center;
-    margin-top: 33px;
-    margin-right: 17px;
-
+    text-align: center;
+    position: absolute;
+    top: 12px;
+    right: 5px;
 }
+
 
 .messenger-container{
 	display: -webkit-box;
@@ -161,6 +225,7 @@ body{
 }
 
 .chat-container{
+    z-index: 1;
 	display: -webkit-box;
 	display: -webkit-flex;
 	display: -ms-flexbox;

@@ -52,7 +52,7 @@ var chatLog = [];
 var messengerCount = 0;
 
 //username stored as global for later use
-var user = "Oliver"
+var user = "Oliver";
 
 //main function
 $(document).ready(function(){
@@ -60,12 +60,23 @@ $(document).ready(function(){
 	//send authentication token to server
 	sendAuthToken();
 
-	$(".reciever").keyup(function(e) {
+	//adds reciever input
+    $(".add-messenger").on("click",function(clickEvent){
+    	$(this).unbind("mouseenter").css({
+    		left: 0
+    	});
+    	showRecieverField();
+	});
+
+	initHover();
+
+	$(".reciever").keydown(function(e) {
  		console.log(e.keyCode);
 	    if (e.keyCode == 13) {
 	    	e.preventDefault();
 	    	//pulls reciever value and tests if valid
 	    	var rec = $('.reciever').val();
+	    	console.log(rec);
 			var noErr = appendMessenger(parseReciever(rec)); //note: focus diverts to new chat
 			if(noErr) hideRecieverField();
 	    }
@@ -79,14 +90,9 @@ $(document).ready(function(){
 	//initializes sortable chat windows
 	$('.messenger-container').sortable({axis:'x'});
 
-	//adds reciever input
-    $(".add-messenger").on("click",function(clickEvent){
-    	showRecieverField();
-	});
-
     //delgate for menu hover
     $(".menu").mouseenter(function(event){
-    	$(this).switchClass("menu-unhover", "menu-hover");
+    	$(this).toggleClass("menu-unhover");
     });
 
 	//delegates menu option enter
@@ -105,27 +111,90 @@ $(document).ready(function(){
 	});
 });
 
-//shows options menu
-function showOptions(){
-	var margin = $(".option-container").width();
-	$(".menu").animate({
-		top: -$(this).height()
+//menu option hover delgates
+function initHover(){
+	var hoverDist = 5;
+	$(".add-messenger").mouseenter(function(event){
+		$(this).css({
+			left: hoverDist
 	});
-	$(".option-container").animate({
-		left: 0
+	}).mouseout(function(event){
+		$(this).css({
+			left: 0
+		});		
+	});
+	$(".settings").mouseenter(function(event){
+		$(this).css({
+			left: hoverDist
+		});
+	}).mouseout(function(event){
+		$(this).css({
+			left: 0
+		});		
+	});
+	$(".logout").mouseenter(function(event){
+		$(this).css({
+			left: hoverDist
+		});
+	}).mouseout(function(event){
+		$(this).css({
+			left: 0
+		});		
 	});
 }
 
+//shows options menu
+function showOptions(){
+	var showMargin = 0;
+	var padding = 350;
+	$(".menu").css({
+		top: -$(this).height()
+	});
+	$(".add-messenger").css({
+		left: showMargin,
+		paddingRight: padding
+	});
+	$(".settings").css({
+		left:  showMargin-2,
+		paddingRight: padding
+	});
+	$(".logout").css({
+		left: showMargin,
+		paddingRight: padding
+	});
+
+	setTimeout(function(){
+		$(".settings").toggleClass("settings-D");
+		$(".logout").toggleClass("logout-D");
+	}, 100);
+}
+
+
 //hides options menu
 function hideOptions(){
-    $(".menu").switchClass("menu-hover", "menu-unhover");
-	var margin = $(".option-container").width();
-	$(".menu").animate({
+	if(!$(".settings").hasClass("settings-D")){
+		$(".settings").toggleClass("settings-D");
+		$(".logout").toggleClass("logout-D");
+	}
+
+
+	var hideMargin = -55;
+    $(".menu").switchClass("menu-hover", "menu-unhover"); //restore original menu class
+	$(".menu").css({
 		top: 0
-	});		
-	$(".option-container").animate({
-		left: -margin
 	});
+	$(".add-messenger").css({
+		left: hideMargin,
+		paddingRight: 0
+	});	
+	$(".settings").css({
+		left: hideMargin,
+		paddingRight: 0
+	});	
+	$(".logout").css({
+		left: hideMargin,
+		paddingRight: 0
+	});	
 	hideRecieverField();
 }
 
@@ -149,19 +218,32 @@ function parseReciever(recRaw){
 
 //shows reciever field
 function showRecieverField(){
- 	$(".reciever").animate({
- 		top: 20
- 	}, 500).focus();
+ 	$(".reciever").css({
+ 		width: 195,
+ 		borderColor: "black",
+ 		height: 36,
+ 		zIndex: 1,
+ 		borderWidth: 3
+ 	}).focus();
 
 }
 
 //hides reciever field
 function hideRecieverField(){
-	$(".messenger-container").css('cursor','auto')
-	$(".reciever").animate({
-		top: -$(this).height()
-	}, 1000).val("");
+	//give event delegate back to add messenger button
+ 	$(".add-messenger").mouseenter(function(event){
+		$(this).css({
+			left: 10
+		});
+	});
 
+	$(".reciever").css({
+		borderColor: "transparent",
+		width: 0,
+		height: 36,
+		zIndex: 0,
+		borderWidth: 0
+	}).val("");
 }
 
 //checks if two arrays are equal
@@ -217,7 +299,7 @@ function initResizableChat(chatId){
 		handles: 'e',
 		minWidth: 250,
 		start: function(event, ui){
-			container = ui.element.width() + ui.element.next().outerWidth();
+			container = ui.element.width() + ui.element.next().width();
 		},
 		resize: function(event, ui){
 			ui.element.next().width(container - ui.element.width());	
@@ -229,7 +311,10 @@ function initResizableChat(chatId){
 
 //injects messenger on addition
 function appendMessenger(rec){
-	//compiling space seperated list of recievers
+	if(messengerCount === 4){
+		alert("max number of windows")
+		return null;
+	}
 
 	if(rec){
 		messengerCount++;
