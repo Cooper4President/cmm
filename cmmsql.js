@@ -6,15 +6,6 @@ Written by: Craig Cornett
 
 sqlite interface for cmm
 
-Please note:
-
-1) ALL inputs are expected to be in the form of plain text without white space
-
-'this_is_good_input_everywhere'
-
-2) the only place where #1 is inaccurate is the createroom() function.
- ['this','is','ok','for,
-
 How to use:
 
 1) create a new sql object:
@@ -66,6 +57,7 @@ function cmmsql(database) {
 	createtable(null,'mainroom','time','user, messsage',defaultcallback);
 	createtable(null,'users','user','password',defaultcallback);
 	createtable(null,'rooms','room','priv,creator',defaultcallback);
+	selfrepair();
     });
 
     function defaultcallback(err,result){
@@ -75,6 +67,25 @@ function cmmsql(database) {
 	if (result){
 	    console.log(result);
 	}
+    }
+
+    function selfrepair(){
+/*
+Ideally this will:
+
+1. Ensure that any room which has an owner will exist and be properly setup.
+2. Clean up any lost/broken rooms.
+*/
+	db.serialize(function(){
+	    db.run('SELECT name FROM sqlite_master WHERE type=?',['table'],function(err,res){
+		defaultcallback(err,res);
+		if (res){
+		    res.forEach(function(){		    
+			// here is where the magic happens
+		    });
+		}
+	    });
+	});
     }
     
     function createtable(err,name,uniqueid,collumnlist,cb){
@@ -143,6 +154,9 @@ function cmmsql(database) {
 	    var error=null;
 	    if (err){
 		error=err;
+		if (err.errno=1){
+		    error=[{error:'Table does not exist',code:'1'}];
+		}
 	    }
 	    cb(error,results);
 	});
@@ -153,23 +167,33 @@ function cmmsql(database) {
 	    cb(err,null);
 	    return;
 	}
+	if (cb==null){
+	    cb=defaultcallback;
+	}
 	var error=null;
+	var result=null;
 	// need to include check for user existance
 	db.serialize(function(){
-	    db.all('SELECT priv FROM rooms WHERE room==?',[roomname],function(err,result){
+	    db.all('SELECT priv FROM rooms WHERE room==?',[roomname],function(err,res1){
 		if (err) {
 		    error=err; // temporary
+		    if (err.errno=1){
+			error=[{error:'Room '+roomname+' does not exist.',code:'1'}]
+		    }
 		    cb(error,null);
 		    return;
 		}
-		var priv = result.priv
-		db.all('SELECT owner FROM '+roomname+'users WHERE user==?',[who],function(err,result){
+		var priv = res1.priv
+		db.all('SELECT owner FROM '+roomname+'users WHERE user==?',[who],function(err,res2){
 		    if(err){
 			error=err; // temproary
+			if (err.errno=1){
+			    error=[{error:'Room '+roomname+' does not exist.',code:'1'}]
+			}
 			cb(error,null);
 			return;
 		    }
-		    var own=result.owner;
+		    var own=res2.owner;
 		    if (own=='false'){
 			if(priv='true'){
 			    // tell the client that they cant add users to the room
@@ -196,11 +220,7 @@ function cmmsql(database) {
 	    });
 	});
     }
-//#######################################################################    
-    
-    
-       
-    
+//##################### Externally Accessible Functions ######################    
     cmmsql.prototype.adduser=function(username,password,cb){
 	var error=null;
 	var result=null;
@@ -215,7 +235,7 @@ function cmmsql(database) {
 		    result='User '+username+' already exists'
 		}
 	    }else{
-		result='User '+uername+' added sucessfully';
+		result='User '+username+' added sucessfully';
 	    }
 	    cb(error,result);
 	});
@@ -233,15 +253,15 @@ function cmmsql(database) {
     }
     
     
-    cmmsql.prototype.createroom=function(roomname,userlist,creator,priv,password,cb){
+    cmmsql.prototype.createroom=function(roomname,userlist,creator,priv,cb){
+	var dcb=defaultcallback;
 	if (cb==null){
-	    cb=defaultcallback;
+	    cb=dcb;
 	}
 	var error=null;
 	var result=null;
-	dcb=defaultcallback;
 	db.serialize(function(){
-	    db.run('INSERT into rooms(room,priv,creator) VALUES (?,?)',[roomname,priv],function(err){
+	    db.run('INSERT into rooms(room,priv,creator) VALUES (?,?,?)',[roomname,priv,creator],function(err){
 		if (err){
 		    error=err;
 		    if (err.errno==19){
@@ -252,10 +272,10 @@ function cmmsql(database) {
 		    return;
 		}
 		createtable(null,roomname,'time','user,message',dcb);
-		createtable(null,roomname+'users','user,owner',dcb);
+		createtable(null,roomname+'users','user','owner',dcb);
 		addusertoroom(null,roomname,creator,'true',cb);
 		userlist.forEach(function(value,index,array){
-		    addusertoroom(null,roomname,value,isowner,creator,cb);
+		    addusertoroom(null,roomname,value,'true',creator,cb);
 		});
 	    });
 	    
@@ -281,8 +301,21 @@ function cmmsql(database) {
 	if (cb==null) {
 	    cb=defaultcallback;
 	}
+	var error=null;
+	var result=null;
 	if (roomname=='mainroom'){
 	    // tell the user they are a moron
+	    error=[{error:'Uniqueness Error',code:'2'}];
+	    result='User '+username+' is already in this room';
+	}else if (roomname=='users'){
+	    error=[{error:'Accessibility Error',code:'1'}];
+	    result='Room users does not exist.';
+	}else if (roomname=='rooms'){
+	    error=[{error:'Accessibility Error',code:'1'}];
+	    result='Room rooms does not exist.';
+	}
+	if(error){
+	    cb(error,result);
 	    return;
 	}
 	addusertoroom(null,roomname,username,isowner,who,cb);
@@ -345,7 +378,7 @@ sql.listusers('craigpriv');
 
 // bob tries to add himself as an owner to craigs room
 //    (room, user_to_add, add_as_owner, who_is_adding)
-sql.joinroom('craig','bob','true','bob');
+sql.joinroom('craigpriv','bob','true','bob');
 // fails because he is not an owner of craigs private room so he cant join
 sql.listusers('craigpriv');
 
@@ -369,9 +402,10 @@ sql.adduser('user3','pass3');
 sql.listusers('mainroom');
 
 
+sql.createroom('bobroom',['user0','user1'],'bob','false');
+sql.listusers('bobroom');
 
-
-
+sql.joinroom('DNE','craig','true','craig');
 
 
 
