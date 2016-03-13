@@ -80,15 +80,6 @@ body{
 }
 
 
-.option-container {
-    z-index: 1;
-    width: 1%;
-    position: absolute;
-    height: 20%;
-    top: 0;
-    left: -5px;
-}
-
 .reciever{
     height: 36px;
     width: 0;

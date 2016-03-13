@@ -65,7 +65,7 @@ $(document).ready(function(){
 	//adds reciever input
     $(".add-messenger").on("click",function(clickEvent){
     	$(this).unbind("mouseenter").css({
-    		left: 0
+    		paddingLeft: 10
     	});
     	showRecieverField();
 	});
