@@ -39,10 +39,6 @@ body{
 
 }
 
-.logout-noD{
-    -webkit-transition-delay: 0;
-            transition-delay: 0;
-}
 
 .logout-D{
     -webkit-transition-delay: 0.5s;
@@ -60,11 +56,6 @@ body{
     left: -55px;
     -webkit-transition:0.25s all;
     transition: 0.25s all;
-}
-
-.settings-noD{
-    -webkit-transition-delay: 0;
-            transition-delay: 0;
 }
 
 .settings-D{
@@ -103,9 +94,9 @@ body{
 
 .option-container {
     z-index: 1;
-    width: 20%;
+    width: 1%;
     position: absolute;
-    height: 35%;
+    height: 20%;
     top: 0;
     left: -5px;
 }

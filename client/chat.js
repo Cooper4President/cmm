@@ -121,22 +121,22 @@ function hoverEvent(cl){
 		_(cl).each(function(cls){
 			$("."+cls).mouseenter(function(event){
 				$(this).css({
-					left: hoverDist
+					paddingLeft: 18
 				})
 			}).mouseout(function(event){
 				$(this).css({
-					left: 0
+					paddingLeft: 10
 				});
 			});		
 		});
 	}
 	$("."+cl).mouseenter(function(event){
 		$(this).css({
-			left: hoverDist
+			paddingLeft: 18
 		})
 	}).mouseout(function(event){
 		$(this).css({
-			left: 0
+			paddingLeft: 10
 		});
 	});	
 }
