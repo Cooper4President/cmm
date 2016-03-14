@@ -13,17 +13,17 @@
 
 ######################~METHODS~######################
 
-	function appendMessenger(rec) 
+	function appendMessenger(rec)
 		Description: appends a messenger to the messenger container
 			rec: Array of recievers the the messenger will be sending to.
 			return: id of the new chat window (no # attatched);
 
-	function updateChat(chatId, value) 
+	function updateChat(chatId, value)
 		Description: updates chat container of associated chat window
 			chatId: id of the chat window you are posting to (no # attatched)
 			value: string of message you are posting
 
-	function updateChatLog(chatId[, value]) 
+	function updateChatLog(chatId[, value])
 		Description: updates the chat log (chatLog) with the chatId if it is not currently in the log, if you want to
 		update the messeges, simply supply the chatId and the message you want to append. If the chatLog was found, it will
 		append the message (if any) and return the object at the chat id.
@@ -31,7 +31,7 @@
 			value: (optional) message you wish to append to log entry
 			return: object associated with chatId
 
-	function submit(chatId, value) 
+	function submit(chatId, value)
 		Description: like updateChat, but also updates the Log and parses the value as a command instead of a raw string
 			chatId: id of the chat window you are posting to (no # attatched)
 			value: string of message you are posting
@@ -58,7 +58,7 @@ var menuOptions = ["add-messenger", "settings", "logout"];
 
 //main function
 $(document).ready(function(){
-	
+
 	//send authentication token to server
 	sendAuthToken();
 
@@ -127,7 +127,7 @@ function hoverEvent(cl){
 				$(this).css({
 					paddingLeft: 10
 				});
-			});		
+			});
 		});
 	}
 	$("."+cl).mouseenter(function(event){
@@ -138,7 +138,7 @@ function hoverEvent(cl){
 		$(this).css({
 			paddingLeft: 10
 		});
-	});	
+	});
 }
 
 function toggleDelay(){
@@ -170,7 +170,7 @@ function showAnimations(cl){
 				paddingRight: padding
 			});
 		})
-	}	
+	}
 	$("."+cl).css({
 		left: showMargin,
 		paddingRight: padding
@@ -188,7 +188,7 @@ function hideOptions(){
 	$(".menu").css({
 		top: 0
 	});
-	hideAnimations(menuOptions);	
+	hideAnimations(menuOptions);
 
 	hideRecieverField();
 }
@@ -206,7 +206,7 @@ function hideAnimations(cl){
 	$("."+cl).css({
 		left: hideMargin,
 		paddingRight: 0
-	});	
+	});
 }
 
 //parses raw text of reciever field
@@ -259,7 +259,7 @@ function checkIfEqual(arr1, arr2){
 	if(arr1.length != arr2.length) return false;
 	for(i=0;i<arr1.length;i++) if(arr1[i] !== arr2[i]) return false;
 	return true;
-}	
+}
 
 //updates chatlog, adds new entry if reciever not found
 function updateChatLog(chatId, mess){
@@ -268,7 +268,7 @@ function updateChatLog(chatId, mess){
 	var found = false;
 	var retVar;
 	_(chatLog).each(function(entry){
-		if(entry.id === chatId){ 
+		if(entry.id === chatId){
 			found = true;
 			if(mess !== undefined) entry.messages.unshift(mess);
 			retVar = entry;
@@ -309,7 +309,7 @@ function initResizableChat(chatId){
 			container = ui.element.width() + ui.element.next().width();
 		},
 		resize: function(event, ui){
-			ui.element.next().width(container - ui.element.width());	
+			ui.element.next().width(container - ui.element.width());
 		}
 	});
 }
@@ -368,7 +368,7 @@ function appendMessenger(rec){
 	    	//enter key submit
 		    if (e.keyCode === 13) {
 				e.preventDefault();
-				var chatId = $(this).closest('.chat').attr('id'); 
+				var chatId = $(this).closest('.chat').attr('id');
 				submit(chatId);
 		    }
 
@@ -385,7 +385,7 @@ function appendMessenger(rec){
 							entry.currentMessage++;
 						}
 					}
-				}); 
+				});
 		    }
 
 		    //down arrow to go through chat log
@@ -401,15 +401,15 @@ function appendMessenger(rec){
 							entry.currentMessage--;
 						}
 					}
-				}); 
+				});
 		    }
 		});
 		return chatId;
-	}else{ 
+	}else{
 		alert('a username is invalid or this chat window already exsists');
 		return null;
 	}
-	
+
 }
 
 
@@ -438,6 +438,11 @@ function submit(id, inp){
 	if(inp === undefined) var inp = cmd.val();
 	if(inp != ""){
 		updateChatLog(id, inp);
+
+		//send the message to the server
+		//TEMPORARY: the array of receiving usernames is currently set to null
+		sendChatMsg(id, testing, inp);
+
 		parseCommand(id, inp);
 		cmd.val("");
 	}
@@ -471,4 +476,3 @@ function getTodaysDate(){
     var today = mm+'/'+dd+'/'+yyyy;
     return today;
 }
-

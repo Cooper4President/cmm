@@ -19,8 +19,13 @@ app.use(express.static('client'));
 var server = require('http').Server(app);
 //for the 'socket.io' library
 var io = require('socket.io')(server);
-
+//filesystem
 var fs = require('fs');
+//the sql database interface
+var cmmsql = require('./cmmsql.js');
+//create new object for the sql database
+var db = new cmmsql('cmm.db');
+
 
 //port number that the server listens on
 var portNum = 3000;
@@ -36,13 +41,6 @@ and associated username (if authenticated)*/
 var activeSockets = {};
 var numActiveSockets = 0;
 
-//TEMPORARY. Used for testing until the actual database is ready.
-var TESTINGuserAccounts = {};
-TESTINGuserAccounts['johnsmith'] = 'mypass123';
-TESTINGuserAccounts['hello'] = 'world';
-TESTINGuserAccounts['1337hacker'] = 'p@ssw0rd';
-TESTINGuserAccounts['student3'] = 'thisISaPASSWORD';
-
 
 //this is called when a socket is connected
 io.on('connection', function(socket){
@@ -51,9 +49,9 @@ io.on('connection', function(socket){
 
   //add socket to list of connected sockets
   activeSockets[socketId] = {};
-  activeSockets.authenticated = false;
-  activeSockets.clientIp = clientIp;
-  activeSockets.username = null;
+  activeSockets[socketId].authenticated = false;
+  activeSockets[socketId].clientIp = clientIp;
+  activeSockets[socketId].username = null;
 
   numActiveSockets++;
   console.log('connected: ' + clientIp);
@@ -76,46 +74,86 @@ io.on('connection', function(socket){
     }
   });
 
-  //login event (NOT to be confused with authentication event)
-  socket.on('login attempt', function(userInfo){
-    console.log('user attempting to login...\n' +
-    'user: ' + userInfo.username + ' pass: ' + userInfo.password);
+  //called when a client submits a chat message to the server
+  socket.on('chat submit', function(msgData){
+    //user who is authenticated on this socket is the sender of the message
+    var chatSenderUsername = activeSockets[socketId].username;
 
-    var loginSuccess = false;
-    for(var key in TESTINGuserAccounts){
-      //if the username exists in the database...
-      if(key == userInfo.username){
-        //if the password matches the username...
-        if(TESTINGuserAccounts[key] == userInfo.password){
-          loginSuccess = true;
+    //TESTING
+    console.log(chatSenderUsername + ' submitted to chat id: ' + msgData.id +
+    ' \nthis message: ' + msgData.msg);
+    console.log('rec ' + msgData.receivers);
+
+    //send the message to the receiving users if they are logged in
+    for(var i in msgData.receivers){
+      for(var j in activeSockets){
+        if(msgData.receivers[i] === activeSockets[j].username){
+          socket.emit('chat deliver', { sender: chatSenderUsername, msg: msgData.msg });
+
           break;
         }
       }
     }
 
-    if(loginSuccess){
-      //TEMPORARY. Generate random hash to be the 'token' for this user session
-      var randStr = Math.random().toString();
-      var token = crypto.createHash('md5').update(randStr).digest('hex');
-      //add user to list of active sessions
-      activeUsers[token] = userInfo.username;
+    //log the message to the database
+    //PLACEHOLDER
+  });
 
-      console.log('user login. generated token: ' + token +
-      ' for user: ' + userInfo.username);
-      numActiveUsers++;
-      console.log('total logged-in users: ' + numActiveUsers);
+  //login event (NOT to be confused with authentication event)
+  socket.on('login attempt', function(userInfo){
+    console.log('user attempting to login...\n' +
+    'user: ' + userInfo.username + ' pass: ' + userInfo.password);
 
-      //give client the token
-      socket.emit('login success', token);
-      //redirect client to chat page
-      socket.emit('page load');
-    }
-    else{
-      //login failed
-      socket.emit('login fail');
-      console.log('login failed...\n' + 'user: ' + userInfo.username +
-      ' pass: ' + userInfo.password);
-    }
+    //query the database to check the user's account details
+    db.listusers('mainroom', function(err, usersInDb){
+      //make sure that an account with the username exists
+      var usernameExists = false;
+      for(var key in usersInDb){
+        if(userInfo.username === usersInDb[key].user){
+          usernameExists = true;
+          break;
+        }
+      }
+      //username exists, so now we need to verify password
+      if(usernameExists){
+        //query the db for the password associated with the account
+        db.getpassword(userInfo.username, function(err, correctPassword){
+          //password provided by client matches password in databse
+          if(userInfo.password === correctPassword){
+            //TEMPORARY. Generate random hash to be the 'token' for this user session
+            var randStr = Math.random().toString();
+            var token = crypto.createHash('md5').update(randStr).digest('hex');
+            //add user to list of active sessions
+            activeUsers[token] = userInfo.username;
+
+            console.log('user login. generated token: ' + token +
+            ' for user: ' + userInfo.username);
+            numActiveUsers++;
+            console.log('total logged-in users: ' + numActiveUsers);
+
+            //give client the token
+            socket.emit('login success', token);
+            //redirect client to chat page
+            socket.emit('page load');
+          }
+          //client entered incorrect password
+          else{
+            //login failed
+            socket.emit('login fail');
+            console.log('login failed...\n' + 'user: ' + userInfo.username +
+            ' pass: ' + userInfo.password);
+          }
+        });
+      }
+      //username does not exist in the database
+      else{
+        //login failed because username does not exist in the database
+        socket.emit('login fail');
+        console.log('login failed...\n' + 'user: ' + userInfo.username +
+        ' pass: ' + userInfo.password);
+      }
+    });
+
   });
 
   //used when a user requests to be logged out
