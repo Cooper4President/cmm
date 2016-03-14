@@ -117,28 +117,31 @@ $(document).ready(function(){
 
 function hoverEvent(cl){
 	var hoverDist = 5;
+	var hoverDist = 18;
+	var normDist = 10;
 	if(Array.isArray(cl)){
 		_(cl).each(function(cls){
 			$("."+cls).mouseenter(function(event){
 				$(this).css({
-					paddingLeft: 18
+					paddingLeft: hoverDist
 				})
 			}).mouseout(function(event){
 				$(this).css({
-					paddingLeft: 10
+					paddingLeft: normDist
 				});
 			});		
 		});
-	}
-	$("."+cl).mouseenter(function(event){
-		$(this).css({
-			paddingLeft: 18
-		})
-	}).mouseout(function(event){
-		$(this).css({
-			paddingLeft: 10
+	}else{
+		$("."+cl).mouseenter(function(event){
+			$(this).css({
+				paddingLeft: hoverDist
+			})
+		}).mouseout(function(event){
+			$(this).css({
+				paddingLeft: normDist
+			});
 		});
-	});	
+	}
 }
 
 function toggleDelay(){
@@ -170,11 +173,12 @@ function showAnimations(cl){
 				paddingRight: padding
 			});
 		})
+	}else{
+		$("."+cl).css({
+			left: showMargin,
+			paddingRight: padding
+		});
 	}	
-	$("."+cl).css({
-		left: showMargin,
-		paddingRight: padding
-	});
 }
 
 
@@ -202,11 +206,12 @@ function hideAnimations(cl){
 				paddingRight: 0
 			});
 		});
+	}else{
+		$("."+cl).css({
+			left: hideMargin,
+			paddingRight: 0
+		});	
 	}
-	$("."+cl).css({
-		left: hideMargin,
-		paddingRight: 0
-	});	
 }
 
 //parses raw text of reciever field
