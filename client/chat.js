@@ -64,7 +64,7 @@ $(document).ready(function(){
 
 	//adds reciever input
     $(".add-messenger").on("click",function(clickEvent){
-    	$(this).unbind("mouseenter").css({
+    	$(this).tooltip("disable").unbind("mouseenter").css({
     		paddingLeft: 10
     	});
     	showRecieverField();
@@ -78,7 +78,6 @@ $(document).ready(function(){
 	    	e.preventDefault();
 	    	//pulls reciever value and tests if valid
 	    	var rec = $('.reciever').val();
-	    	console.log(rec);
 			var noErr = appendMessenger(parseReciever(rec)); //note: focus diverts to new chat
 			if(noErr) hideRecieverField();
 	    }
@@ -119,9 +118,17 @@ function hoverEvent(cl){
 	var hoverDist = 5;
 	var hoverDist = 18;
 	var normDist = 10;
+
+	var toolTipOptions = {
+		track: true,
+		show: {
+			delay: 750,
+			effect: "fade"
+		}
+	}
 	if(Array.isArray(cl)){
 		_(cl).each(function(cls){
-			$("."+cls).mouseenter(function(event){
+			$("."+cls).tooltip(toolTipOptions).mouseenter(function(event){
 				$(this).css({
 					paddingLeft: hoverDist
 				})
@@ -129,17 +136,17 @@ function hoverEvent(cl){
 				$(this).css({
 					paddingLeft: normDist
 				});
-			});		
+			}).tooltip("enable");		
 		});
 	}else{
-		$("."+cl).mouseenter(function(event){
+		$("."+cl).tooltip(toolTipOptions).mouseenter(function(event){
 			$(this).css({
 				paddingLeft: hoverDist
 			})
 		}).mouseout(function(event){
 			$(this).css({
 				paddingLeft: normDist
-			});
+			}).tooltip("enable");
 		});
 	}
 }
@@ -166,18 +173,16 @@ function showOptions(){
 function showAnimations(cl){
 	var showMargin = 0;
 	var padding = 350;
+	var showStyle = {
+		left: showMargin,
+		paddingRight: padding
+	}
 	if(Array.isArray(cl)){
 		_(cl).each(function(cls){
-			$("."+cls).css({
-				left: showMargin,
-				paddingRight: padding
-			});
+			$("."+cls).css(showStyle);
 		})
 	}else{
-		$("."+cl).css({
-			left: showMargin,
-			paddingRight: padding
-		});
+		$("."+cl).css(showStyle);
 	}	
 }
 
@@ -187,7 +192,6 @@ function hideOptions(){
 	if(!$(".settings").hasClass("settings-D")){
 		toggleDelay();
 	}
-
 
 	$(".menu").css({
 		top: 0
@@ -199,18 +203,16 @@ function hideOptions(){
 
 function hideAnimations(cl){
 	var hideMargin = -55;
+	var hideStyle = {
+		left: hideMargin,
+		paddingRight: 0
+	}
 	if(Array.isArray(cl)){
 		_(cl).each(function(cls){
-			$("."+cls).css({
-				left: hideMargin,
-				paddingRight: 0
-			});
+			$("."+cls).css(hideStyle);
 		});
 	}else{
-		$("."+cl).css({
-			left: hideMargin,
-			paddingRight: 0
-		});	
+		$("."+cl).css(hideStyle);	
 	}
 }
 
@@ -413,12 +415,8 @@ function appendMessenger(rec){
 	}else{ 
 		alert('a username is invalid or this chat window already exsists');
 		return null;
-	}
-	
+	}	
 }
-
-
-
 
 //update chat function
 function updateChat(chatId, value){
