@@ -54,6 +54,7 @@ var messengerCount = 0;
 //username stored as global for later use
 var user = "Oliver";
 
+//classes of menu options (MUST BE ORDERED LIST OF CURRENT MENU OPTION LAY OUT)
 var menuOptions = ["add-messenger", "settings", "logout"];
 
 //main function
@@ -62,7 +63,13 @@ $(document).ready(function(){
 	//send authentication token to server
 	sendAuthToken();
 
-	//adds reciever input
+	//call event handlers
+	initEvents();
+});
+
+//initailizes event handlers
+function initEvents(){
+	//add messenger handler
     $(".add-messenger").on("click",function(clickEvent){
     	$(this).tooltip("disable").unbind("mouseenter").css({
     		paddingLeft: 10
@@ -72,8 +79,8 @@ $(document).ready(function(){
 
 	hoverEvent(menuOptions);
 
+	//reciever handler
 	$(".reciever").keydown(function(e) {
- 		console.log(e.keyCode);
 	    if (e.keyCode == 13) {
 	    	e.preventDefault();
 	    	//pulls reciever value and tests if valid
@@ -103,7 +110,7 @@ $(document).ready(function(){
 		showOptions();
 	});
 
-	//delegates menu optino escape
+	//delegates menu option escape
 	$(".messenger-container").mouseenter(function(event){
 		hideOptions();
 	});
@@ -112,7 +119,7 @@ $(document).ready(function(){
 	$(window).on("resize", function(event){
 		if(event.target === window) refreshChats();
 	});
-});
+}
 
 function hoverEvent(cl){
 	var hoverDist = 5;
@@ -325,7 +332,7 @@ function initResizableChat(chatId){
 
 //injects messenger on addition
 function appendMessenger(rec){
-	if(messengerCount === 4){
+	if(messengerCount === 3){
 		alert("max number of windows")
 		return null;
 	}
@@ -371,12 +378,16 @@ function appendMessenger(rec){
 		});
 
 		//keydown fucntions for command line
+		var saveCmd;
 	    html.find('.cmd').keydown(function(e) {
 	    	//enter key submit
 		    if (e.keyCode === 13) {
 				e.preventDefault();
 				var chatId = $(this).closest('.chat').attr('id'); 
 				submit(chatId);
+				_(chatLog).each(function(entry){
+					if(entry.id === chatId) entry.currentMessage = -1;
+				});
 		    }
 
 		    //up arrow to go through chat log
@@ -388,6 +399,7 @@ function appendMessenger(rec){
 						var cmd = $("#"+entry.id).find('.cmd');
 						var index = entry.currentMessage;
 						if(index < entry.messages.length-1){
+							if(index === -1) saveCmd = cmd.val();
 							cmd.val(entry.messages[index+1]);
 							entry.currentMessage++;
 						}
@@ -404,7 +416,8 @@ function appendMessenger(rec){
 						var cmd = $("#"+entry.id).find('.cmd');
 						var index = entry.currentMessage;
 						if(index > -1){
-							cmd.val(entry.messages[index-1]);
+							if(index === 0) cmd.val(saveCmd);
+							else cmd.val(entry.messages[index-1]);
 							entry.currentMessage--;
 						}
 					}
