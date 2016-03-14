@@ -66,6 +66,18 @@ function parseCommand(user, rec ,inp){
 				case "small":
 					msg = msg.small();
 					break;
+				case "picture":
+					var findURL = inp.match(/--picture\s*=\s*(.*)\s*/);
+					if(findURL){
+						var img_url = findURL[1]
+						var img = "<img src='" + img_url + "' alt='test'>";
+						updateChat(user, rec, img);
+						msg = msg.replace(img_url, '');
+					}
+					else{
+						updateChat("ERROR", rec,"Invalid pictue url");
+					}
+					break;
 				default:
 					updateChat("ERROR", rec,"Command " + cmd.bold() + " not found. Type --help for help");
 					break;
