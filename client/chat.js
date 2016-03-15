@@ -15,7 +15,7 @@
 
 	function appendMessenger(rec)
 		Description: appends a messenger to the messenger container
-			rec: Array of recievers the the messenger will be sending to.
+			rec: Array of receivers the the messenger will be sending to.
 			return: id of the new chat window (no # attatched);
 
 	function updateChat(chatId, value)
@@ -54,6 +54,7 @@ var messengerCount = 0;
 //username stored as global for later use
 var user = "Oliver";
 
+//classes of menu options (MUST BE ORDERED LIST OF CURRENT MENU OPTION LAY OUT)
 var menuOptions = ["add-messenger", "settings", "logout"];
 
 //main function
@@ -62,30 +63,35 @@ $(document).ready(function(){
 	//send authentication token to server
 	sendAuthToken();
 
-	//adds reciever input
+	//call event handlers
+	initEvents();
+});
+
+//initailizes event handlers
+function initEvents(){
+	//add messenger handler
     $(".add-messenger").on("click",function(clickEvent){
-    	$(this).unbind("mouseenter").css({
+    	$(this).tooltip("disable").unbind("mouseenter").css({
     		paddingLeft: 10
     	});
-    	showRecieverField();
+    	showReceiverField();
 	});
 
 	hoverEvent(menuOptions);
 
-	$(".reciever").keydown(function(e) {
- 		console.log(e.keyCode);
+	//receiver handler
+	$(".receiver").keydown(function(e) {
 	    if (e.keyCode == 13) {
 	    	e.preventDefault();
-	    	//pulls reciever value and tests if valid
-	    	var rec = $('.reciever').val();
-	    	console.log(rec);
-			var noErr = appendMessenger(parseReciever(rec)); //note: focus diverts to new chat
-			if(noErr) hideRecieverField();
+	    	//pulls receiver value and tests if valid
+	    	var rec = $('.receiver').val();
+			var noErr = appendMessenger(parseReceiver(rec)); //note: focus diverts to new chat
+			if(noErr) hideReceiverField();
 	    }
-	    //esc out of reciever window
+	    //esc out of receiver window
 	    else if(e.keyCode == 27){
 	    	e.preventDefault();
-	    	hideRecieverField();
+	    	hideReceiverField();
 	    }
  	}).autogrow();
 
@@ -104,7 +110,7 @@ $(document).ready(function(){
 		showOptions();
 	});
 
-	//delegates menu optino escape
+	//delegates menu option escape
 	$(".messenger-container").mouseenter(function(event){
 		hideOptions();
 	});
@@ -113,34 +119,51 @@ $(document).ready(function(){
 	$(window).on("resize", function(event){
 		if(event.target === window) refreshChats();
 	});
-});
+}
 
+//delegates hover animations of menu options
 function hoverEvent(cl){
 	var hoverDist = 5;
+	var hoverDist = 18;
+	var normDist = 10;
+
+	var toolTipOptions = {
+		track: true,
+		show: {
+			delay: 750,
+			effect: "fade"
+		},
+		hide: {
+			effect: "none"
+		}
+	}
 	if(Array.isArray(cl)){
 		_(cl).each(function(cls){
-			$("."+cls).mouseenter(function(event){
+			$("."+cls).tooltip(toolTipOptions).mouseenter(function(event){
 				$(this).css({
-					paddingLeft: 18
+					paddingLeft: hoverDist
 				})
 			}).mouseout(function(event){
 				$(this).css({
-					paddingLeft: 10
+					paddingLeft: normDist
 				});
-			});
+			}).tooltip("enable");		
+		});
+	}else{
+		$("."+cl).tooltip(toolTipOptions).mouseenter(function(event){
+			$(this).css({
+				paddingLeft: hoverDist
+			})
+		}).mouseout(function(event){
+			$(this).css({
+				paddingLeft: normDist
+			}).tooltip("enable");
 		});
 	}
-	$("."+cl).mouseenter(function(event){
-		$(this).css({
-			paddingLeft: 18
-		})
-	}).mouseout(function(event){
-		$(this).css({
-			paddingLeft: 10
-		});
-	});
 }
 
+
+//toggles delay on menu options
 function toggleDelay(){
 	var delayOps = _.slice(menuOptions, 1);
 	_(delayOps).each(function(cls){
@@ -160,21 +183,21 @@ function showOptions(){
 	}, 100);
 }
 
+//delegates show animations for menu options
 function showAnimations(cl){
 	var showMargin = 0;
 	var padding = 350;
-	if(Array.isArray(cl)){
-		_(cl).each(function(cls){
-			$("."+cls).css({
-				left: showMargin,
-				paddingRight: padding
-			});
-		})
-	}
-	$("."+cl).css({
+	var showStyle = {
 		left: showMargin,
 		paddingRight: padding
-	});
+	}
+	if(Array.isArray(cl)){
+		_(cl).each(function(cls){
+			$("."+cls).css(showStyle);
+		});
+	}else{
+		$("."+cl).css(showStyle);
+	}	
 }
 
 
@@ -184,33 +207,37 @@ function hideOptions(){
 		toggleDelay();
 	}
 
-
 	$(".menu").css({
 		top: 0
 	});
 	hideAnimations(menuOptions);
 
-	hideRecieverField();
+	hideReceiverField();
 }
 
+//delegates hide animations for menu options
 function hideAnimations(cl){
 	var hideMargin = -55;
-	if(Array.isArray(cl)){
-		_(cl).each(function(cls){
-			$("."+cls).css({
-				left: hideMargin,
-				paddingRight: 0
-			});
-		});
-	}
-	$("."+cl).css({
+	var hideStyle = {
 		left: hideMargin,
 		paddingRight: 0
-	});
+	}
+	if(Array.isArray(cl)){
+		_(cl).each(function(cls){
+			$("."+cls).css(hideStyle);
+		});
+	}else{
+		$("."+cl).css(hideStyle);	
+	}
 }
 
-//parses raw text of reciever field
-function parseReciever(recRaw){
+//simple get receivers function
+function getReceivers(id){
+	return $("#"+id).data().receivers;
+}
+
+//parses raw text of receiver field
+function parseReceiver(recRaw){
 	if(recRaw === "") return null;
 	var recList = _.map(_.split(recRaw, ","), function(n){return _.trim(n)});
 	var found = false
@@ -219,7 +246,7 @@ function parseReciever(recRaw){
 		if(entry === "") found = true;
 	});
 	_(chatLog).each(function(entry){
-		var rec = $("#"+entry.id).data().recievers;
+		var rec = $("#"+entry.id).data().receivers;
 		if(checkIfEqual(rec, recList)) found = true;
 	});
 
@@ -227,9 +254,9 @@ function parseReciever(recRaw){
 	else return recList.sort();
 }
 
-//shows reciever field
-function showRecieverField(){
- 	$(".reciever").css({
+//shows receiver field
+function showReceiverField(){
+ 	$(".receiver").css({
  		width: 195,
  		borderColor: "black",
  		height: 36,
@@ -239,12 +266,12 @@ function showRecieverField(){
 
 }
 
-//hides reciever field
-function hideRecieverField(){
+//hides receiver field
+function hideReceiverField(){
 	//give event delegate back to add messenger button
  	hoverEvent("add-messenger");
 
-	$(".reciever").css({
+	$(".receiver").css({
 		borderColor: "transparent",
 		width: 0,
 		height: 36,
@@ -261,10 +288,10 @@ function checkIfEqual(arr1, arr2){
 	return true;
 }
 
-//updates chatlog, adds new entry if reciever not found
+//updates chatlog, adds new entry if receiver not found
 function updateChatLog(chatId, mess){
 
-	//finds reciever and updates messages
+	//finds receiver and updates messages
 	var found = false;
 	var retVar;
 	_(chatLog).each(function(entry){
@@ -318,7 +345,7 @@ function initResizableChat(chatId){
 
 //injects messenger on addition
 function appendMessenger(rec){
-	if(messengerCount === 4){
+	if(messengerCount === 3){
 		alert("max number of windows")
 		return null;
 	}
@@ -329,7 +356,7 @@ function appendMessenger(rec){
 
 		var chatId = "chat-" + messengerCount;
 
-		//formats recievers for chat head title
+		//formats receivers for chat head title
 		var recFormated = _.join(rec, ', ');
 
 		var recList = _.join(rec,' ');
@@ -338,21 +365,21 @@ function appendMessenger(rec){
 		var context = {id : chatId, formated: recFormated};
 		var html = $(Handlebars.templates['client/messenger-template.handlebars'](context));
 
-		//appending to message container of body
+		//appending messenger to message container of body
 		$('.messenger-container').prepend(html);
 
 
 		//append data to chat box
 
-		$("#"+chatId).data("recievers", rec);
+		$("#"+chatId).data("receivers", rec);
 
 		//update chatLog
 		updateChatLog(chatId);
 
-		//reverts
-		//revertMessengerButton();
+		//focus on new chat window
 		html.find('.cmd').focus().autogrow();
 
+		//initializes resize event
 		initResizableChat(chatId);
 
 		//handles close button
@@ -364,44 +391,25 @@ function appendMessenger(rec){
 		});
 
 		//keydown fucntions for command line
+		var saveCmd;
 	    html.find('.cmd').keydown(function(e) {
-	    	//enter key submit
+			var chatId = $(this).closest('.chat').attr('id');
+			//enter key submit
 		    if (e.keyCode === 13) {
 				e.preventDefault();
-				var chatId = $(this).closest('.chat').attr('id');
-				submit(chatId);
+				enterKeyHandler(chatId); 
 		    }
 
 		    //up arrow to go through chat log
 		    if(e.keyCode === 38){
 		    	e.preventDefault();
-				var chatId = $(this).closest('.chat').attr('id');
-				_(chatLog).each(function(entry){
-					if(entry.id === chatId){
-						var cmd = $("#"+entry.id).find('.cmd');
-						var index = entry.currentMessage;
-						if(index < entry.messages.length-1){
-							cmd.val(entry.messages[index+1]);
-							entry.currentMessage++;
-						}
-					}
-				});
+				upArrowHandler(chatId);
 		    }
 
 		    //down arrow to go through chat log
 		    if(e.keyCode === 40){
 		    	e.preventDefault();
-		    	var chatId = $(this).closest('.chat').attr('id');
-				_(chatLog).each(function(entry){
-					if(entry.id === chatId){
-						var cmd = $("#"+entry.id).find('.cmd');
-						var index = entry.currentMessage;
-						if(index > -1){
-							cmd.val(entry.messages[index-1]);
-							entry.currentMessage--;
-						}
-					}
-				});
+ 				downArrowHandler(chatId);
 		    }
 		});
 		return chatId;
@@ -409,16 +417,56 @@ function appendMessenger(rec){
 		alert('a username is invalid or this chat window already exsists');
 		return null;
 	}
-
 }
 
 
+//handles down arrow functionality
+function downArrowHandler(chatId){
+	_(chatLog).each(function(entry){
+		if(entry.id === chatId){
+			var cmd = $("#"+entry.id).find('.cmd');
+			var index = entry.currentMessage;
+			if(index > -1){
+				if(index === 0) cmd.val(saveCmd);
+				else cmd.val(entry.messages[index-1]);
+				entry.currentMessage--;
+			}
+			return;
+		}
+	});
+}
 
+//handles up arrow functionality
+function upArrowHandler(chatId){
+	_(chatLog).each(function(entry){
+		if(entry.id === chatId){
+			var cmd = $("#"+entry.id).find('.cmd');
+			var index = entry.currentMessage;
+			if(index < entry.messages.length-1){
+				if(index === -1) saveCmd = cmd.val();
+				cmd.val(entry.messages[index+1]);
+				entry.currentMessage++;
+			}
+			return;
+		}
+	}); 
+}
+
+//handles enter key functionality
+function enterKeyHandler(chatId){
+	submit(chatId);
+	_(chatLog).each(function(entry){
+		if(entry.id === chatId) {
+			entry.currentMessage = -1;
+			return;
+		}
+	});
+}
 
 //update chat function
 function updateChat(chatId, value){
 	var container = $("#"+chatId).find('.chat-container');
-	var chat = "<div>"+user + ": " + value + "</div>"
+	var chat = "<div>"+user + ": " + value + "</div>";
 	container.append(chat);
 	checkScrollbar(chatId);
 }
@@ -441,6 +489,7 @@ function submit(id, inp){
 
 		//send the message to the server
 		//TEMPORARY: the array of receiving usernames is currently set to null
+		var testing = getReceivers(id);
 		sendChatMsg(id, testing, inp);
 
 		parseCommand(id, inp);
