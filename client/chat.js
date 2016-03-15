@@ -466,7 +466,7 @@ function enterKeyHandler(chatId){
 //update chat function
 function updateChat(chatId, value){
 	var container = $("#"+chatId).find('.chat-container');
-	var chat = "<div>"+user + ": " + value + "</div>"
+	var chat = "<div>"+user + ": " + value + "</div>";
 	container.append(chat);
 	checkScrollbar(chatId);
 }
