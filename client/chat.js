@@ -121,6 +121,7 @@ function initEvents(){
 	});
 }
 
+//delegates hover animations of menu options
 function hoverEvent(cl){
 	var hoverDist = 5;
 	var hoverDist = 18;
@@ -131,6 +132,9 @@ function hoverEvent(cl){
 		show: {
 			delay: 750,
 			effect: "fade"
+		},
+		hide: {
+			effect: "none"
 		}
 	}
 	if(Array.isArray(cl)){
@@ -158,6 +162,8 @@ function hoverEvent(cl){
 	}
 }
 
+
+//toggles delay on menu options
 function toggleDelay(){
 	var delayOps = _.slice(menuOptions, 1);
 	_(delayOps).each(function(cls){
@@ -177,6 +183,7 @@ function showOptions(){
 	}, 100);
 }
 
+//delegates show animations for menu options
 function showAnimations(cl){
 	var showMargin = 0;
 	var padding = 350;
@@ -208,6 +215,7 @@ function hideOptions(){
 	hideRecieverField();
 }
 
+//delegates hide animations for menu options
 function hideAnimations(cl){
 	var hideMargin = -55;
 	var hideStyle = {
@@ -352,7 +360,7 @@ function appendMessenger(rec){
 		var context = {id : chatId, formated: recFormated};
 		var html = $(Handlebars.templates['client/messenger-template.handlebars'](context));
 
-		//appending to message container of body
+		//appending messenger to message container of body
 		$('.messenger-container').prepend(html);
 
 
@@ -363,10 +371,10 @@ function appendMessenger(rec){
 		//update chatLog
 		updateChatLog(chatId);
 
-		//reverts
-		//revertMessengerButton();
+		//focus on new chat window
 		html.find('.cmd').focus().autogrow();
 
+		//initializes resize event
 		initResizableChat(chatId);
 
 		//handles close button
@@ -380,48 +388,23 @@ function appendMessenger(rec){
 		//keydown fucntions for command line
 		var saveCmd;
 	    html.find('.cmd').keydown(function(e) {
-	    	//enter key submit
+			var chatId = $(this).closest('.chat').attr('id');
+			//enter key submit
 		    if (e.keyCode === 13) {
 				e.preventDefault();
-				var chatId = $(this).closest('.chat').attr('id'); 
-				submit(chatId);
-				_(chatLog).each(function(entry){
-					if(entry.id === chatId) entry.currentMessage = -1;
-				});
+				enterKeyHandler(chatId); 
 		    }
 
 		    //up arrow to go through chat log
 		    if(e.keyCode === 38){
 		    	e.preventDefault();
-				var chatId = $(this).closest('.chat').attr('id');
-				_(chatLog).each(function(entry){
-					if(entry.id === chatId){
-						var cmd = $("#"+entry.id).find('.cmd');
-						var index = entry.currentMessage;
-						if(index < entry.messages.length-1){
-							if(index === -1) saveCmd = cmd.val();
-							cmd.val(entry.messages[index+1]);
-							entry.currentMessage++;
-						}
-					}
-				}); 
+				upArrowHandler(chatId);
 		    }
 
 		    //down arrow to go through chat log
 		    if(e.keyCode === 40){
 		    	e.preventDefault();
-		    	var chatId = $(this).closest('.chat').attr('id');
-				_(chatLog).each(function(entry){
-					if(entry.id === chatId){
-						var cmd = $("#"+entry.id).find('.cmd');
-						var index = entry.currentMessage;
-						if(index > -1){
-							if(index === 0) cmd.val(saveCmd);
-							else cmd.val(entry.messages[index-1]);
-							entry.currentMessage--;
-						}
-					}
-				}); 
+ 				downArrowHandler(chatId);
 		    }
 		});
 		return chatId;
@@ -429,6 +412,45 @@ function appendMessenger(rec){
 		alert('a username is invalid or this chat window already exsists');
 		return null;
 	}	
+}
+
+
+//handles down arrow functionality
+function downArrowHandler(chatId){
+	_(chatLog).each(function(entry){
+		if(entry.id === chatId){
+			var cmd = $("#"+entry.id).find('.cmd');
+			var index = entry.currentMessage;
+			if(index > -1){
+				if(index === 0) cmd.val(saveCmd);
+				else cmd.val(entry.messages[index-1]);
+				entry.currentMessage--;
+			}
+		}
+	});
+}
+
+//handles up arrow functionality
+function upArrowHandler(chatId){
+	_(chatLog).each(function(entry){
+		if(entry.id === chatId){
+			var cmd = $("#"+entry.id).find('.cmd');
+			var index = entry.currentMessage;
+			if(index < entry.messages.length-1){
+				if(index === -1) saveCmd = cmd.val();
+				cmd.val(entry.messages[index+1]);
+				entry.currentMessage++;
+			}
+		}
+	}); 
+}
+
+//handles enter key functionality
+function enterKeyHandler(chatId){
+	submit(chatId);
+	_(chatLog).each(function(entry){
+		if(entry.id === chatId) entry.currentMessage = -1;
+	});
 }
 
 //update chat function
