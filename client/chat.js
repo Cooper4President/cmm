@@ -15,7 +15,7 @@
 
 	function appendMessenger(rec) 
 		Description: appends a messenger to the messenger container
-			rec: Array of recievers the the messenger will be sending to.
+			rec: Array of receivers the the messenger will be sending to.
 			return: id of the new chat window (no # attatched);
 
 	function updateChat(chatId, value) 
@@ -74,24 +74,24 @@ function initEvents(){
     	$(this).tooltip("disable").unbind("mouseenter").css({
     		paddingLeft: 10
     	});
-    	showRecieverField();
+    	showReceiverField();
 	});
 
 	hoverEvent(menuOptions);
 
-	//reciever handler
-	$(".reciever").keydown(function(e) {
+	//receiver handler
+	$(".receiver").keydown(function(e) {
 	    if (e.keyCode == 13) {
 	    	e.preventDefault();
-	    	//pulls reciever value and tests if valid
-	    	var rec = $('.reciever').val();
-			var noErr = appendMessenger(parseReciever(rec)); //note: focus diverts to new chat
-			if(noErr) hideRecieverField();
+	    	//pulls receiver value and tests if valid
+	    	var rec = $('.receiver').val();
+			var noErr = appendMessenger(parseReceiver(rec)); //note: focus diverts to new chat
+			if(noErr) hideReceiverField();
 	    }
-	    //esc out of reciever window
+	    //esc out of receiver window
 	    else if(e.keyCode == 27){
 	    	e.preventDefault();
-	    	hideRecieverField();
+	    	hideReceiverField();
 	    }
  	}).autogrow();
 
@@ -212,7 +212,7 @@ function hideOptions(){
 	});
 	hideAnimations(menuOptions);	
 
-	hideRecieverField();
+	hideReceiverField();
 }
 
 //delegates hide animations for menu options
@@ -231,8 +231,13 @@ function hideAnimations(cl){
 	}
 }
 
-//parses raw text of reciever field
-function parseReciever(recRaw){
+//simple get receivers function
+function getReceivers(id){
+	return $("#"+id).data().receivers;
+}
+
+//parses raw text of receiver field
+function parseReceiver(recRaw){
 	if(recRaw === "") return null;
 	var recList = _.map(_.split(recRaw, ","), function(n){return _.trim(n)});
 	var found = false
@@ -241,7 +246,7 @@ function parseReciever(recRaw){
 		if(entry === "") found = true;
 	});
 	_(chatLog).each(function(entry){
-		var rec = $("#"+entry.id).data().recievers;
+		var rec = $("#"+entry.id).data().receivers;
 		if(checkIfEqual(rec, recList)) found = true;
 	});
 
@@ -249,9 +254,9 @@ function parseReciever(recRaw){
 	else return recList.sort();
 }
 
-//shows reciever field
-function showRecieverField(){
- 	$(".reciever").css({
+//shows receiver field
+function showReceiverField(){
+ 	$(".receiver").css({
  		width: 195,
  		borderColor: "black",
  		height: 36,
@@ -261,12 +266,12 @@ function showRecieverField(){
 
 }
 
-//hides reciever field
-function hideRecieverField(){
+//hides receiver field
+function hideReceiverField(){
 	//give event delegate back to add messenger button
  	hoverEvent("add-messenger");
 
-	$(".reciever").css({
+	$(".receiver").css({
 		borderColor: "transparent",
 		width: 0,
 		height: 36,
@@ -283,10 +288,10 @@ function checkIfEqual(arr1, arr2){
 	return true;
 }	
 
-//updates chatlog, adds new entry if reciever not found
+//updates chatlog, adds new entry if receiver not found
 function updateChatLog(chatId, mess){
 
-	//finds reciever and updates messages
+	//finds receiver and updates messages
 	var found = false;
 	var retVar;
 	_(chatLog).each(function(entry){
@@ -351,7 +356,7 @@ function appendMessenger(rec){
 
 		var chatId = "chat-" + messengerCount;
 
-		//formats recievers for chat head title
+		//formats receivers for chat head title
 		var recFormated = _.join(rec, ', ');
 
 		var recList = _.join(rec,' ');
@@ -366,7 +371,7 @@ function appendMessenger(rec){
 
 		//append data to chat box
 
-		$("#"+chatId).data("recievers", rec);
+		$("#"+chatId).data("receivers", rec);
 
 		//update chatLog
 		updateChatLog(chatId);
