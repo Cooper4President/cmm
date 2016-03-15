@@ -431,6 +431,7 @@ function downArrowHandler(chatId){
 				else cmd.val(entry.messages[index-1]);
 				entry.currentMessage--;
 			}
+			return;
 		}
 	});
 }
@@ -446,6 +447,7 @@ function upArrowHandler(chatId){
 				cmd.val(entry.messages[index+1]);
 				entry.currentMessage++;
 			}
+			return;
 		}
 	}); 
 }
@@ -454,7 +456,10 @@ function upArrowHandler(chatId){
 function enterKeyHandler(chatId){
 	submit(chatId);
 	_(chatLog).each(function(entry){
-		if(entry.id === chatId) entry.currentMessage = -1;
+		if(entry.id === chatId) {
+			entry.currentMessage = -1;
+			return;
+		}
 	});
 }
 
