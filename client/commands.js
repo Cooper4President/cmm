@@ -70,7 +70,7 @@ function parseCommand(user, rec ,inp){
 					var findURL = inp.match(/--picture\s*=\s*(.*)\s*/);
 					if(findURL){
 						var img_url = findURL[1]
-						var img = "<img src='" + img_url + "' alt='test'>";
+						var img = "<img src='" + img_url + "' width: " + 0.8*$('.chat-container').width() + ">";
 						updateChat(user, rec, img);
 						msg = msg.replace(img_url, '');
 					}
