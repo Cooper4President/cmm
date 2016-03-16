@@ -77,6 +77,14 @@ function parseCommand(user, rec ,inp){
 					else{
 						updateChat("ERROR", rec,"Invalid pictue url");
 					}
+				case "newtab":
+					window.open('', '_blank');
+					break;
+				case "search":
+					var searchStr = msg.replace(/\s/,'+');
+					var searchUrl = 'https://www.google.com/search?q=' + searchStr;
+					window.open(searchUrl, '_blank');
+					msg = "";
 					break;
 				default:
 					updateChat("ERROR", rec,"Command " + cmd.bold() + " not found. Type --help for help");
