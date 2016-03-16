@@ -1,6 +1,6 @@
 var socket = io();
 
-
+//sends user login information to the server
 function sendUser(user, pass){
 	socket.emit('login attempt', { username: user, password: pass });
 }
@@ -19,5 +19,5 @@ socket.on('login fail', function(){
 });
 
 socket.on('page load', function(){
-	$(location).attr('href',"http://localhost:3000/chat.html");
+	$(location).attr('href', '/chat.html');
 });
