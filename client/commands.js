@@ -66,6 +66,15 @@ function parseCommand(user, rec ,inp){
 				case "small":
 					msg = msg.small();
 					break;
+				case "newtab":
+					window.open('', '_blank');
+					break;
+				case "search":
+					var searchStr = msg.replace(/\s/,'+');
+					var searchUrl = 'https://www.google.com/search?q=' + searchStr;
+					window.open(searchUrl, '_blank');
+					msg = "";
+					break;
 				default:
 					updateChat("ERROR", rec,"Command " + cmd.bold() + " not found. Type --help for help");
 					break;
