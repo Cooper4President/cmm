@@ -8,7 +8,7 @@ module.exports = function(grunt) {
         handlebars: {
     	    all: {
     	        files: {
-    	            'client/js/messenger-template.js': 'client/messenger-template.handlebars',
+    	            'client/messenger-template.js': 'client/messenger-template.handlebars',
     	        },
     	        options: {
     	        	namespace: 'Handlebars.templates'
