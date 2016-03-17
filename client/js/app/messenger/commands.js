@@ -65,6 +65,27 @@ define(['jquery', 'lodash','./chat', 'misc/date', 'misc/help', './chat-info'], f
 					case "small":
 						msg = msg.small();
 						break;
+					case "picture":
+						var findURL = inp.match(/--picture\s*=\s*(.*)\s*/);
+						if(findURL){
+							var img_url = findURL[1]
+							var img = "<img src='" + img_url + "' width: " + 0.8*$('.chat-container').width() + ">";
+							//Appending to chat container manually
+							container.append(img);
+							msg = msg.replace(img_url, '');
+						}
+						else{
+							return "Error: Invalid pictue url";
+						}
+					case "newtab":
+						window.open('', '_blank');
+						break;
+					case "search":
+						var searchStr = msg.replace(/\s/,'+');
+						var searchUrl = 'https://www.google.com/search?q=' + searchStr;
+						window.open(searchUrl, '_blank');
+						msg = "";
+						break;
 					default:
 						return "Error: Command " + cmd.bold() + " not found. Type --help for help";
 						break;
