@@ -57,7 +57,25 @@ io.on('connection', function(socket){
   console.log('connected: ' + clientIp);
   console.log('total connected sockets: ' + numActiveSockets);
 
-  //event functions
+  //register event function callbacks
+  registerEventFuncs(socket, socketId, clientIp);
+});
+
+
+//start the server
+server.listen(portNum, function(){
+  console.log('server listening on port ' + portNum);
+});
+
+
+
+/*
+container to hold the socket event functions which are registered as callbacks
+when a socket is connected
+*/
+function registerEventFuncs(socket, socketId, clientIp){
+  //*****event functions*****
+
 
   //authentication event (NOT to be confused with login event)
   socket.on('auth attempt', function(token){
@@ -180,10 +198,4 @@ io.on('connection', function(socket){
     console.log('socket disconnected: ' + clientIp);
     console.log('total connected sockets: ' + numActiveSockets);
   });
-});
-
-
-//start the server
-server.listen(portNum, function(){
-  console.log('server listening on port ' + portNum);
-});
+}
