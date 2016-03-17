@@ -98,6 +98,7 @@ define(['jquery','lodash','jqueryui'], function($, _){
 			if(!$(".settings").hasClass("settings-D")){
 				this.toggleDelay();
 			}
+			if(!$('.menu').hasClass('menu-unhover')) $('.menu').toggleClass("menu-unhover");
 
 			$(".menu").css({
 				top: 0
