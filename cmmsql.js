@@ -237,7 +237,7 @@ function cmmsql(database) {
           result='User '+username+' already exists'
         }
       }else{
-        result='User '+username+' added sucessfully';
+        result='User '+username+' added successfully';
       }
       cb(error,result);
     });

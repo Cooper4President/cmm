@@ -77,6 +77,27 @@ function registerEventFuncs(socket, socketId, clientIp){
   //*****event functions*****
 
 
+    //sent by client to request that a new user account be created
+    socket.on('account create attempt', function(userInfo){
+      //testing
+      console.log('request to create new account with details:\n' +
+      'user: ' + userInfo.username + ' pass: ' + userInfo.password);
+
+      //send request to database to create the new account
+      db.adduser(userInfo.username, userInfo.password, function(err, result){
+        if(err){
+          //there was a problem creating the new account
+          //notify the client
+          socket.emit('account create fail');
+        }
+        else{
+          //new account created successfully in database
+          //notify the client
+          socket.emit('account create success');
+        }
+      });
+    });
+
   //authentication event (NOT to be confused with login event)
   socket.on('auth attempt', function(token){
     for(var key in activeUsers){
