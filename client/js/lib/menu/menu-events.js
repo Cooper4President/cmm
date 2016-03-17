@@ -83,19 +83,20 @@ define(['jquery','lodash','./receiver','jqueryui'], function($, _, receiver){
 		//shows options menu
 		showMenu: function(){
 			$(".menu").css({
-				top: -$(this).height()
+				top: -$(".menu").height()
 			});
 			this.showAnimations(this.menuOptions);
 
+			curr = this
 			setTimeout(function(){
-				menuEvent.toggleDelay();
+				curr.toggleDelay();
 			}, 100);
 		},
 
 		//hides options menu
 		hideMenu: function (){
 			if(!$(".settings").hasClass("settings-D")){
-				menuEvent.toggleDelay();
+				this.toggleDelay();
 			}
 
 			$(".menu").css({
@@ -103,7 +104,31 @@ define(['jquery','lodash','./receiver','jqueryui'], function($, _, receiver){
 			});
 			this.hideAnimations(this.menuOptions);
 
-			receiver.hideReceiverField();
+			this.hideReceiverField();
+		},
+		//hides receiver field
+		hideReceiverField: function(){
+			//give event delegate back to add messenger button
+		 	this.hoverEvent("add-messenger");
+
+			$(".receiver").css({
+				borderColor: "transparent",
+				width: 0,
+				height: 36,
+				zIndex: 0,
+				borderWidth: 0
+			}).val("");
+		},
+
+		//shows receiver field
+		showReceiverField: function(){
+		 	$(".receiver").css({
+		 		width: 195,
+		 		borderColor: "black",
+		 		height: 36,
+		 		zIndex: 1,
+		 		borderWidth: 3
+		 	}).focus();
 		}
 	}	
 });

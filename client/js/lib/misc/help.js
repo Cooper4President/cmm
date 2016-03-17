@@ -4,6 +4,7 @@ define(['jquery', 'messenger/chat'], function($, chat){
 		getHelp: function(chatId){
 			//ajax call gets help info from help.txt
 			$.ajax({
+				context: this,
 				url: 'help.txt',
 				dataType: 'text',
 				success: function(data){

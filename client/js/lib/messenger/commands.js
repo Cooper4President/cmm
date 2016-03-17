@@ -1,4 +1,4 @@
-define(['jquery', 'lodash','./chat', 'misc/date'], function($, _, chat, date){
+define(['jquery', 'lodash','./chat', 'misc/date', 'misc/help'], function($, _, chat, date, help){
 	return function(chatId ,inp){
 		var container = $("#"+chatId).find('.chat-container');
 		//match the -- delimiter to find all commands in the input
@@ -16,7 +16,7 @@ define(['jquery', 'lodash','./chat', 'misc/date'], function($, _, chat, date){
 				//match the command name, and execute command accordingly
 				switch(cmd){
 					case "help":
-						getHelp(chatId);
+						help.getHelp(chatId);
 						break;
 					case "date":
 						var date = date();

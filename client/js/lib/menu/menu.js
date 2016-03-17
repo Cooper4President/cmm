@@ -1,4 +1,4 @@
-define(['jquery', './menu-events', './receiver'], function($, menuEvent, receiver){
+define(['jquery', './menu-events', './receiver', 'jqueryui'], function($, menuEvent, receiver){
 	return{
 		//classes of menu options (MUST BE ORDERED LIST OF CURRENT MENU OPTION LAY OUT)
 		initMenu: function(){
