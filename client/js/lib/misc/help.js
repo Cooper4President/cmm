@@ -1,6 +1,6 @@
 define(['jquery'], function($){
 	function append(chatId,data){
-		$("#"+chatId).find('chat-container').append("<div>"+data+ "</div>");
+		$("#"+chatId).find('.chat-container').append("<div>"+data+ "</div>");
 	}
 
 	return{
