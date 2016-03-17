@@ -1,4 +1,8 @@
-define(['jquery', 'messenger/chat'], function($, chat){
+define(['jquery'], function($){
+	function append(chatId,data){
+		$("#"+chatId).find('chat-container').append("<div>"+data+ "</div>");
+	}
+
 	return{
 		//help text handler
 		getHelp: function(chatId){
@@ -8,8 +12,9 @@ define(['jquery', 'messenger/chat'], function($, chat){
 				url: 'help.txt',
 				dataType: 'text',
 				success: function(data){
+					console.log('sent data');
 					data = data.replace(/\n/g, '<br />');
-					chat.updateChat(chatId, data);
+					append(chatId, data);
 				},
 				error: function(data){
 					console.log("Error with help");
