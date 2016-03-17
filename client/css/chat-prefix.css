@@ -87,8 +87,8 @@ body{
     position: absolute;
     left: 0;
     top: 0;
-    -webkit-transition:1s all;
-    transition: 1s all;
+    -webkit-transition:0.25s all;
+    transition: 0.25s all;
 }
 
 

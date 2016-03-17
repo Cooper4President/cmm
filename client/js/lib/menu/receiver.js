@@ -1,4 +1,11 @@
-define(['jquery', 'lodash', './menu-events', 'messenger/chat'], function($, _, menuEvent, chat){
+define([
+	'jquery', 
+	'lodash', 
+	'./menu-events', 
+	'messenger/chat-info', 
+	'messenger/chat',
+	'misc/misc'
+], function($, _, menuEvent, chatInfo, chat, misc){
 	//parses raw text of receiver field
 	function parseReceiver(recRaw){
 		if(recRaw === "") return null;
@@ -8,9 +15,9 @@ define(['jquery', 'lodash', './menu-events', 'messenger/chat'], function($, _, m
 			if(_.includes(entry, " ") || _.includes(entry, "\n"))found = true;
 			if(entry === "") found = true;
 		});
-		_(chatLog).each(function(entry){
+		_(chatInfo.log).each(function(entry){
 			var rec = $("#"+entry.id).data().receivers;
-			if(checkIfEqual(rec, recList)) found = true;
+			if(misc.checkIfEqual(rec, recList)) found = true;
 		});
 
 		if(found) return null;
@@ -22,6 +29,7 @@ define(['jquery', 'lodash', './menu-events', 'messenger/chat'], function($, _, m
 			    if (e.keyCode == 13) {
 			    	e.preventDefault();
 			    	//pulls receiver value and tests if valid
+			    	chat.refreshChats();
 			    	var rec = $('.receiver').val();
 					var noErr = chat.appendMessenger(parseReceiver(rec)); //note: focus diverts to new chat
 					if(noErr) menuEvent.hideReceiverField();
@@ -35,5 +43,3 @@ define(['jquery', 'lodash', './menu-events', 'messenger/chat'], function($, _, m
 		}
 	}
 });
-
-

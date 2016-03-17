@@ -1,4 +1,4 @@
-define(['jquery', 'lodash','./chat', 'misc/date', 'misc/help'], function($, _, chat, date, help){
+define(['jquery', 'lodash','./chat', 'misc/date', 'misc/help', './chat-info'], function($, _, chat, date, help, chatInfo){
 	return function(chatId ,inp){
 		var container = $("#"+chatId).find('.chat-container');
 		//match the -- delimiter to find all commands in the input
@@ -35,7 +35,7 @@ define(['jquery', 'lodash','./chat', 'misc/date', 'misc/help'], function($, _, c
 							msg = msg.fontcolor(color);
 						}
 						else{
-							updateChat(chatId ,"Error: Invalid color");
+							return "Error: Invalid color";
 						}
 						break;
 
@@ -48,7 +48,7 @@ define(['jquery', 'lodash','./chat', 'misc/date', 'misc/help'], function($, _, c
 							msg = msg.fontsize(size);
 						}
 						else{
-							updateChat(chatId ,"Error: Invalid font size");
+							return "Error: Invalid font size";
 						}
 						break;
 					case "bold":
@@ -66,12 +66,12 @@ define(['jquery', 'lodash','./chat', 'misc/date', 'misc/help'], function($, _, c
 						msg = msg.small();
 						break;
 					default:
-						updateChat(chatId,"Error: Command " + cmd.bold() + " not found. Type --help for help");
+						return "Error: Command " + cmd.bold() + " not found. Type --help for help";
 						break;
 				}
 			});
-			if(msg != "") chat.updateChat(chatId, msg);
-		}else chat.updateChat(chatId, inp);
+			if(msg != "") return msg;
+		}else return inp;
 	}
 });
 

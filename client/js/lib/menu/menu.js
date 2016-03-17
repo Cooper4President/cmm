@@ -1,4 +1,4 @@
-define(['jquery', './menu-events', './receiver', 'jqueryui'], function($, menuEvent, receiver){
+define(['jquery', './menu-events', './receiver', 'jqueryui'], function($, menuEvent){
 	return{
 		//classes of menu options (MUST BE ORDERED LIST OF CURRENT MENU OPTION LAY OUT)
 		initMenu: function(){
@@ -26,7 +26,7 @@ define(['jquery', './menu-events', './receiver', 'jqueryui'], function($, menuEv
 		    	$(this).tooltip("disable").unbind("mouseenter").css({
 		    		paddingLeft: 10
 		    	});
-		    	receiver.showReceiverField();
+		    	menuEvent.showReceiverField();
 			});
 		}
 	}

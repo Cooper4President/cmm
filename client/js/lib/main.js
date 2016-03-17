@@ -9,14 +9,12 @@ define([
 ], function($, _, menuEvent, receiver, chat, chatSocket, menu){
 	return function(){
 			//main function
-	        $(document).ready(function(){
-	            //send authentication token to server
-	            chatSocket.sendAuthToken();
-	        }); 
+
+			menuEvent.hoverEvent(menuEvent.menuOptions);
+	        //send authentication token to server
+	        chatSocket.sendAuthToken();
 			//add messenger handler
 			menu.initAddMessenger();
-
-			menuEvent.hoverEvent(menu.menuOptions);
 
 			//receiver handler
 			receiver.initReceiver();

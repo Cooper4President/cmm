@@ -1,4 +1,4 @@
-define(['jquery','lodash','./receiver','jqueryui'], function($, _, receiver){
+define(['jquery','lodash','jqueryui'], function($, _){
 	return {
 		menuOptions: ["add-messenger", "settings", "logout"],
 		//delegates show animations for menu options
@@ -83,7 +83,7 @@ define(['jquery','lodash','./receiver','jqueryui'], function($, _, receiver){
 		//shows options menu
 		showMenu: function(){
 			$(".menu").css({
-				top: -$(".menu").height()
+				top: -$(".menu").height()-5
 			});
 			this.showAnimations(this.menuOptions);
 

@@ -5,6 +5,10 @@
   "dependencies": {
     "autogrow": "^1.0.3",
     "jquery.cookie": "^1.4.1",
-    "lodash": "^4.6.1"
+    "lodash": "^4.6.1",
+    "requirejs": "^2.1.22",
+    "require-handlebars-plugin": "^1.0.0",
+    "jquery": "^2.2.1",
+    "jquery-ui": "^1.11.4"
   }
 }

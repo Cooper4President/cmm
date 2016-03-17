@@ -76,7 +76,7 @@ body{
     position: absolute;
     left: 0;
     top: 0;
-    transition: 1s all;
+    transition: 0.25s all;
 }
 
 

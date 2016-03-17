@@ -5,7 +5,7 @@
 
 ######################~GLOBALS~######################
 
-	chatLog: holds all messages of each chat window
+	chatInfo.log: holds all messages of each chat window
 
 	messagengerCount: number of chat windows on the screen currently
 
@@ -24,8 +24,8 @@
 			value: string of message you are posting
 
 	function updateChatLog(chatId[, value])
-		Description: updates the chat log (chatLog) with the chatId if it is not currently in the log, if you want to
-		update the messeges, simply supply the chatId and the message you want to append. If the chatLog was found, it will
+		Description: updates the chat log (chatInfo.log) with the chatId if it is not currently in the log, if you want to
+		update the messeges, simply supply the chatId and the message you want to append. If the chatInfo.log was found, it will
 		append the message (if any) and return the object at the chat id.
 			chatId: chat id of log entry (no # attatched)
 			value: (optional) message you wish to append to log entry
@@ -51,70 +51,90 @@ define([
 	'jquery', 
 	'lodash', 
 	'misc/user', 
-	'hbs!../../../messenger-template', 
-	'./chat-events', 
+	'hbs!./messenger-template', 
 	'./chat-sockets',
 	'./commands',
+	'./chat-info',
 	'autogrow'
-], function($, _, user, messengerTemplate, chatEvent, chatSocket, command){
+], function($, _, user, messengerTemplate, chatSocket, command, chatInfo){
 	return {
-		// call this in the console to get log of chat window id's paired with messeges history for that window
-		chatLog: [],
-
-		//call this in console to get the current number of messengers on screen
-		messengerCount: 0,
 		
 		//simple get receivers function
 		getReceivers: function(id){
 			return $("#"+id).data().receivers;
 		},
-
-		//updates chatlog, adds new entry if receiver not found
-		updateChatLog: function(chatId, mess){
-
-			//finds receiver and updates messages
-			var found = false;
-			var retVar;
-			_(chatLog).each(function(entry){
+		//handles down arrow functionality
+		downArrowHandler: function(chatId){
+			_(chatInfo.log).each(function(entry){
 				if(entry.id === chatId){
-					found = true;
-					if(mess !== undefined) entry.messages.unshift(mess);
-					retVar = entry;
+					var cmd = $("#"+entry.id).find('.cmd');
+					var index = entry.currentMessage;
+		//handles down arrow functionality
+					if(index > -1){
+						if(index === 0) cmd.val(saveCmd);
+						else cmd.val(entry.messages[index-1]);
+						entry.currentMessage--;
+					}
+					return;
 				}
 			});
-
-			//if not found make a new entry
-			if(!found){
-				if(mess !== undefined) chatLog.push({id:chatId, messages:[mess], currentMessage:-1});
-				else chatLog.push({id:chatId, messages:[], currentMessage:-1});
-				retVar = _.last(chatLog);
-			}
-
-			return retVar;
 		},
 
+		//handles up arrow functionality
+		upArrowHandler: function(chatId){
+			_(chatInfo.log).each(function(entry){
+				if(entry.id === chatId){
+					var cmd = $("#"+entry.id).find('.cmd');
+					var index = entry.currentMessage;
+					if(index < entry.messages.length-1){
+						if(index === -1) saveCmd = cmd.val();
+						cmd.val(entry.messages[index+1]);
+						entry.currentMessage++;
+					}
+					return;
+				}
+			}); 
+		},
+		//handles enter key functionality
+		enterKeyHandler: function(chatId){
+			this.submit(chatId);
+			_(chatInfo.log).each(function(entry){
+				if(entry.id === chatId) {
+					entry.currentMessage = -1;
+					return;
+				}
+			});
+		},
+
+		//checks if chat box is overflowed
+		checkScrollbar: function(chatId){
+			var container = $("#"+chatId).find('.chat-container');
+			var elt, hasOverflow = (elt = container).innerWidth() > elt[0].scrollWidth;
+			if(hasOverflow) container.scrollTop(container[0].scrollHeight);
+		},
 		//refreshes the chat for style bugs
 		refreshChats: function(){
 			$('.messenger-container').css({
 				'width': $(window).width()
 			})
 			$('.chat').css({
-				'width': $(window).width()
+				'width': $(window).width()/chatInfo.count
 			});
 		},
 
 		//injects messenger on addition
 		appendMessenger: function(rec){
-			if(messengerCount === 3){
+			if(chatInfo.count === 3){
 				alert("max number of windows")
 				return null;
 			}
 
 			if(rec){
+				var curr = this;
 				//update messenger count
-				this.messengerCount++;
+				chatInfo.count++;
 
-				var chatId = "chat-" + this.messengerCount;
+				var chatId = "chat-" + chatInfo.count;
 
 				//formats receivers for chat head title
 				var recFormated = _.join(rec, ', ');
@@ -133,21 +153,21 @@ define([
 
 				$("#"+chatId).data("receivers", rec);
 
-				//update chatLog
-				this.updateChatLog(chatId);
+				//update chatInfo.log
+				chatInfo.updateChatLog(chatId);
 
 				//focus on new chat window
 				html.find('.cmd').focus().autogrow();
 
 				//initializes resize event
-				initResizableChat(chatId);
+				this.initResizableChat(chatId);
 
 				//handles close button
 				html.find(".remove-messenger").on("click",function(clickEvent){
 					html.remove()
-					_.remove(chatLog, function(n){return n.id === chatId})
-					this.messengerCount--;
-					this.refreshChats();
+					_.remove(chatInfo.log, function(n){return n.id === chatId})
+					chatInfo.count--;
+					curr.refreshChats();
 				});
 
 				//keydown fucntions for command line
@@ -157,19 +177,19 @@ define([
 					//enter key submit
 				    if (e.keyCode === 13) {
 						e.preventDefault();
-						chatEvent.enterKeyHandler(chatId); 
+						curr.enterKeyHandler(chatId); 
 				    }
 
 				    //up arrow to go through chat log
 				    if(e.keyCode === 38){
 				    	e.preventDefault();
-						chatEvent.upArrowHandler(chatId);
+						curr.upArrowHandler(chatId);
 				    }
 
 				    //down arrow to go through chat log
 				    if(e.keyCode === 40){
 				    	e.preventDefault();
-		 				chatEvent.downArrowHandler(chatId);
+		 				curr.downArrowHandler(chatId);
 				    }
 				});
 				return chatId;
@@ -182,9 +202,9 @@ define([
 		//update chat function
 		updateChat: function(chatId, value){
 			var container = $("#"+chatId).find('.chat-container');
-			var chat = "<div>" + user.name + ": " + value + "</div>";
+			if(value !== undefined)var chat = "<div>" + user.name + ": " + value + "</div>";
 			container.append(chat);
-			chatEvent.checkScrollbar(chatId);
+			this.checkScrollbar(chatId);
 		},
 
 		//client side submit function
@@ -194,17 +214,35 @@ define([
 			var cmd = $(chatId).find('.cmd');
 			if(inp === undefined) var inp = cmd.val();
 			if(inp != ""){
-				this.updateChatLog(id, inp);
-
+				chatInfo.updateChatLog(id, inp);
 				//send the message to the server
 				//TEMPORARY: the array of receiving usernames is currently set to null
 				var testing = this.getReceivers(id);
 				chatSocket.sendChatMsg(id, testing, inp);
 
-				command(id, inp);
+				this.updateChat(id, command(id, inp));
 				cmd.val("");
 			}
 			cmd.focus();
+		},
+
+			//initializes the resize event
+		initResizableChat: function(chatId){
+			//fixes width bug
+			this.refreshChats();
+
+			//initializes resizable chat
+			var container;
+			$("#"+chatId).resizable({
+				handles: 'e',
+				minWidth: 250,
+				start: function(event, ui){
+					container = ui.element.width() + ui.element.next().width();
+				},
+				resize: function(event, ui){
+					ui.element.next().width(container - ui.element.width());
+				}
+			});
 		}
 	}
 

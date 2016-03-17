@@ -1,10 +1,10 @@
 requirejs.config({
     baseUrl: 'js/lib',
     paths: {
-        jquery: '//code.jquery.com/jquery-2.2.0',
+        jquery: '../bower_components/jquery/dist/jquery',
         socket_io: '//cdn.socket.io/socket.io-1.4.5',
         hbs: '../bower_components/require-handlebars-plugin/hbs',
-        jqueryui: '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min',
+        jqueryui: '../bower_components/jquery-ui/jquery-ui',
         lodash: '../bower_components/lodash/lodash',
         autogrow: '../bower_components/autogrow/autogrow',
         jquery_cookie: '../bower_components/jquery.cookie/jquery.cookie'
