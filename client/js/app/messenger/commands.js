@@ -77,6 +77,7 @@ define(['jquery', 'lodash','./chat', 'misc/date', 'misc/help', './chat-info'], f
 						else{
 							return "Error: Invalid pictue url";
 						}
+						break;
 					case "newtab":
 						window.open('', '_blank');
 						break;
