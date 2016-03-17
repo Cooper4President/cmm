@@ -127,7 +127,8 @@ function registerEventFuncs(socket, socketId, clientIp){
     for(var i in msgData.receivers){
       for(var j in activeSockets){
         if(msgData.receivers[i] === activeSockets[j].username){
-          socket.emit('chat deliver', { sender: chatSenderUsername, msg: msgData.msg });
+          socket.emit('chat deliver',
+          { chatRoomId: msgData.chatRoomId, sender: chatSenderUsername, msg: msgData.msg });
 
           break;
         }
@@ -135,7 +136,15 @@ function registerEventFuncs(socket, socketId, clientIp){
     }
 
     //log the message to the database
-    //PLACEHOLDER
+    db.logroom(msgData.chatRoomId, chatSenderUsername, msgData.msg, function(err, result){
+      if(err){
+        console.log('error logging message to database with chatRoomId: ' +
+        msgData.chatRoomId);
+      }
+      else{
+        //message logged to database successfully
+      }
+    });
   });
 
   //login event (NOT to be confused with authentication event)
