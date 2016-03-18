@@ -1,99 +1,109 @@
-define(['jquery', 'lodash','./chat', 'misc/date', 'misc/help', './chat-info'], function($, _, chat, date, help, chatInfo){
+define([
+	'jquery', 
+	'lodash',
+	'misc/date', 
+	'misc/help', 
+	'./chat-info', 
+	'hbs!templates/message',
+	'misc/user'
+], function($, _, getDate, help, chatInfo, message, user){
 	return function(chatId ,inp){
+		var envilope = {
+			username: user.name
+		}
+
 		var container = $("#"+chatId).find('.chat-container');
 		//match the -- delimiter to find all commands in the input
-		var matchList = inp.match(/--\w+/g);
-		//check that there is a command in the input
-		if(matchList){
-			//remove all the commands from the message, to get just the text
-			var msg = inp.replace(/--\w+/g,'');
-			var msg = msg.replace(/\s*=\s*\w+/g,'');
-			//iterate through the list of matches
-			_(matchList).forEach(function(cmd){
-				//parse out the -- delimiter
-				cmd = cmd.replace('--','');
-
+		if(_.includes(inp , '--')){
+			var commands = _.split(inp, ' ');
+			_.pull(commands, "");
+			for(i=0;i<commands.length;i++){
+				var cmd = commands[i];
 				//match the command name, and execute command accordingly
-				switch(cmd){
+				if(_.startsWith(cmd, '--')){
+					cmd = _.replace(cmd, '--', '');
+					switch(cmd){
 					case "help":
 						help.getHelp(chatId);
 						break;
 					case "date":
-						var date = date();
-						msg = msg + " " + date;
+						var date = getDate;
+						inp = _.replace(inp, '--'+cmd, date);
 						break;
 					case "clear":
 						container.empty();
 						break;
 					case "color":
-						//find color
-						var findColor = inp.match(/--color\s*=\s*(\w+)\s*/);
-
-						if(findColor){
-							var color = findColor[1];
-							//set color
-							msg = msg.fontcolor(color);
+						var color = commands[i+1];
+						if(color){
+							inp = _.replace(inp, color, '');
+							inp = inp.fontcolor(color);
 						}
-						else{
-							return "Error: Invalid color";
-						}
+						else return {error: "Error: Invalid color"};
 						break;
-
+					case "font":
+						inp = _.replace(inp, '--'+cmd, '');
+						cmd = "fontsize";
 					case "fontsize":
-						//find font size
-						var findSize = inp.match(/--fontsize\s*=\s*([0-9]+)\s*/);
-						if(findSize){
-							var size = findSize[1];
-							//set size
-							msg = msg.fontsize(size);
+						var size = commands[i+1];
+						if(size) {
+							inp = _.replace(inp, size, '');
+							inp = inp.fontsize(size);
 						}
-						else{
-							return "Error: Invalid font size";
-						}
+						else return {error: "Error: Invalid font size"};
 						break;
 					case "bold":
-						msg = msg.bold();
+						inp = inp.bold();
 						break;
 					case "italic":
+						inp = _.replace(inp, '--'+cmd, '');
 						cmd = "italics";
 					case "italics":
-						msg = msg.italics();
+						inp = inp.italics();
 						break;
 					case "big":
-						msg = msg.big();
+						inp = inp.big();
 						break;
 					case "small":
-						msg = msg.small();
+						inp = inp.small();
 						break;
 					case "picture":
-						var findURL = inp.match(/--picture\s*=\s*(.*)\s*/);
-						if(findURL){
-							var img_url = findURL[1]
-							var img = "<img src='" + img_url + "' width: " + 0.8*$('.chat-container').width() + ">";
-							//Appending to chat container manually
-							container.append(img);
-							msg = msg.replace(img_url, '');
+						var imgUrl = commands[i+1];
+						if(imgUrl){
+							envilope.image = {
+								url: imgUrl,
+								width: container.width()
+							}
+							inp = _.replace(inp, imgUrl, '');
 						}
 						else{
-							return "Error: Invalid pictue url";
+							 return {error: "Error: Invalid picture url"};
 						}
 						break;
 					case "newtab":
 						window.open('', '_blank');
 						break;
 					case "search":
-						var searchStr = msg.replace(/\s/,'+');
+						var searchStr = _.trim(inp.replace("--"+cmd, '').replace(/\s+/g,'+'), '+');
 						var searchUrl = 'https://www.google.com/search?q=' + searchStr;
 						window.open(searchUrl, '_blank');
-						msg = "";
+						return; //might want to change if we don't want stand alone function
 						break;
 					default:
-						return "Error: Command " + cmd.bold() + " not found. Type --help for help";
+						var err = "Error: Command " + cmd.bold() + " not found. Type --help for help";
+						return {error: err};
 						break;
+					}
+					inp = _.replace(inp, '--'+cmd, '');
 				}
-			});
-			if(msg != "") return msg;
-		}else return inp;
+			}
+			inp = _.trim(inp);
+			if(inp != "") envilope.message = inp; 
+			return envilope;
+		}else{
+			envilope.message = inp;
+			return envilope;		
+		} 
 	}
 });
 

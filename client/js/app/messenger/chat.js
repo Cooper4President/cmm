@@ -51,18 +51,13 @@ define([
 	'jquery', 
 	'lodash', 
 	'misc/user', 
-	'hbs!./messenger-template', 
+	'hbs!templates/messenger', 
 	'./chat-sockets',
-	'./commands',
 	'./chat-info',
+	'./send',
 	'autogrow'
-], function($, _, user, messengerTemplate, chatSocket, command, chatInfo){
+], function($, _, user, messengerTemplate, chatSocket, chatInfo, send){
 	return {
-		
-		//simple get receivers function
-		getReceivers: function(id){
-			return $("#"+id).data().receivers;
-		},
 		//handles down arrow functionality
 		downArrowHandler: function(chatId){
 			_(chatInfo.log).each(function(entry){
@@ -97,7 +92,7 @@ define([
 		},
 		//handles enter key functionality
 		enterKeyHandler: function(chatId){
-			this.submit(chatId);
+			send(chatId);
 			_(chatInfo.log).each(function(entry){
 				if(entry.id === chatId) {
 					entry.currentMessage = -1;
@@ -106,12 +101,6 @@ define([
 			});
 		},
 
-		//checks if chat box is overflowed
-		checkScrollbar: function(chatId){
-			var container = $("#"+chatId).find('.chat-container');
-			var elt, hasOverflow = (elt = container).innerWidth() > elt[0].scrollWidth;
-			if(hasOverflow) container.scrollTop(container[0].scrollHeight);
-		},
 		//refreshes the chat for style bugs
 		refreshChats: function(){
 			$('.messenger-container').css({
@@ -199,34 +188,7 @@ define([
 			}
 		},
 
-		//update chat function
-		updateChat: function(chatId, value){
-			var container = $("#"+chatId).find('.chat-container');
-			if(value !== undefined)var chat = "<div>" + user.name + ": " + value + "</div>";
-			container.append(chat);
-			this.checkScrollbar(chatId);
-		},
-
-		//client side submit function
-		submit: function(id, inp){
-			var chatId = "#"+id;
-			var container = $(chatId).find('.chat-container');
-			var cmd = $(chatId).find('.cmd');
-			if(inp === undefined) var inp = cmd.val();
-			if(inp != ""){
-				chatInfo.updateChatLog(id, inp);
-				//send the message to the server
-				//TEMPORARY: the array of receiving usernames is currently set to null
-				var testing = this.getReceivers(id);
-				chatSocket.sendChatMsg(id, testing, inp);
-
-				this.updateChat(id, command(id, inp));
-				cmd.val("");
-			}
-			cmd.focus();
-		},
-
-			//initializes the resize event
+		//initializes the resize event
 		initResizableChat: function(chatId){
 			//fixes width bug
 			this.refreshChats();

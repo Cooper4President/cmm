@@ -9,9 +9,6 @@ requirejs.config({
         autogrow: '../bower_components/autogrow/autogrow',
         jquery_cookie: '../bower_components/jquery.cookie/jquery.cookie'
     },
-    hbs: {
-    	templateExtension: 'handlebars'
-    },
     shim: {
     	autogrow: ['jquery'],
     	jquery_cookie: ['jquery'],
