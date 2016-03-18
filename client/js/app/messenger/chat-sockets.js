@@ -26,7 +26,7 @@ define(['jquery','socket_io','jquery_cookie'], function($, io){
 		},
 
 		//called when user submits a chat message, to send it to server
-		sendChatMsg: function (chatId, chatReceivers, chatMsg){
+		sendChatMsg: function (chatRoomId, chatReceivers, chatMsg){
 		  //chatId - ID of the chat 'thread' this message belongs to
 		  //chatReceivers - list (array) of usernames who should receive the message
 		  //chatMsg - contents of the message
