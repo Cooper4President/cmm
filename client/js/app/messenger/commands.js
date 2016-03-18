@@ -1,3 +1,7 @@
+/*
+	ARGUEMENT FOR COMMANDS ARE NOW SPACE SEPERATED AS OPPOSED TO '='
+*/
+
 define([
 	'jquery', 
 	'lodash',
