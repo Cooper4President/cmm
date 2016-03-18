@@ -1,6 +1,6 @@
-define(['jquery'], function($){
+define(['jquery', 'hbs!templates/message'], function($, message){
 	function append(chatId,data){
-		$("#"+chatId).find('.chat-container').append("<div>"+data+ "</div>");
+		$("#"+chatId).find('.chat-container').append(message({help: data}));
 	}
 
 	return function(chatId){

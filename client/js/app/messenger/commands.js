@@ -25,7 +25,7 @@ define([
 					name = _.replace(cmd, '--', '');
 					switch(name){
 					case "help":
-						help.getHelp(chatId);
+						help(chatId);
 						break;
 					case "date":
 						var date = getDate;

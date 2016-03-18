@@ -1,3 +1,4 @@
+===HELP===
 Useful Commands:
 
 --date : Shows current date
