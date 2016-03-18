@@ -219,6 +219,31 @@ function registerEventFuncs(socket, socketId, clientIp){
     }
   });
 
+  //used when a user requests to create a new chatroom
+  socket.on('room create request', function(chatReceivers){
+    //TEMPORARY. Generate random hash to be the unique room id
+    var randStr = Math.random().toString();
+    var chatRoomId = crypto.createHash('md5').update(randStr).digest('hex');
+
+    //user who is creating the chatroom
+    var chatCreator = activeSockets[socketId].username;
+
+    //whether the chatroom should be set to private
+    var roomIsPrivate = false;
+
+    //tell the database to create a new chatroom with these users
+    db.createroom(chatRoomId, chatReceivers, chatCreator, roomIsPrivate, function(err, result){
+      if(!err){
+        //tell the client the room has been created
+        socket.emit('room create success', chatRoomId);
+      }
+      else{
+        //error creating room, maybe it already exists?
+        console.log('error creating room');
+      }
+    });
+  });
+
   //called when socket is disconnected
   socket.on('disconnect', function(){
     //remove socket from list of connected sockets

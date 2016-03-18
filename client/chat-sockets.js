@@ -6,6 +6,12 @@ function requestChatRoomLog(chatRoomId){
   socket.emit('chat log request', chatRoomId);
 }
 
+//request server to create a new chatroom
+//server will respond with the unique room id once it is created
+function requestCreateRoom(chatReceivers){
+  socket.emit('room create request', chatReceivers);
+}
+
 //send auth token to server
 function sendAuthToken(){
   socket.emit('auth attempt', $.cookie('authToken'));
@@ -37,4 +43,12 @@ socket.on('chat deliver', function(msgData){
 
   //TEMPORARY: placeholder for actual functionality
   alert(msgData.sender + ' sent you a message:\n' + msgData.msg);
+});
+
+//occurs when the server has created a new chatroom and sent the unique id
+socket.on('room create success', function(chatRoomId){
+  //chatRoomId - unique ID of the chat 'thread' this message belongs to
+
+  //TEMPORARY: placeholder for actual functionality
+  alert('Chatroom created with unique chatRoomId: ' + chatRoomId);
 });
