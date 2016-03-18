@@ -105,10 +105,11 @@ define([
 		refreshChats: function(){
 			$('.messenger-container').css({
 				'width': $(window).width()
-			})
+			});
 			$('.chat').css({
 				'width': $(window).width()/chatInfo.count
 			});
+			$('.img').width(0.8*$(window).width()/chatInfo.count);
 		},
 
 		//injects messenger on addition
@@ -203,6 +204,7 @@ define([
 				},
 				resize: function(event, ui){
 					ui.element.next().width(container - ui.element.width());
+					$('.img').width(0.8*$('.img').closest('.chat-container').width());
 				}
 			});
 		}

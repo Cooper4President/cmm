@@ -70,6 +70,9 @@ define([
 					case "small":
 						inp = inp.small();
 						break;
+					case "pic":
+						inp = _.replace(inp, cmd, '');
+						cmd = "picture";
 					case "picture":
 						//url is next arguement
 						var imgUrl = commands[i+1];
