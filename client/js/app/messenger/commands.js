@@ -77,7 +77,7 @@ define([
 							//this is how you manually store data for the pictue
 							envilope.image = {
 								url: imgUrl,
-								width: container.width()
+								width: 0.8*container.width()
 							}
 							inp = _.replace(inp, imgUrl, '');
 						}
