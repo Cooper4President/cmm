@@ -17,7 +17,7 @@ define([ //list of dependencies to load for this module
 	//can be returned (such as an object, which most modules in this case return)
 	return function(chatId ,inp){ 
 		//this is the main object to store command data
-		var envilope = {
+		var envelope = {
 			username: user.name
 		}
 
@@ -88,7 +88,7 @@ define([ //list of dependencies to load for this module
 						var imgUrl = commands[i+1];
 						if(imgUrl){
 							//this is how you manually store data for the pictue
-							envilope.image = {
+							envelope.image = {
 								url: imgUrl,
 								width: 0.8*container.width()
 							}
@@ -118,11 +118,11 @@ define([ //list of dependencies to load for this module
 				}
 			}
 			inp = _.trim(inp);
-			if(inp != "") envilope.message = inp; 
-			return envilope;
+			if(inp != "") envelope.message = inp; 
+			return envelope;
 		}else{
-			envilope.message = inp;
-			return envilope;		
+			envelope.message = inp;
+			return envelope;		
 		} 
 	}
 });
