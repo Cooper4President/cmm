@@ -17,13 +17,13 @@ database is the location/name of the database file.
 
 2) add users to the database
 
-sql_object_name.adduser(username,password);
+sql_object_name.adduser(username,password,callbck);
 
 username is the username and password is the password.
 
 3) create new chat rooms
 
-sql_object_name.createroom(roomname,invited_owners,creator,private);
+sql_object_name.createroom(roomname,invited_owners,creator,private,callback);
 
 roomname is the name of the chat room
 invited_owners is a text array which contains the users who can add users to a private room other than the room creator. ['user1','user2','user3',,,'userN']
@@ -32,18 +32,16 @@ private is text equal to 'true' or 'false' any other values will be replaced wit
 
 4) add users to chatrooms
 
-sql_object_name.joinroom(
+sql_object_name.joinroom(roomname,joining_user,owner,who,callback);
 
 
 
 
 Error Codes
-0 Opertaion Completed Successfully
 1 Access Error
 2 Uniqueness Error
 3 Permissions Error
-4
-5
+
 
 */
 
@@ -136,7 +134,7 @@ Ideally this will:
 	    cb(err,null);
 	    return;
 	}
-	db.all('SELECT ?? From ? WHERE ?',[columnlist,table,req],function(err,results){
+	db.all('SELECT ? From ? WHERE ?',[columnlist,table,req],function(err,results){
 	    var error=null;
 	    if (err){
 		error=err;
@@ -332,7 +330,13 @@ Ideally this will:
 	if (cb==null) {
 	    cb=defaultcallback;
 	}
-	// need to implement this
+	var error=null;
+	db.all('SELECT users FROM ? WHERE owner=?',[roomname+'users','true'],function(err,res){
+	    if (err){
+		error=err;
+	    }
+	    cb(error,res);
+	});
     }
     
     cmmsql.prototype.kickout=function(roomname,userkicked,kicker,cb){
@@ -346,67 +350,21 @@ Ideally this will:
 	if (cb==null) {
 	    cb=defaultcallback;
 	}
+	var result=null;
 	var error=null;
-	db.all('SELECT password FROM users WHERE username==?',[username],function(err,result){
+	db.all('SELECT password FROM users WHERE user==?',[username],function(err,res){
 	    if (err){
 		error=err;
 	    }
-	    cb(error,result.password);
+	    if (res){
+		result=res.password;
+	    }
+	    cb(error,result);
 	});
     }
     
 }
 //##########################  END OF THE CLASS  ##########################
 
-// This is for testing and sample code
-
-
-// create a new database named cmm.db
-var sql=new cmmsql('cmm.db');
-
-// add some users to the database they are all by default
-// put in to the main chat room.
-sql.adduser('craig','password');
-sql.adduser('bob','stuff');
-
-// list users in the main chat room
-sql.listusers('mainroom');
-
-// create a private room
-sql.createroom('craigpriv',[],'craig','true');
-sql.listusers('craigpriv');
-
-// bob tries to add himself as an owner to craigs room
-//    (room, user_to_add, add_as_owner, who_is_adding)
-sql.joinroom('craigpriv','bob','true','bob');
-// fails because he is not an owner of craigs private room so he cant join
-sql.listusers('craigpriv');
-
-// create a public room
-sql.createroom('craigpub',[],'craig','false');
-
-// bob can join this room but he cant claim ownership
-sql.joinroom('craigpub','bob','true','bob');
-sql.listusers('craigpub');
-sql.listowners('craigpub');
-
-// as the owner of the room craig can kick bob out
-sql.kickout('craigpub','bob','craig');
-sql.listusers('craigpub');
-
-// create some more users
-sql.adduser('user0','pass0');
-sql.adduser('user1','pass1');
-sql.adduser('user2','pass2');
-sql.adduser('user3','pass3');
-sql.listusers('mainroom');
-
-
-sql.createroom('bobroom',['user0','user1'],'bob','false');
-sql.listusers('bobroom');
-
-sql.joinroom('DNE','craig','true','craig');
-
-
-
-// end testing section
+// Now make it importable
+module.exports=cmmsql
