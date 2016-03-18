@@ -8,8 +8,10 @@ function requestChatRoomLog(chatRoomId){
 
 //request server to create a new chatroom
 //server will respond with the unique room id once it is created
-function requestCreateRoom(chatReceivers){
-  socket.emit('room create request', chatReceivers);
+function requestCreateRoom(chatReceivers, isPrivate){
+  //chatReceivers - list of usernames who are to be included in room
+  //isPrivate - true/false whether the room should be set to private
+  socket.emit('room create request', {chatReceivers: chatReceivers, isPrivate: isPrivate});
 }
 
 //send auth token to server
