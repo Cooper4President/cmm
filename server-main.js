@@ -6,6 +6,8 @@ Then, go to 'localhost:####' in browser, where #### is the port number
 //for the 'express' library
 var express = require('express');
 var app = express();
+//handlebars framework
+var handlebars = require('handlebars');
 //nodejs crypto module
 var crypto = require('crypto');
 /*
@@ -55,7 +57,46 @@ io.on('connection', function(socket){
   console.log('connected: ' + clientIp);
   console.log('total connected sockets: ' + numActiveSockets);
 
-  //event functions
+  //register event function callbacks
+  registerEventFuncs(socket, socketId, clientIp);
+});
+
+
+//start the server
+server.listen(portNum, function(){
+  console.log('server listening on port ' + portNum);
+});
+
+
+
+/*
+container to hold the socket event functions which are registered as callbacks
+when a socket is connected
+*/
+function registerEventFuncs(socket, socketId, clientIp){
+  //*****event functions*****
+
+
+    //sent by client to request that a new user account be created
+    socket.on('account create attempt', function(userInfo){
+      //testing
+      console.log('request to create new account with details:\n' +
+      'user: ' + userInfo.username + ' pass: ' + userInfo.password);
+
+      //send request to database to create the new account
+      db.adduser(userInfo.username, userInfo.password, function(err, result){
+        if(err){
+          //there was a problem creating the new account
+          //notify the client
+          socket.emit('account create fail');
+        }
+        else{
+          //new account created successfully in database
+          //notify the client
+          socket.emit('account create success');
+        }
+      });
+    });
 
   //authentication event (NOT to be confused with login event)
   socket.on('auth attempt', function(token){
@@ -86,7 +127,8 @@ io.on('connection', function(socket){
     for(var i in msgData.receivers){
       for(var j in activeSockets){
         if(msgData.receivers[i] === activeSockets[j].username){
-          socket.emit('chat deliver', { sender: chatSenderUsername, msg: msgData.msg });
+          socket.emit('chat deliver',
+          { chatRoomId: msgData.chatRoomId, sender: chatSenderUsername, msg: msgData.msg });
 
           break;
         }
@@ -94,7 +136,15 @@ io.on('connection', function(socket){
     }
 
     //log the message to the database
-    //PLACEHOLDER
+    db.logroom(msgData.chatRoomId, chatSenderUsername, msgData.msg, function(err, result){
+      if(err){
+        console.log('error logging message to database with chatRoomId: ' +
+        msgData.chatRoomId);
+      }
+      else{
+        //message logged to database successfully
+      }
+    });
   });
 
   //login event (NOT to be confused with authentication event)
@@ -178,10 +228,4 @@ io.on('connection', function(socket){
     console.log('socket disconnected: ' + clientIp);
     console.log('total connected sockets: ' + numActiveSockets);
   });
-});
-
-
-//start the server
-server.listen(portNum, function(){
-  console.log('server listening on port ' + portNum);
-});
+}

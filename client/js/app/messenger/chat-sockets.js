@@ -10,6 +10,15 @@ define(['jquery','socket_io','jquery_cookie'], function($, io){
 	  alert(msgData.sender + ' sent you a message:\n' + msgData.msg);
 	});
 
+	//occurs when the server responds to the request for room log
+	socket.on('chat log deliver', function(logData){
+	  //logData.chatRoomId - unique ID of the chat 'thread' this message belongs to
+	  //logData.log - the logged message history of this chatroom
+
+	  //TEMPORARY: placeholder for actual functionality
+	  alert('Log received from server for chatRoomId: ' + logData.chatRoomId);
+	});
+
 	return {
 			//send auth token to server
 		sendAuthToken: function (){
@@ -22,7 +31,11 @@ define(['jquery','socket_io','jquery_cookie'], function($, io){
 		  //chatReceivers - list (array) of usernames who should receive the message
 		  //chatMsg - contents of the message
 
-		  socket.emit('chat submit', { id: chatId, receivers: chatReceivers, msg: chatMsg });
+  			socket.emit('chat submit', { chatRoomId: chatRoomId, receivers: chatReceivers, msg: chatMsg });
+		},
+		//request server for log of messages from a chatroom
+		requestChatRoomLog: function(chatRoomId){
+		  socket.emit('chat log request', chatRoomId);
 		}
 	}
 });
