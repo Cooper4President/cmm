@@ -75,26 +75,26 @@ function registerEventFuncs(socket, socketId, clientIp){
   //*****event functions*****
 
 
-    //sent by client to request that a new user account be created
-    socket.on('account create attempt', function(userInfo){
-      //testing
-      console.log('request to create new account with details:\n' +
-      'user: ' + userInfo.username + ' pass: ' + userInfo.password);
+  //sent by client to request that a new user account be created
+  socket.on('account create attempt', function(userInfo){
+    //testing
+    console.log('request to create new account with details:\n' +
+    'user: ' + userInfo.username + ' pass: ' + userInfo.password);
 
-      //send request to database to create the new account
-      db.adduser(userInfo.username, userInfo.password, function(err, result){
-        if(err){
-          //there was a problem creating the new account
-          //notify the client
-          socket.emit('account create fail');
-        }
-        else{
-          //new account created successfully in database
-          //notify the client
-          socket.emit('account create success');
-        }
-      });
+    //send request to database to create the new account
+    db.adduser(userInfo.username, userInfo.password, function(err, result){
+      if(err){
+        //there was a problem creating the new account
+        //notify the client
+        socket.emit('account create fail');
+      }
+      else{
+        //new account created successfully in database
+        //notify the client
+        socket.emit('account create success');
+      }
     });
+  });
 
   //authentication event (NOT to be confused with login event)
   socket.on('auth attempt', function(token){
@@ -217,13 +217,39 @@ function registerEventFuncs(socket, socketId, clientIp){
     }
   });
 
-  //called when socket is disconnected
-  socket.on('disconnect', function(){
-    //remove socket from list of connected sockets
-    delete activeSockets[socketId];
+  //used when a user requests to create a new chatroom
+  socket.on('room create request', function(roomInfo){
+    //roomInfo.chatReceivers - list of usernames who are to be included in room
+    //roomInfo.isPrivate - true/false whether the room should be set to private
 
-    numActiveSockets--;
-    console.log('socket disconnected: ' + clientIp);
-    console.log('total connected sockets: ' + numActiveSockets);
-  });
-}
+    //TEMPORARY. Generate random hash to be the unique room id
+    var randStr = Math.random().toString();
+    var chatRoomId = crypto.createHash('md5').update(randStr).digest('hex');
+
+    //user who is creating the chatroom
+    var chatCreator = activeSockets[socketId].username;
+
+    //tell the database to create a new chatroom with these users
+    db.createroom(chatRoomId, roomInfo.chatReceivers, chatCreator, roomInfo.isPrivate,
+      function(err, result){
+        if(!err){
+          //tell the client the room has been created
+          socket.emit('room create success', chatRoomId);
+        }
+        else{
+          //error creating room, maybe it already exists?
+          console.log('error creating room');
+        }
+      });
+    });
+
+    //called when socket is disconnected
+    socket.on('disconnect', function(){
+      //remove socket from list of connected sockets
+      delete activeSockets[socketId];
+
+      numActiveSockets--;
+      console.log('socket disconnected: ' + clientIp);
+      console.log('total connected sockets: ' + numActiveSockets);
+    });
+  }

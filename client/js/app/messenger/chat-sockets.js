@@ -36,6 +36,13 @@ define(['jquery','socket_io','jquery_cookie'], function($, io){
 		//request server for log of messages from a chatroom
 		requestChatRoomLog: function(chatRoomId){
 		  socket.emit('chat log request', chatRoomId);
+		},
+		//request server to create a new chatroom
+		//server will respond with the unique room id once it is created
+		requestCreateRoom: function(chatReceivers, isPrivate){
+		  //chatReceivers - list of usernames who are to be included in room
+		  //isPrivate - true/false whether the room should be set to private
+		  socket.emit('room create request', {chatReceivers: chatReceivers, isPrivate: isPrivate});
 		}
 	}
 });
