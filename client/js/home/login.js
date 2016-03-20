@@ -1,5 +1,6 @@
 define(['jquery', './index-data', './animations'], function($, data, animation){
 	return function(){
+		//switches to sign up screen
 		$('.sign-up-re').on('click', function(event){
 			animation.bottom('login').center('sign-up');
 		});		
