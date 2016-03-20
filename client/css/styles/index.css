@@ -9,8 +9,19 @@ body{
 	height: 100%;
 }
 
+.home-item{
+	border: 1px solid black;
+    border-radius: 5px;
+    height: 500px;
+    width: 500px;
+    align-items: center;
+    justify-content: center;
+}
+
 div.login-container{
 	display: flex;
 	flex-direction: column;
+	flex-direction: column;
 }
+
 /*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImluZGV4LmNzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSxFQUFFLFNBQVMsQ0FBQyxVQUFVLENBQUM7OztBQUd2QjtDQUNDLGNBQWM7Q0FDZCx3QkFBd0I7Q0FDeEIsb0JBQW9CO0NBQ3BCOztBQUVEO0NBQ0MsY0FBYztDQUNkLHVCQUF1QjtDQUN2QiIsImZpbGUiOiJpbmRleC5jc3MiLCJzb3VyY2VzQ29udGVudCI6WyIqe21hcmdpbjowOyBwYWRkaW5nOjA7fVxuXG5cbmJvZHl7XG5cdGRpc3BsYXk6IGZsZXg7XG5cdGp1c3RpZnktY29udGVudDogY2VudGVyO1xuXHRhbGlnbi1pdGVtczogY2VudGVyO1xufVxuXG5kaXYubG9naW4tY29udGFpbmVye1xuXHRkaXNwbGF5OiBmbGV4O1xuXHRmbGV4LWRpcmVjdGlvbjogY29sdW1uO1xufVxuIl19 */
