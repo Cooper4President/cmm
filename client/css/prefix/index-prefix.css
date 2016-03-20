@@ -2,23 +2,11 @@
 
 
 body{
-	display: -webkit-box;
-	display: -webkit-flex;
-	display: -ms-flexbox;
-	display: flex;
-	-webkit-box-pack: center;
-	-webkit-justify-content: center;
-	    -ms-flex-pack: center;
-	        justify-content: center;
-	-webkit-box-align: center;
-	-webkit-align-items: center;
-	    -ms-flex-align: center;
-	        align-items: center;
 	width: 100%;
 	height: 100%;
 }
 
-div.login-container{
+.start{
 	display: -webkit-box;
 	display: -webkit-flex;
 	display: -ms-flexbox;
@@ -28,19 +16,65 @@ div.login-container{
 	-webkit-flex-direction: column;
 	    -ms-flex-direction: column;
 	        flex-direction: column;
-	-webkit-flex-direction: column;
-	    -ms-flex-direction: column;
-	        flex-direction: column;
-    border: 1px solid black;
+	-webkit-box-align: center;
+	-webkit-align-items: center;
+	    -ms-flex-align: center;
+	        align-items: center;
+	-webkit-box-pack: center;
+	-webkit-justify-content: center;
+	    -ms-flex-pack: center;
+	        justify-content: center;
+}
+
+.home-item{
+	border: 1px solid black;
     border-radius: 5px;
     height: 500px;
     width: 500px;
-    -webkit-box-align: center;
-    -webkit-align-items: center;
-        -ms-flex-align: center;
-            align-items: center;
+    position: absolute;
+    -webkit-transition:0.5s all;
+    transition: 0.5s all;
+}
+
+.button{
+    height: 30px;
+    width: 200px;
+    border: 1px solid black;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 30px;
+    border-radius: 5px;
+    -webkit-transition:0.5s all;
+    transition: 0.5s all;
+}
+
+.button:hover {
+    box-shadow: 3px 4px 5px 0px rgba(0,0,0,0.75);
+}
+
+.conjunction{
+	text-align: center;
+    vertical-align: middle;
+    line-height: 100%;
+}
+
+div.login-container{
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-align: center;
+	-webkit-align-items: center;
+	    -ms-flex-align: center;
+	        align-items: center;
     -webkit-box-pack: center;
     -webkit-justify-content: center;
         -ms-flex-pack: center;
             justify-content: center;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	-webkit-flex-direction: column;
+	    -ms-flex-direction: column;
+	        flex-direction: column;
 }
+
