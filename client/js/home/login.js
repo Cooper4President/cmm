@@ -2,7 +2,8 @@ define(['jquery', './index-data'], function($, data){
 	return {
 		init: function(){
 			//submit button event
-			$(".login").on("click",function(){
+			$(".log").on("click",function(){
+				console.log("someshit");
 				data.storeLoginData();
 			});
 
@@ -11,7 +12,7 @@ define(['jquery', './index-data'], function($, data){
 			    if (e.which === 13) {
 					e.preventDefault();
 					data.storeLoginData();
-			    };
+			    }
 			});
 		}
 	}
