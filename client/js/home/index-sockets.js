@@ -1,11 +1,11 @@
-define(['socket_io'], function(io){
+define(['socket_io', './animations'], function(io, animation){
 
 	var socket = io();
 
 
 	//sent by server when attempt to create new user account succeeds
 	socket.on('account create success', function(){
-		//todo
+		animation.center('login').top('sign-up'); // show login screen
 	});
 
 	//sent by server when attempt to create neww user account fails

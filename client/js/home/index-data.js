@@ -9,6 +9,16 @@ define(['jquery', './index-sockets'], function($, socket){
 			}else{
 				alert("Username Invalid");
 			}
+		},
+		storeAccountData: function(user, email, pass){
+			var user = $('.new-user').val();
+			var email = $('.new-email').val(); //create account with email??
+			var pass = $('.new-pass').val();
+			if(!/\s+/g.test(user)){ //test for valid user name
+				socket.createAccount(user, pass);
+			}else{
+				alert("Username Invalid");
+			}		
 		}
 	}
 });

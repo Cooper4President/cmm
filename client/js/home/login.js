@@ -6,7 +6,6 @@ define(['jquery', './index-data', './animations'], function($, data, animation){
 		});		
 		//submit button event
 		$(".log").on("click",function(){
-			console.log("someshit");
 			data.storeLoginData();
 		});
 
