@@ -5,7 +5,7 @@ define(['jquery', './index-sockets'], function($, socket){
 			var username = $(".username").val();
 			var password = $(".password").val();
 			if(!/\s+/g.test(username)){ //test for valid user name
-				sendUser(username, password);
+				socket.sendUser(username, password);
 			}else{
 				alert("Username Invalid");
 			}
