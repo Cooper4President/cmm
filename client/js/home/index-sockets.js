@@ -39,8 +39,7 @@ define(['socket_io'], function(io){
 		//the server will send back either a success or failure event
 		createAccount: function(user, pass){
 			socket.emit('account create attempt', { username: user, password: pass });
-		}
-
+		},
 		//sends user login information to the server
 		//the server will send back either a success or failure event
 		sendUser: function(user, pass){
