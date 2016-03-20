@@ -1,42 +1,23 @@
 /*
 cmmsql.js
-
 Written by: Craig Cornett
-
-
 sqlite interface for cmm
-
 How to use:
-
 1) create a new sql object:
-
 var sql_object_name = new cmmsql(database);
-
 sql_object_name is whatever you want to type
 database is the location/name of the database file.
-
 2) add users to the database
-
 sql_object_name.adduser(username,password);
-
 username is the username and password is the password.
-
 3) create new chat rooms
-
 sql_object_name.createroom(roomname,invited_owners,creator,private);
-
 roomname is the name of the chat room
 invited_owners is a text array which contains the users who can add users to a private room other than the room creator. ['user1','user2','user3',,,'userN']
 creator is the creating user and by default owns the room
 private is text equal to 'true' or 'false' any other values will be replaced with 'false'
-
 4) add users to chatrooms
-
 sql_object_name.joinroom(
-
-
-
-
 Error Codes
 0 Opertaion Completed Successfully
 1 Access Error
@@ -44,7 +25,6 @@ Error Codes
 3 Permissions Error
 4
 5
-
 */
 
 //allow this to be loaded as a NodeJS module using 'require'
@@ -74,7 +54,6 @@ function cmmsql(database) {
   function selfrepair(){
     /*
     Ideally this will:
-
     1. Ensure that any room which has an owner will exist and be properly setup.
     2. Clean up any lost/broken rooms.
     */
@@ -237,7 +216,7 @@ function cmmsql(database) {
           result='User '+username+' already exists'
         }
       }else{
-        result='User '+username+' added sucessfully';
+        result='User '+username+' added successfully';
       }
       cb(error,result);
     });
@@ -365,53 +344,40 @@ function cmmsql(database) {
 // This is for testing and sample code
 
 /*
-
 // create a new database named cmm.db
 var sql=new cmmsql('cmm.db');
-
 // add some users to the database they are all by default
 // put in to the main chat room.
 sql.adduser('craig','password');
 sql.adduser('bob','stuff');
-
 // list users in the main chat room
 sql.listusers('mainroom');
-
 // create a private room
 sql.createroom('craigpriv',[],'craig','true');
 sql.listusers('craigpriv');
-
 // bob tries to add himself as an owner to craigs room
 //    (room, user_to_add, add_as_owner, who_is_adding)
 sql.joinroom('craigpriv','bob','true','bob');
 // fails because he is not an owner of craigs private room so he cant join
 sql.listusers('craigpriv');
-
 // create a public room
 sql.createroom('craigpub',[],'craig','false');
-
 // bob can join this room but he cant claim ownership
 sql.joinroom('craigpub','bob','true','bob');
 sql.listusers('craigpub');
 sql.listowners('craigpub');
-
 // as the owner of the room craig can kick bob out
 sql.kickout('craigpub','bob','craig');
 sql.listusers('craigpub');
-
 // create some more users
 sql.adduser('user0','pass0');
 sql.adduser('user1','pass1');
 sql.adduser('user2','pass2');
 sql.adduser('user3','pass3');
 sql.listusers('mainroom');
-
-
 sql.createroom('bobroom',['user0','user1'],'bob','false');
 sql.listusers('bobroom');
-
 sql.joinroom('DNE','craig','true','craig');
-
 */
 
 // end testing section
