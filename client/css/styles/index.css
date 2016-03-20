@@ -6,6 +6,10 @@ body{
 	height: 100%;
 }
 
+.username, .password {
+    margin: 3px;
+}
+
 .start{
 	display: flex;
 	flex-direction: column;

@@ -6,6 +6,10 @@ body{
 	height: 100%;
 }
 
+.username, .password {
+    margin: 3px;
+}
+
 .start{
 	display: -webkit-box;
 	display: -webkit-flex;
