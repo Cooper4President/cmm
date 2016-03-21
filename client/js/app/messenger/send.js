@@ -5,7 +5,7 @@ define([
 	'hbs!templates/message', 
 	'./commands', //dependency that runs commands
 	'./chat-sockets'
-], function($, _, chatInfo, message, command , socket){ //command first refrenced as arguemnt to this module
+], function($, _, chatInfo, message, command , socket){ //command first refrenced as argument to this module
 	//define private function outside of return like this
 
 	//simple get receivers function
@@ -33,8 +33,8 @@ define([
 			var testing = getReceivers(id);
 			//send chat message to server
 			socket.sendChatMsg(id, testing, inp);
-			container.append(message(command(id, inp))); //since the command module only returns a funciton 
-			checkScrollbar(id);							//we can all it like this
+			container.append(message(command(id, inp))); //since the command module only returns a function 
+			checkScrollbar(id);							//we can call it like this
 			cmd.val("");
 		}
 		cmd.focus();
