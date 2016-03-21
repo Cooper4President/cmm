@@ -23,13 +23,36 @@ define([ //list of dependencies to load for this module
 
 		var container = $("#"+chatId).find('.chat-container');
 		//match the -- delimiter to find all commands in the input
+
+
 		if(_.includes(inp , '--')){
 			//get all space seperated words
-			var commands = _.split(inp, ' ');
-			_.pull(commands, "");
+			var words = _.split(inp, ' ');
+
+			//remove blank entries of array created by multiple spaces
+			_.pull(words, "");
+
+
+			var commands = [];
+			for(i=0; i<words.length; i++){
+				int cmdCount = 0;
+				var word = words[i];
+				var cmd, arg;
+				if(_.startsWith(word,'--')){
+					cmd = words[i];
+					commands.push({'cmdName': cmd, 'argList' : []});
+					cmdCount++;
+				}
+				else if(_.startsWith(word, '&')){
+					arg = words[i];
+					commands[cmdCount]['argList'].push(arg);
+				}
+
+			}
+
 			//loop through to find commands
-			for(i=0;i<commands.length;i++){
-				var cmd = commands[i];
+			for(i=0;i<words.length;i++){
+				var cmd = words[i];
 				//match the command name, and execute command accordingly
 				if(_.startsWith(cmd, '--')){
 					name = _.replace(cmd, '--', '');
@@ -46,7 +69,7 @@ define([ //list of dependencies to load for this module
 						break;
 					case "color":
 						//color is next arguement
-						var color = commands[i+1];
+						var color = words[i+1];
 						if(color){
 							inp = _.replace(inp, color, ''); //replacing first arguement of color command
 							inp = inp.fontcolor(color);
@@ -58,7 +81,7 @@ define([ //list of dependencies to load for this module
 						cmd = "fontsize";
 					case "fontsize":
 						//size is next arguement
-						var size = commands[i+1];
+						var size = words[i+1];
 						if(size) {
 							inp = _.replace(inp, size, ''); //replacing first arguement of font command
 							inp = inp.fontsize(size);
@@ -85,7 +108,7 @@ define([ //list of dependencies to load for this module
 						cmd = "picture";
 					case "picture":
 						//url is next arguement
-						var imgUrl = commands[i+1];
+						var imgUrl = words[i+1];
 						if(imgUrl){
 							//this is how you manually store data for the pictue
 							envelope.image = {
