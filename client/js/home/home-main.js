@@ -1,5 +1,5 @@
-define(['index-events'],function(events){
+define(['login'],function(login){
 	return function(){
-		events.init();
+		login.init();
 	}
 });
