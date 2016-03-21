@@ -1,52 +1,3 @@
-/*
-	chat.js houses all the cmm website's interactive elements, such as chat windows, menu options, etc...
-	Here is a quick guide to some useful globals and methods
-
-
-######################~GLOBALS~######################
-
-	chatInfo.log: holds all messages of each chat window
-
-	messagengerCount: number of chat windows on the screen currently
-
-	var user: user of current client
-
-######################~METHODS~######################
-
-	function appendMessenger(rec)
-		Description: appends a messenger to the messenger container
-			rec: Array of receivers the the messenger will be sending to.
-			return: id of the new chat window (no # attatched);
-
-	function updateChat(chatId, value)
-		Description: updates chat container of associated chat window
-			chatId: id of the chat window you are posting to (no # attatched)
-			value: string of message you are posting
-
-	function updateChatLog(chatId[, value])
-		Description: updates the chat log (chatInfo.log) with the chatId if it is not currently in the log, if you want to
-		update the messeges, simply supply the chatId and the message you want to append. If the chatInfo.log was found, it will
-		append the message (if any) and return the object at the chat id.
-			chatId: chat id of log entry (no # attatched)
-			value: (optional) message you wish to append to log entry
-			return: object associated with chatId
-
-	function submit(chatId, value)
-		Description: like updateChat, but also updates the Log and parses the value as a command instead of a raw string
-			chatId: id of the chat window you are posting to (no # attatched)
-			value: string of message you are posting
-
-	function getHelp(chatId)
-		Description: posts the help document on chat window
-			chatId: id of chat window you want to post to (no # attatched)
-
-	function getTodaysDate()
-		Description: returns today's date
-
-*/
-
-
-
 define([
 	'jquery', 
 	'lodash', 
@@ -57,50 +8,7 @@ define([
 	'./send',
 	'autogrow'
 ], function($, _, user, messengerTemplate, chatSocket, chatInfo, send){
-	return {
-		//handles down arrow functionality
-		downArrowHandler: function(chatId){
-			_(chatInfo.log).each(function(entry){
-				if(entry.id === chatId){
-					var cmd = $("#"+entry.id).find('.cmd');
-					var index = entry.currentMessage;
-		//handles down arrow functionality
-					if(index > -1){
-						if(index === 0) cmd.val(saveCmd);
-						else cmd.val(entry.messages[index-1]);
-						entry.currentMessage--;
-					}
-					return;
-				}
-			});
-		},
-
-		//handles up arrow functionality
-		upArrowHandler: function(chatId){
-			_(chatInfo.log).each(function(entry){
-				if(entry.id === chatId){
-					var cmd = $("#"+entry.id).find('.cmd');
-					var index = entry.currentMessage;
-					if(index < entry.messages.length-1){
-						if(index === -1) saveCmd = cmd.val();
-						cmd.val(entry.messages[index+1]);
-						entry.currentMessage++;
-					}
-					return;
-				}
-			}); 
-		},
-		//handles enter key functionality
-		enterKeyHandler: function(chatId){
-			send(chatId);
-			_(chatInfo.log).each(function(entry){
-				if(entry.id === chatId) {
-					entry.currentMessage = -1;
-					return;
-				}
-			});
-		},
-
+	var api = {
 		//refreshes the chat for style bugs
 		refreshChats: function(){
 			$('.messenger-container').css({
@@ -150,7 +58,7 @@ define([
 				html.find('.cmd').focus().autogrow();
 
 				//initializes resize event
-				this.initResizableChat(chatId);
+				initResizableChat(chatId);
 
 				//handles close button
 				html.find(".remove-messenger").on("click",function(clickEvent){
@@ -161,25 +69,24 @@ define([
 				});
 
 				//keydown fucntions for command line
-				var saveCmd;
 			    html.find('.cmd').keydown(function(e) {
 					var chatId = $(this).closest('.chat').attr('id');
 					//enter key submit
 				    if (e.keyCode === 13) {
 						e.preventDefault();
-						curr.enterKeyHandler(chatId); 
+						enterKeyHandler(chatId); 
 				    }
 
 				    //up arrow to go through chat log
 				    if(e.keyCode === 38){
 				    	e.preventDefault();
-						curr.upArrowHandler(chatId);
+						upArrowHandler(chatId);
 				    }
 
 				    //down arrow to go through chat log
 				    if(e.keyCode === 40){
 				    	e.preventDefault();
-		 				curr.downArrowHandler(chatId);
+		 				downArrowHandler(chatId);
 				    }
 				});
 				return chatId;
@@ -187,27 +94,71 @@ define([
 				alert('a username is invalid or this chat window already exsists');
 				return null;
 			}
-		},
-
-		//initializes the resize event
-		initResizableChat: function(chatId){
-			//fixes width bug
-			this.refreshChats();
-
-			//initializes resizable chat
-			var container;
-			$("#"+chatId).resizable({
-				handles: 'e',
-				minWidth: 250,
-				start: function(event, ui){
-					container = ui.element.width() + ui.element.next().width();
-				},
-				resize: function(event, ui){
-					ui.element.next().width(container - ui.element.width());
-					$('.img').width(0.8*$('.img').closest('.chat-container').width());
-				}
-			});
 		}
 	}
+	var saveCmd;
+	//handles down arrow functionality
+	function downArrowHandler(chatId){
+		_(chatInfo.log).each(function(entry){
+			if(entry.id === chatId){
+				var cmd = $("#"+entry.id).find('.cmd');
+				var index = entry.currentMessage;
+				//handles down arrow functionality
+				if(index > -1){
+					if(index === 0) cmd.val(saveCmd);
+					else cmd.val(entry.messages[index-1]);
+					entry.currentMessage--;
+				}
+				return;
+			}
+		});
+	}
 
+	//handles up arrow functionality
+	function upArrowHandler(chatId){
+		_(chatInfo.log).each(function(entry){
+			if(entry.id === chatId){
+				var cmd = $("#"+entry.id).find('.cmd');
+				var index = entry.currentMessage;
+				if(index < entry.messages.length-1){
+					if(index === -1) saveCmd = cmd.val();
+					cmd.val(entry.messages[index+1]);
+					entry.currentMessage++;
+				}
+				return;
+			}
+		}); 
+	}
+	//handles enter key functionality
+	function enterKeyHandler(chatId){
+		send(chatId);
+		_(chatInfo.log).each(function(entry){
+			if(entry.id === chatId) {
+				entry.currentMessage = -1;
+				return;
+			}
+		});
+	}
+
+	//initializes the resize event
+	function initResizableChat(chatId){
+		//fixes width bug
+		api.refreshChats();
+
+		//initializes resizable chat
+		var container;
+		$("#"+chatId).resizable({
+			handles: 'e',
+			minWidth: 250,
+			start: function(event, ui){
+				container = ui.element.width() + ui.element.next().width();
+			},
+			resize: function(event, ui){
+				ui.element.next().width(container - ui.element.width());
+				$('.img').width(0.8*$('.img').closest('.chat-container').width());
+			}
+		});
+	}
+
+	return api;
 });
