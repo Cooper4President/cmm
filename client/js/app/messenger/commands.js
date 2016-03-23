@@ -16,7 +16,9 @@ define([ //list of dependencies to load for this module
 	//this returns a function, as this is the only function that this modele requires, it can also be anything that
 	//can be returned (such as an object, which most modules in this case return)
 
-	return function(chatId ,inp){ 
+	var error = false;
+
+	return function(chatId, inp){ 
 		//this is the main object to store command data
 		var envelope = {
 			username: user.name
@@ -27,33 +29,30 @@ define([ //list of dependencies to load for this module
 
 		//match the -- delimiter to find all commands in the input
 		if(_.includes(inp , '--')){
-			//Declare an array for the input
-			inpArray = [];
-			inpArray.push(inp);
-
 			//get all space seperated words
 			var words = _.split(inp, ' ');
 			//remove any blank entries in words created by multiple spaces
 			_.pull(words, "");
 
 			var commands = parseCommands(words);
-
 			//Iterate through commands and arguments
-			for(i=0; i<commands.length; i++){
+			for(var i=0; i < commands.length; i++){
 				cmdInfo = commands[i];
 
 				//Handle each command
 				switch(cmdInfo.cmdName){
 					case "--color":
-						color = setFontColor(words, cmdInfo);
-						container.append(color);
-						inp = inp.fontcolor(color);
+						inp = setFontColor(words, cmdInfo, inp);
+						alert(inp);
+						if(error){
+							error = false;
+							return{error: inp};
+						}
 						break;
-				default:
-					var err = "Error: Command " + cmdInfo.cmdName.bold() + " not found. Type --help for help";
-					return {error: err};
-					break;
-
+					default:
+						var err = "Command " + cmdInfo.cmdName + " not found. Type --help for help";
+						return {error: err};
+						break;
 				}
 			}
 			inp = _.trim(inp);
@@ -185,7 +184,7 @@ define([ //list of dependencies to load for this module
 
 	function parseCommands(words){
 		var commands = [];
-		for(i=0; i<words.length; i++){
+		for(var i=0; i<words.length; i++){
 			cmdCount = 0;
 			var word = words[i];
 			var cmd, arg;
@@ -196,17 +195,56 @@ define([ //list of dependencies to load for this module
 			}
 			else if(_.startsWith(word, '&')){
 				arg = words[i];
-				commands[cmdCount]['argList'].push(arg);
+				if(cmdCount){
+					commands[cmdCount-1]['argList'].push(arg);
+				}		
 			}
 		}
 		return commands;
 	}
 
-	function setFontColor(words, cmdInfo){
-		i = _.indexOf(words, cmdInfo.cmdName) + cmdInfo.argList.length + 1;
-		color = words[i];
-		return color;
+	function setFontColor(words, cmdInfo, inp){
+		var colorIndex = _.indexOf(words, cmdInfo.cmdName) + cmdInfo.argList.length + 1;
+
+		color = words[colorIndex];
+
+		if(colorIndex+1 == words.length-1){
+			targetStr = words[colorIndex+1];
+		}
+		else{
+			startWord = words[colorIndex+1];
+			endWord = words[words.length-1];
+			regex = new RegExp(startWord + '.*' + endWord);
+			targetStr = inp.match(regex);	
+		}
+		
+		inp = inp.replace(targetStr, "<font color=\"" + color + "\">" + targetStr + "</font>");
+
+		inp = inp.replace(color, '');
+		words.splice(colorIndex, 1);
+		inp = cleanupInp(cmdInfo, inp);
+		words = cleanupWords(cmdInfo, words);
+		
+		return inp;
 	}
+
+	//function to remove command and arguments from the message input
+	function cleanupInp(cmdInfo, inp){
+		inp = inp.replace(cmdInfo.cmdName, '');
+		for(var i=0; i<cmdInfo.argList.length; i++){
+			inp = inp.replace(cmdInfo.argList[i], '');
+		}
+		return inp;
+	}
+
+	function cleanupWords(cmdInfo, words){
+		words.splice(words.indexOf(cmdInfo.cmdName), 1);
+		for(var i=0; i<cmdInfo.argList.length; i++){
+			words.splice(words.indexOf(cmdInfo.argList[i]), 1);
+		}
+		return words;
+	}
+
 });
 
 //parses command and updates the chat
