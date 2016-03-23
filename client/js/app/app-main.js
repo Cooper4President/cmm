@@ -5,11 +5,10 @@ define([
 	'menu/receiver', 
 	'messenger/chat',
 	'messenger/chat-sockets',
-	'menu/menu'
+	'menu/menu',
 ], function($, _, menuEvent, receiver, chat, chatSocket, menu){
 	return function(){
 			//main function
-
 			menuEvent.hoverEvent(menuEvent.menuOptions);
 	        //send authentication token to server
 	        chatSocket.sendAuthToken();
@@ -23,8 +22,8 @@ define([
 			menu.initMenu();
 
 			//updates chat windows on resize
-			$(window).on("resize", function(event){
+			/*$(window).on("resize", function(event){
 				if(event.target === window) chat.refreshChats();
-			});
+			});*/
 		}
 });

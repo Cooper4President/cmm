@@ -29,9 +29,9 @@ define([
 			    if (e.keyCode == 13) {
 			    	e.preventDefault();
 			    	//pulls receiver value and tests if valid
-			    	chat.refreshChats();
+			    	//chat.refreshChats();
 			    	var rec = $('.receiver').val();
-					var noErr = chat.appendMessenger(parseReceiver(rec)); //note: focus diverts to new chat
+					var noErr = chat(parseReceiver(rec)); //note: focus diverts to new chat
 					if(noErr) menuEvent.hideReceiverField();
 			    }
 			    //esc out of receiver window

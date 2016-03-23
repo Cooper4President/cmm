@@ -4,7 +4,7 @@ define(['jquery', './menu-events', './receiver', 'jqueryui'], function($, menuEv
 		initMenu: function(){
 			var cur = this;
 			//initializes sortable chat windows
-			$('.messenger-container').sortable({axis:'x'});
+			//$('.messenger-container').sortable({axis:'x'});
 
 		    //delgate for menu hover
 		    $(".menu").hover(function(event){
