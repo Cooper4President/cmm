@@ -19,7 +19,7 @@ define([
 			'width': $(window).width()
 		});
 
-		$('.chat-elements').each(function(){
+		$('.chat-element').each(function(){
 			var left = parseInt($(this).prev().css('left')) + $(this).prev().width();
 			$(this).css({
 				'width': $(window).width()/chatInfo.count,
@@ -150,7 +150,7 @@ define([
 
 			//keydown fucntions for command line
 		    html.find('.cmd').keydown(function(e) {
-				var chatId = $(this).closest('.chat').attr('id');
+				var chatId = $(this).closest('.chat-element').attr('id');
 				//enter key submit
 			    if (e.keyCode === 13) {
 					e.preventDefault();

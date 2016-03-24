@@ -2,9 +2,9 @@ define(['jquery'], function($){
 	return function(id){
 		var isDrag = false;
 		var cont;
-		var elm = $('#'+id).closest('.chat-elements');
+		var elm = $('#'+id);
 		var win = $(window).width();
-		$('#'+id).next().mousedown(function(event){
+		$('#'+id).find('.resize-bar').mousedown(function(event){
 			isDrag = true;
 			cont = elm.width() + elm.next().width();
 		});
