@@ -11,7 +11,7 @@ define([
 
 	//jquery plug-ins
 	'autogrow'
-], function($, _, user, messenger, chatSocket, chatInfo, send, resize, sort){
+	], function($, _, user, messenger, chatSocket, chatInfo, send, resize, sort){
 	//refreshes the chat for style bugs
 	function refreshChats(){
 		$('.messenger-container').css({

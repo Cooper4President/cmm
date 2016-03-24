@@ -5,7 +5,8 @@ define([
 	'./menu-info',
 
 	//jquery plug ins
-'jqueryui'], function($, _, menuAnimations, menuInfo){
+	'jqueryui'
+	], function($, _, menuAnimations, menuInfo){
 	return {
 
 		//toggles delay on menu options

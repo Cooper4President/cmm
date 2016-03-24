@@ -5,7 +5,7 @@ define([
 	'messenger/chat',
 	'messenger/chat-sockets',
 	'menu/menu',
-], function($, _, receiver, chat, chatSocket, menu){
+	], function($, _, receiver, chat, chatSocket, menu){
 	//main function
 	return function(){
         //send authentication token to server

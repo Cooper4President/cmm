@@ -5,7 +5,7 @@ define([
 	'messenger/chat-info', 
 	'messenger/chat',
 	'misc/misc'
-], function($, _, menuEvent, chatInfo, chat, misc){
+	], function($, _, menuEvent, chatInfo, chat, misc){
 	//parses raw text of receiver field
 	function parseReceiver(recRaw){
 		if(recRaw === "") return null;

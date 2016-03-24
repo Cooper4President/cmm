@@ -5,7 +5,7 @@ define([
 
 	//jquery plug ins
 	'jqueryui'
-], function($, menuEvents){
+	], function($, menuEvents){
 	return{
 		//classes of menu options (MUST BE ORDERED LIST OF CURRENT MENU OPTION LAY OUT)
 		initMenu: function(){

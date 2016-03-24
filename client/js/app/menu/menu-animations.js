@@ -3,7 +3,7 @@ define([
 
 	//jquery plug in
 	'jqueryui'
-], function($){
+	], function($){
 	return {
 		showAnimation: function(cl){
 			var showMargin = 0;

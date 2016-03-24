@@ -5,7 +5,7 @@ define([
 	'hbs!templates/message', 
 	'./commands', //dependency that runs commands
 	'./chat-sockets'
-], function($, _, chatInfo, message, command , socket){ //command first refrenced as arguemnt to this module
+	], function($, _, chatInfo, message, command , socket){ //command first refrenced as arguemnt to this module
 	//define private function outside of return like this
 
 	//simple get receivers function
