@@ -7,10 +7,11 @@ define([
 	'./chat-info',
 	'./send',
 	'./resize',
+	'./sort',
 
 	//jquery plug-ins
 	'autogrow'
-], function($, _, user, messenger, chatSocket, chatInfo, send, resize){
+], function($, _, user, messenger, chatSocket, chatInfo, send, resize, sort){
 	//injects messenger on addition
 	//refreshes the chat for style bugs
 	function refreshChats(){
@@ -137,6 +138,7 @@ define([
 			//initializes resize event
 			//initResizableChat(chatId);
 			resize(chatId);
+			sort(chatId);
 
 			//handles close button
 			html.find(".remove-messenger").on("click",function(clickEvent){
