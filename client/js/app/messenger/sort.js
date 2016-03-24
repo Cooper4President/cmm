@@ -1,8 +1,11 @@
 define(['jquery'], function($){
+	//enables sorting chat window
 	return function (id){
+		//checks drag
 		var isDrag = false;
 		var dist, startLeft;
 		var call = false;
+		//drag delegate
 		$('#'+id).find('.chat-head').mousedown(function (event){
 			if(call) call = false;
 			if(!call) call = true;
@@ -11,9 +14,9 @@ define(['jquery'], function($){
 			dist = event.pageX - parseInt(elm.css('left'));
 			startLeft = parseInt(elm.css('left'));
 		});
+		//sorts windows based on current window position
 		$('body').mousemove(function (event){
 			if(isDrag){
-				console.log(id);
 				var elm = $('#'+id);
 				var margin = event.pageX - dist;
 				elm.css('left', margin).css('z-index', 1);
@@ -23,7 +26,6 @@ define(['jquery'], function($){
 				if(event.pageX < leftBound){
 					if(!(event.pageX > startLeft + elm.prev().width())){
 						var tempLeft = parseInt(elm.prev().css('left'));
-						//var diff = Math.abs(elm.width() - elm.next().width());
 						elm.prev().css('left', tempLeft + elm.width());
 						startLeft = startLeft - elm.prev().width();
 						elm.after(elm.prev());

@@ -1,29 +1,25 @@
 define([
 	'jquery', 
 	'lodash', 
-	'menu/menu-events', 
 	'menu/receiver', 
 	'messenger/chat',
 	'messenger/chat-sockets',
 	'menu/menu',
-], function($, _, menuEvent, receiver, chat, chatSocket, menu){
+], function($, _, receiver, chat, chatSocket, menu){
+	//main function
 	return function(){
-			//main function
-			menuEvent.hoverEvent(menuEvent.menuOptions);
-	        //send authentication token to server
-	        chatSocket.sendAuthToken();
-			//add messenger handler
-			menu.initAddMessenger();
+        //send authentication token to server
+        chatSocket.sendAuthToken();
+		//add messenger handler
+		menu.initAddMessenger();
 
-			//receiver handler
-			receiver.initReceiver();
+		//receiver handler
+		receiver();
 
-			//init menu button
-			menu.initMenu();
+		//hover handler
+		menu.initHoverEvents();
 
-			//updates chat windows on resize
-			/*$(window).on("resize", function(event){
-				if(event.target === window) chat.refreshChats();
-			});*/
-		}
+		//init menu button
+		menu.initMenu();
+	}
 });

@@ -12,7 +12,6 @@ define([
 	//jquery plug-ins
 	'autogrow'
 ], function($, _, user, messenger, chatSocket, chatInfo, send, resize, sort){
-	//injects messenger on addition
 	//refreshes the chat for style bugs
 	function refreshChats(){
 		$('.messenger-container').css({
@@ -94,6 +93,7 @@ define([
 		});
 	}
 
+	//injects messenger on addition
 	return function(rec){
 		if(chatInfo.count === 3){
 			alert("max number of windows")

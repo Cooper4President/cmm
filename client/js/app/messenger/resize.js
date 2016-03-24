@@ -1,9 +1,14 @@
 define(['jquery'], function($){
+	//enables resizable chat window
 	return function(id){
+		//detects drag
 		var isDrag = false;
+		//size of current container and next;
 		var cont;
+		//current element
 		var elm = $('#'+id);
-		var win = $(window).width();
+
+		//drag delegate
 		$('#'+id).find('.resize-bar').mousedown(function(event){
 			isDrag = true;
 			cont = elm.width() + elm.next().width();

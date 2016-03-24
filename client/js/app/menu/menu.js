@@ -1,4 +1,11 @@
-define(['jquery', './menu-events', './receiver', 'jqueryui'], function($, menuEvent){
+define([
+	'jquery', 
+	'./menu-events', 
+	'./receiver', 
+
+	//jquery plug ins
+	'jqueryui'
+], function($, menuEvents){
 	return{
 		//classes of menu options (MUST BE ORDERED LIST OF CURRENT MENU OPTION LAY OUT)
 		initMenu: function(){
@@ -13,12 +20,12 @@ define(['jquery', './menu-events', './receiver', 'jqueryui'], function($, menuEv
 
 			//delegates menu option enter
 			$(".menu").on("click", function(event){
-				menuEvent.showMenu();
+				menuEvents.showMenu();
 			});
 
 			//delegates menu option escape
 			$(".messenger-container").mouseenter(function(event){
-				menuEvent.hideMenu();
+				menuEvents.hideMenu();
 			});		
 		},
 		initAddMessenger: function(){
@@ -26,8 +33,11 @@ define(['jquery', './menu-events', './receiver', 'jqueryui'], function($, menuEv
 		    	$(this).tooltip("disable").unbind("mouseenter").css({
 		    		paddingLeft: 10
 		    	});
-		    	menuEvent.showReceiverField();
+		    	menuEvents.showReceiverField();
 			});
+		},
+		initHoverEvents: function(){
+			menuEvents.hoverStart();
 		}
 	}
 });

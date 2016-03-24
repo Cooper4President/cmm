@@ -1,91 +1,27 @@
-define(['jquery','lodash','jqueryui'], function($, _){
+define([
+	'jquery',
+	'lodash',
+	'./menu-animations',
+	'./menu-info',
+
+	//jquery plug ins
+'jqueryui'], function($, _, menuAnimations, menuInfo){
 	return {
-		menuOptions: ["add-messenger", "settings", "logout"],
-		//delegates show animations for menu options
-		showAnimations: function(cl){
-			var showMargin = 0;
-			var padding = 350;
-			var showStyle = {
-				left: showMargin,
-				paddingRight: padding
-			}
-			if(Array.isArray(cl)){
-				_(cl).each(function(cls){
-					$("."+cls).css(showStyle);
-				});
-			}else{
-				$("."+cl).css(showStyle);
-			}	
-		},
 
-		//delegates hide animations for menu options
-		hideAnimations: function(cl){
-			var hideMargin = -55;
-			var hideStyle = {
-				left: hideMargin,
-				paddingRight: 0
-			}
-			if(Array.isArray(cl)){
-				_(cl).each(function(cls){
-					$("."+cls).css(hideStyle);
-				});
-			}else{
-				$("."+cl).css(hideStyle);	
-			}
-		},
-		//delegates hover animations of menu options
-		hoverEvent: function(cl){
-			var hoverDist = 5;
-			var hoverDist = 18;
-			var normDist = 10;
-
-			var toolTipOptions = {
-				track: true,
-				show: {
-					delay: 750,
-					effect: "fade"
-				},
-				hide: {
-					effect: "none"
-				}
-			}
-			if(Array.isArray(cl)){
-				_(cl).each(function(cls){
-					$("."+cls).tooltip(toolTipOptions).mouseenter(function(event){
-						$(this).css({
-							paddingLeft: hoverDist
-						})
-					}).mouseout(function(event){
-						$(this).css({
-							paddingLeft: normDist
-						});
-					}).tooltip("enable");		
-				});
-			}else{
-				$("."+cl).tooltip(toolTipOptions).mouseenter(function(event){
-					$(this).css({
-						paddingLeft: hoverDist
-					})
-				}).mouseout(function(event){
-					$(this).css({
-						paddingLeft: normDist
-					}).tooltip("enable");
-				});
-			}
-		},
 		//toggles delay on menu options
 		toggleDelay: function(){
-			var delayOps = _.slice(this.menuOptions, 1);
+			var delayOps = _.slice(menuInfo.options, 1);
 			_(delayOps).each(function(cls){
 				$("."+cls).toggleClass(cls+"-D");
 			});
 		},
+
 		//shows options menu
 		showMenu: function(){
 			$(".menu").css({
 				top: -$(".menu").height()-5
 			});
-			this.showAnimations(this.menuOptions);
+			menuAnimations.showAnimation(menuInfo.options);
 
 			curr = this
 			setTimeout(function(){
@@ -103,14 +39,14 @@ define(['jquery','lodash','jqueryui'], function($, _){
 			$(".menu").css({
 				top: 0
 			});
-			this.hideAnimations(this.menuOptions);
+			menuAnimations.hideAnimation(menuInfo.options);
 
 			this.hideReceiverField();
 		},
 		//hides receiver field
 		hideReceiverField: function(){
 			//give event delegate back to add messenger button
-		 	this.hoverEvent("add-messenger");
+		 	menuAnimations.hoverAnimation("add-messenger");
 
 			$(".receiver").css({
 				borderColor: "transparent",
@@ -130,6 +66,11 @@ define(['jquery','lodash','jqueryui'], function($, _){
 		 		zIndex: 1,
 		 		borderWidth: 3
 		 	}).focus();
+		},
+
+		//start the hover animations for all options
+		hoverStart: function(){
+			menuAnimations.hoverAnimation(menuInfo.options);
 		}
 	}	
 });

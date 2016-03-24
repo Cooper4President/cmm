@@ -23,13 +23,11 @@ define([
 		if(found) return null;
 		else return recList.sort();
 	}
-	return{
-		initReceiver: function(){
+	return function(){
 			$(".receiver").keydown(function(e) {
 			    if (e.keyCode == 13) {
 			    	e.preventDefault();
 			    	//pulls receiver value and tests if valid
-			    	//chat.refreshChats();
 			    	var rec = $('.receiver').val();
 					var noErr = chat(parseReceiver(rec)); //note: focus diverts to new chat
 					if(noErr) menuEvent.hideReceiverField();
@@ -41,5 +39,4 @@ define([
 			    }
 		 	}).autogrow();
 		}
-	}
 });
