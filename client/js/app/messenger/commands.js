@@ -6,12 +6,12 @@
 define([ //list of dependencies to load for this module
 	'jquery', //first arguement $
 	'lodash',//second arguement _
-	'misc/date', //third aguement getDat
+	'misc/date', //third aguement date
 	'misc/help', //etc...
-	'./chat-info', 
+	'./chatInfo', 
 	'hbs!templates/message',
 	'misc/user'
-	], function($, _, getDate, help, chatInfo, message, user){ //references to the modules in order of dependencies
+	], function($, _, date, help, chatInfo, message, user){ //references to the modules in order of dependencies
 	//when you return something in a module, you are simply stating what are the public functions of this module
 	//this returns an function, as this is the only function that this modele requires, it can also be anything that
 	//can be returned (such as an object, which most modules in this case return)
@@ -38,8 +38,8 @@ define([ //list of dependencies to load for this module
 						help(chatId);
 						break;
 					case "date":
-						var date = getDate;
-						inp = _.replace(inp, cmd, date); //replacing date command input with date
+						var today = date;
+						inp = _.replace(inp, cmd, today); //replacing date command input with date
 						break;
 					case "clear":
 						container.empty();

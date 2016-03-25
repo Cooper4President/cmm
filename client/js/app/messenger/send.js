@@ -1,11 +1,11 @@
 define([
 	'jquery' , 
 	'lodash', 
-	'./chat-info', 
+	'./chatInfo', 
 	'hbs!templates/message', 
 	'./commands', //dependency that runs commands
-	'./chat-sockets'
-	], function($, _, chatInfo, message, command , socket){ //command first refrenced as arguemnt to this module
+	'./chatSockets'
+	], function($, _, chatInfo, message, commands , chatSockets){ //command first refrenced as arguemnt to this module
 	//define private function outside of return like this
 
 	//simple get receivers function
@@ -32,8 +32,8 @@ define([
 			//TEMPORARY: the array of receiving usernames is currently set to null
 			var testing = getReceivers(id);
 			//send chat message to server
-			socket.sendChatMsg(id, testing, inp);
-			container.append(message(command(id, inp))); //since the command module only returns a funciton 
+			chatSockets.sendChatMsg(id, testing, inp);
+			container.append(message(commands(id, inp))); //since the command module only returns a funciton 
 			checkScrollbar(id);							//we can all it like this
 			cmd.val("");
 		}

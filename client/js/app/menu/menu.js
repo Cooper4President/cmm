@@ -1,6 +1,6 @@
 define([
 	'jquery', 
-	'./menu-events', 
+	'./menuEvents', 
 	'./receiver', 
 
 	//jquery plug ins

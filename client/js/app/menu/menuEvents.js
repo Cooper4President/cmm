@@ -1,8 +1,8 @@
 define([
 	'jquery',
 	'lodash',
-	'./menu-animations',
-	'./menu-info',
+	'./menuAnimations',
+	'./menuInfo',
 
 	//jquery plug ins
 	'jqueryui'

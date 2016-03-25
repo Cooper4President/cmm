@@ -16,6 +16,6 @@ requirejs.config({
     }
 });
 
-requirejs(['app-main'], function(main){
+requirejs(['appMain'], function(main){
    main();
 });

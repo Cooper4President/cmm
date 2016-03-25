@@ -1,11 +1,11 @@
 define([
 	'jquery', 
 	'lodash', 
-	'./menu-events', 
-	'messenger/chat-info', 
+	'./menuEvents', 
+	'messenger/chatInfo', 
 	'messenger/chat',
 	'misc/misc'
-	], function($, _, menuEvent, chatInfo, chat, misc){
+	], function($, _, menuEvents, chatInfo, chat, misc){
 	//parses raw text of receiver field
 	function parseReceiver(recRaw){
 		if(recRaw === "") return null;
@@ -30,12 +30,12 @@ define([
 			    	//pulls receiver value and tests if valid
 			    	var rec = $('.receiver').val();
 					var noErr = chat(parseReceiver(rec)); //note: focus diverts to new chat
-					if(noErr) menuEvent.hideReceiverField();
+					if(noErr) menuEvents.hideReceiverField();
 			    }
 			    //esc out of receiver window
 			    else if(e.keyCode == 27){
 			    	e.preventDefault();
-			    	menuEvent.hideReceiverField();
+			    	menuEvents.hideReceiverField();
 			    }
 		 	}).autogrow();
 		}

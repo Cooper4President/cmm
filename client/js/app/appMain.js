@@ -3,13 +3,13 @@ define([
 	'lodash', 
 	'menu/receiver', 
 	'messenger/chat',
-	'messenger/chat-sockets',
+	'messenger/chatSockets',
 	'menu/menu',
-	], function($, _, receiver, chat, chatSocket, menu){
+	], function($, _, receiver, chat, chatSockets, menu){
 	//main function
 	return function(){
         //send authentication token to server
-        chatSocket.sendAuthToken();
+        chatSockets.sendAuthToken();
 		//add messenger handler
 		menu.initAddMessenger();
 

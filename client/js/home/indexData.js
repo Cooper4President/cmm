@@ -1,11 +1,11 @@
-define(['jquery', './index-sockets'], function($, socket){
+define(['jquery', './indexSockets'], function($, indexSockets){
 	return {
 		//changes URL
 		storeLoginData: function(){
 			var username = $(".username").val();
 			var password = $(".password").val();
 			if(!/\s+/g.test(username)){ //test for valid user name
-				socket.sendUser(username, password);
+				indexSockets.sendUser(username, password);
 			}else{
 				alert("Username Invalid");
 			}
@@ -15,7 +15,7 @@ define(['jquery', './index-sockets'], function($, socket){
 			var email = $('.new-email').val(); //create account with email??
 			var pass = $('.new-pass').val();
 			if(!/\s+/g.test(user)){ //test for valid user name
-				socket.createAccount(user, pass);
+				indexSockets.createAccount(user, pass);
 			}else{
 				alert("Username Invalid");
 			}		

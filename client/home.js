@@ -19,6 +19,6 @@ requirejs.config({
     }
 });
 
-requirejs(['home-main'], function(main){
+requirejs(['homeMain'], function(main){
    main();
 });

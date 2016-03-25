@@ -1,4 +1,4 @@
-define(['socket_io', './animations'], function(io, animation){
+define(['socket_io', './animations'], function(io, animations){
 
 	var socket = io();
 
@@ -6,7 +6,7 @@ define(['socket_io', './animations'], function(io, animation){
 	//sent by server when attempt to create new user account succeeds
 	socket.on('account create success', function(){
 		$('.login-prompt').html("Account successfully created!"); //change login prompt
-		animation.center('login').top('sign-up'); // show login screen
+		animations.center('login').top('sign-up'); // show login screen
 	});
 
 	//sent by server when attempt to create neww user account fails

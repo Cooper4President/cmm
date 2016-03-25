@@ -1,19 +1,19 @@
-define(['jquery', './index-data', './animations'], function($, data, animation){
+define(['jquery', './indexData', './animations'], function($, indexData, animations){
 	return function(){
 		//switches to sign up screen
 		$('.sign-up-re').on('click', function(event){
-			animation.bottom('login').center('sign-up');
+			animations.bottom('login').center('sign-up');
 		});		
 		//submit button event
 		$(".log").on("click",function(){
-			data.storeLoginData();
+			indexData.storeLoginData();
 		});
 
 		//delegate for enter key
 		$(".username, .password").keydown(function(e) {
 		    if (e.which === 13) {
 				e.preventDefault();
-				data.storeLoginData();
+				indexData.storeLoginData();
 		    }
 		});
 	}

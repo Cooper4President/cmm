@@ -3,15 +3,14 @@ define([
 	'lodash', 
 	'misc/user', 
 	'hbs!templates/messenger', 
-	'./chat-sockets',
-	'./chat-info',
+	'./chatInfo',
 	'./send',
 	'./resize',
 	'./sort',
 
 	//jquery plug-ins
 	'autogrow'
-	], function($, _, user, messenger, chatSocket, chatInfo, send, resize, sort){
+	], function($, _, user, messenger, chatInfo, send, resize, sort){
 	//refreshes the chat for style bugs
 	function refreshChats(){
 		$('.messenger-container').css({
@@ -19,7 +18,9 @@ define([
 		});
 
 		$('.chat-element').each(function(){
-			var left = parseInt($(this).prev().css('left')) + $(this).prev().width();
+			var left;
+			if($(this).prev().length > 0)left = parseInt($(this).prev().css('left')) + $(this).prev().width();
+			else left = 0;
 			$(this).css({
 				'width': $(window).width()/chatInfo.count,
 				'left': left
