@@ -7,10 +7,10 @@ define([
 	'./send',
 	'./resize',
 	'./sort',
-
+	'./queueMessenger',
 	//jquery plug-ins
 	'autogrow'
-	], function($, _, user, messenger, chatInfo, send, resize, sort){
+	], function($, _, user, messenger, chatInfo, send, resize, sort, queueMessenger){
 	//refreshes the chat for style bugs
 	function refreshChats(){
 		$('.messenger-container').css({
@@ -96,7 +96,7 @@ define([
 
 	//injects messenger on addition
 	return function(rec){
-		if(chatInfo.count === 3){
+		if(chatInfo.count === chatInfo.chatsPerWindow){
 			alert("max number of windows")
 			return null;
 		}
@@ -140,6 +140,7 @@ define([
 			//initResizableChat(chatId);
 			resize(chatId);
 			sort(chatId);
+			queueMessenger(chatId);
 
 			//handles close button
 			html.find(".remove-messenger").on("click",function(clickEvent){
