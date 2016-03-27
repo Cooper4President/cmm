@@ -7,16 +7,20 @@ define([
 	'./resize'
 	], function($, _, chatInfo, messenger, sort, resize){
 
+	var delay = 250;
+
 	function scaleToAdd(html){
 		$('.messenger-container').prepend(html);
-		var shrink = $(window).width() - html.width();
-		var scale = shrink/$(window).width();
+		var
+			shrink = $(window).width() - html.width(),
+			scale = shrink/$(window).width();
 		if(chatInfo.center.length > 0){
 			var
 				minW = parseInt(html.css('minWidth')),
 				widths = _.map(chatInfo.center, function(n){ return n.width()*scale }),
 				minCount = 0,
-				diff = 0;
+				diff = 0,
+				lft = html.width();
 			_.each(widths, function(ent, ind){
 				if(ent <= minW){
 					diff += minW - ent;
@@ -27,27 +31,19 @@ define([
 			var dist = diff/(widths.length - minCount);
 			if(dist){
 				_.each(widths, function(ent, ind){
-					if(ent !== minW){
-						widths[ind] -= dist;
-					}
+					if(ent !== minW) widths[ind] -= dist;
 				});
 			}
-			var lft = html.width();
 			_.each(chatInfo.center, function(elm, ind){
 				elm.animate({
 					width: widths[ind],
 					left: lft
-				});
+				}, delay);
 				lft += widths[ind];
 			});
-			html.animate({left: 0});
-			chatInfo.center.unshift(html);
-
-		}else{
-			html.animate({left: 0});
-			chatInfo.center.unshift(html);
 		}
-		//console.log(widths);
+		html.animate({left: 0}, delay);
+		chatInfo.center.unshift(html);
 	}
 
 	function shiftToAdd(html){

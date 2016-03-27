@@ -31,11 +31,6 @@ body{
     min-width: 250px;
 }
 
-.animate-element{
-    -webkit-transition:0.25s all;
-    transition: 0.25s all;
-}
-
 .resize-bar {
     cursor: e-resize;
     width: 10px;
@@ -90,6 +85,7 @@ body{
     /* margin-top: 39px; */
     vertical-align: middle;
     line-height: 55px;
+    -webkit-user-select: none;
 }
 
 .user-container{

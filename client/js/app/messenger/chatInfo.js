@@ -5,7 +5,7 @@ define(['lodash'], function(_){
 		left: [],
 		right: [],
 		count: 0,
-		chatsPerWindow: 4,
+		chatsPerWindow: 3,
 		defaultWidth: function(){
 			if(this.count){
 				if(this.count > this.chatsPerWindow) return $(window).width()/this.chatsPerWindow;
