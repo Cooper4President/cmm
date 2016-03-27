@@ -30,6 +30,12 @@ body{
     left: 0px;
     min-width: 250px;
 }
+
+.animate-element{
+    -webkit-transition:0.25s all;
+    transition: 0.25s all;
+}
+
 .resize-bar {
     cursor: e-resize;
     width: 10px;

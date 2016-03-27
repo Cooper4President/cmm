@@ -27,14 +27,18 @@ define([
 		var cmd = $(chatId).find('.cmd');
 		if(inp === undefined) var inp = cmd.val();
 		if(inp != ""){
+			//update chatlog with new message
 			chatInfo.updateChatLog(id, inp);
+
 			//send the message to the server
-			//TEMPORARY: the array of receiving usernames is currently set to null
 			var testing = getReceivers(id);
-			//send chat message to server
 			chatSockets.sendChatMsg(id, testing, inp);
-			container.append(message(commands(id, inp))); //since the command module only returns a funciton 
-			checkScrollbar(id);							//we can all it like this
+
+			//run message as a command and post it to respective chat window
+			container.append(message(commands(id, inp))); //since the command module only returns a funciton we call it like this
+			
+			//check scroll bar and clear field
+			checkScrollbar(id);							
 			cmd.val("");
 		}
 		cmd.focus();

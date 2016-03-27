@@ -5,13 +5,12 @@ define(['lodash'], function(_){
 		left: [],
 		right: [],
 		count: 0,
-		chatsPerWindow: 3,
+		chatsPerWindow: 4,
 		defaultWidth: function(){
 			if(this.count){
 				if(this.count > this.chatsPerWindow) return $(window).width()/this.chatsPerWindow;
 				else return $(window).width()/this.count;
-			};
-			else return $(window).width();
+			}else return $(window).width();
 		},
 
 		//updates chatlog, adds new entry if receiver not found

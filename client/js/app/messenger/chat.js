@@ -13,10 +13,7 @@ define([
 	], function($, _, user, messenger, chatInfo, send, resize, sort, queueMessenger){
 	//refreshes the chat for style bugs
 	function refreshChats(){
-		$('.messenger-container').css({
-			'width': $(window).width()
-		});
-
+		$('.messenger-container').width($(window).width());
 		$('.chat-element').each(function(){
 			var left;
 			if($(this).prev().length > 0)left = parseInt($(this).prev().css('left')) + $(this).prev().width();
@@ -70,26 +67,6 @@ define([
 			if(entry.id === chatId) {
 				entry.currentMessage = -1;
 				return;
-			}
-		});
-	}
-
-	//initializes the resize event
-	function initResizableChat(chatId){
-		//fixes width bug
-		refreshChats();
-
-		//initializes resizable chat
-		var container;
-		$("#"+chatId).resizable({
-			handles: 'e',
-			minWidth: 250,
-			start: function(event, ui){
-				container = ui.element.width() + ui.element.next().width();
-			},
-			resize: function(event, ui){
-				ui.element.next().width(container - ui.element.width());
-				$('.img').width(0.8*$('.img').closest('.chat-container').width());
 			}
 		});
 	}
