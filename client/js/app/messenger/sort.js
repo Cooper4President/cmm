@@ -1,14 +1,26 @@
-define(['jquery'], function($){
+define(['jquery', './chatInfo'], function($, chatInfo){
+
+	function swap(a, b){
+		var ai, bi;
+		_.each(chatInfo.center, function(elm, ind){
+			if(elm.is(a)){
+				ai = ind;
+			}else if(elm.is(b)){
+				bi = ind;
+			}
+		});
+
+		chatInfo.center[ai] = b;
+		chatInfo.center[bi] = a;
+	}
+
 	//enables sorting chat window
 	return function (id){
 		//checks drag
 		var isDrag = false;
 		var dist, startLeft;
-		var call = false;
 		//drag delegate
 		$('#'+id).find('.chat-head').mousedown(function (event){
-			if(call) call = false;
-			if(!call) call = true;
 			var elm = $('#'+id);
 			isDrag = true;
 			dist = event.pageX - parseInt(elm.css('left'));
@@ -28,6 +40,7 @@ define(['jquery'], function($){
 						var tempLeft = parseInt(elm.prev().css('left'));
 						elm.prev().css('left', tempLeft + elm.width());
 						startLeft = startLeft - elm.prev().width();
+						swap(elm, elm.prev());
 						elm.after(elm.prev());
 					}
 				}
@@ -37,6 +50,7 @@ define(['jquery'], function($){
 						var diff = elm.width() - elm.next().width();
 						elm.next().css('left', startLeft);
 						startLeft = startLeft + elm.next().width();
+						swap(elm, elm.next());
 						elm.before(elm.next());
 					}
 				}

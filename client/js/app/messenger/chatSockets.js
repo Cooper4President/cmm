@@ -3,7 +3,8 @@ define([
 	'socket_io',
 
 	//jquery plug ins
-	'jquery_cookie'], function($, io){
+	'jquery_cookie'
+	], function($, io){
 	var socket = io();
 
 

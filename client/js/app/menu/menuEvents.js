@@ -2,10 +2,7 @@ define([
 	'jquery',
 	'lodash',
 	'./menuAnimations',
-	'./menuInfo',
-
-	//jquery plug ins
-	'jqueryui'
+	'./menuInfo'
 	], function($, _, menuAnimations, menuInfo){
 	return {
 

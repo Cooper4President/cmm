@@ -7,15 +7,15 @@ define([
 	'./resize'
 	], function($, _, chatInfo, messenger, sort, resize){
 
+	//delay for animations
 	var delay = 250;
 
 	function scaleToAdd(html){
 		$('.messenger-container').prepend(html);
-		var
-			shrink = $(window).width() - html.width(),
-			scale = shrink/$(window).width();
 		if(chatInfo.center.length > 0){
 			var
+				shrink = $(window).width() - html.width(),
+				scale = shrink/$(window).width(),
 				minW = parseInt(html.css('minWidth')),
 				widths = _.map(chatInfo.center, function(n){ return n.width()*scale }),
 				minCount = 0,
@@ -47,7 +47,19 @@ define([
 	}
 
 	function shiftToAdd(html){
-		//todo overflow when chat count is above chats per window
+		html.width(_.last(chatInfo.center).width());
+		chatInfo.center[0].before(html);
+		chatInfo.right.unshift(_.last(chatInfo.center));
+		_.pull(chatInfo.center, _.last(chatInfo.center));
+		chatInfo.center.unshift(html);
+		var shifting = _.union(chatInfo.center, chatInfo.right);
+		var lft = 0;
+		_.each(shifting, function(elm){
+			elm.animate({
+				left: lft
+			},delay);
+			lft += elm.width();
+		});
 	}
 
 	return function(rec){
