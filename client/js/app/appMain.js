@@ -7,8 +7,10 @@ define([
 	], function(receiver, chat, chatSockets, menu, checkWindow){
 	//main function
 	return function(){
+
         //send authentication token to server
         chatSockets.sendAuthToken();
+
 		//add messenger handler
 		menu.initAddMessenger();
 
@@ -21,6 +23,7 @@ define([
 		//init menu button
 		menu.initMenu();
 
+		//resizes chat(s) on window resize
 		checkWindow();
 
 	}
