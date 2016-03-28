@@ -4,11 +4,12 @@ define([
 	'./chatInfo',
 	'hbs!templates/messenger',
 	'./sort',
-	'./resize'
-	], function($, _, chatInfo, messenger, sort, resize){
+	'./resize',
+	'./chatEvents'
+	], function($, _, chatInfo, messenger, sort, resize, chatEvents){
 
-	//delay for animations
-	var delay = 250;
+	//duration for animations
+	var duration = 250;
 
 	function scaleToAdd(html){
 		$('.messenger-container').prepend(html);
@@ -38,17 +39,17 @@ define([
 				elm.animate({
 					width: widths[ind],
 					left: lft
-				}, delay);
+				}, duration);
 				lft += widths[ind];
 			});
 		}
-		html.animate({left: 0}, delay);
+		html.animate({left: 0}, duration);
 		chatInfo.center.unshift(html);
 	}
 
 	function shiftToAdd(html){
 		html.width(_.last(chatInfo.center).width());
-		chatInfo.center[0].before(html);
+		_.first(chatInfo.center).before(html);
 		chatInfo.right.unshift(_.last(chatInfo.center));
 		_.pull(chatInfo.center, _.last(chatInfo.center));
 		chatInfo.center.unshift(html);
@@ -57,7 +58,7 @@ define([
 		_.each(shifting, function(elm){
 			elm.animate({
 				left: lft
-			},delay);
+			},duration);
 			lft += elm.width();
 		});
 	}
@@ -79,6 +80,8 @@ define([
 			resize(chatId);
 
 			chatInfo.updateChatLog(chatId);
+
+			chatEvents(html);
 
 			return chatId;
 

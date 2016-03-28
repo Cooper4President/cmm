@@ -3,7 +3,8 @@ define([
 	'messenger/chat',
 	'messenger/chatSockets',
 	'menu/menu',
-	], function(receiver, chat, chatSockets, menu){
+	'misc/checkWindow'
+	], function(receiver, chat, chatSockets, menu, checkWindow){
 	//main function
 	return function(){
         //send authentication token to server
@@ -19,5 +20,8 @@ define([
 
 		//init menu button
 		menu.initMenu();
+
+		checkWindow();
+
 	}
 });
