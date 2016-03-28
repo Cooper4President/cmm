@@ -1,8 +1,9 @@
 define([
 	'jquery', 
 	'lodash',
-	'./chatInfo'
-	], function($, _, chatInfo){
+	'./chatInfo',
+	'./shifter'
+	], function($, _, chatInfo, shifter){
 
 	var duration = 250;
 	return function (html){
@@ -51,5 +52,8 @@ define([
 			});
 			html.remove();
 		}
+		if(chatInfo.left.length === 0) shifter.hideRight();
+		if(chatInfo.right.length === 0) shifter.hideLeft();
+
 	}
 });

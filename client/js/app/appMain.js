@@ -3,8 +3,9 @@ define([
 	'messenger/chat',
 	'messenger/chatSockets',
 	'menu/menu',
-	'misc/checkWindow'
-	], function(receiver, chat, chatSockets, menu, checkWindow){
+	'misc/checkWindow',
+	'messenger/shifter'
+	], function(receiver, chat, chatSockets, menu, checkWindow, shifter){
 	//main function
 	return function(){
 
@@ -22,6 +23,9 @@ define([
 
 		//resizes chat(s) on window resize
 		checkWindow();
+
+		//initializes chat shifter
+		shifter.init();
 
 	}
 });

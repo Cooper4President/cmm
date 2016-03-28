@@ -23,14 +23,16 @@
     position: absolute;
     top: 40%;
     padding: 5px;
-    left: -40px;
+    right: -40px;
     color: rgba(0, 0, 0, 0.22);
     transition: 0.25s all;
+    z-index: 1;
+
 }
 
 .shift-left.fa.fa-caret-left:hover {
     color: black;
-    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .shift-right.fa.fa-caret-right {
@@ -38,15 +40,16 @@
     text-align: center;
     position: absolute;
     top: 40%;
-    right: -40px;
+    left: -40px;
     padding: 5px;
     color: rgba(0, 0, 0, 0.22);
     transition: 0.25s all;
+    z-index: 1;
 }
 
 .shift-right.fa.fa-caret-right:hover {
     color: black;
-    padding-right: 10px;
+    padding-left: 10px;
 }
 
 

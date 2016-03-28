@@ -5,8 +5,9 @@ define([
 	'messenger/chatInfo', 
 	//'messenger/chat',
 	'messenger/queueMessenger',
-	'misc/misc'
-	], function($, _, menuEvents, chatInfo, queueMessenger /*chat*/, misc){
+	'misc/misc',
+	'messenger/shifter'
+	], function($, _, menuEvents, chatInfo, queueMessenger /*chat*/, misc, shifter){
 	//parses raw text of receiver field
 	function parseReceiver(recRaw){
 		if(recRaw === "") return null;
@@ -32,6 +33,9 @@ define([
 			    	var rec = $('.receiver').val();
 					var noErr = queueMessenger(parseReceiver(rec)); //note: focus diverts to new chat
 					if(noErr) menuEvents.hideReceiverField();
+					if(chatInfo.left.length > 0) shifter.showRight();
+					if(chatInfo.right.length > 0) shifter.showLeft();
+
 			    }
 			    //esc out of receiver window
 			    else if(e.keyCode == 27){
