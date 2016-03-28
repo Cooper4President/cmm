@@ -1,11 +1,10 @@
 define([
 	'menu/receiver', 
-	'messenger/chat',
 	'messenger/chatSockets',
 	'menu/menu',
 	'misc/checkWindow',
 	'messenger/shifter'
-	], function(receiver, chat, chatSockets, menu, checkWindow, shifter){
+	], function(receiver, chatSockets, menu, checkWindow, shifter){
 	//main function
 	return function(){
 

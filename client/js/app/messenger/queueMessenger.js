@@ -5,7 +5,8 @@ define([
 	'hbs!templates/messenger',
 	'./sort',
 	'./resize',
-	'./chatEvents'
+	'./chatEvents',
+	'autogrow'
 	], function($, _, chatInfo, messenger, sort, resize, chatEvents){
 
 	//duration for animations
@@ -82,6 +83,10 @@ define([
 			chatInfo.updateChatLog(chatId);
 
 			chatEvents(html);
+
+			//focus on new chat window
+			html.find('.cmd').focus().autogrow();
+
 
 			return chatId;
 
