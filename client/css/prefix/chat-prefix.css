@@ -38,22 +38,19 @@ body{
     top: 0;
     height: 100%;
     position: absolute;
-}
-
-
-
-.remove-messenger{
-    cursor: pointer;
-    height: 10px;
-    width: 5%;
+    z-index: 3;
 }
 
 .remove-messenger.fa.fa-times {
+    cursor: pointer;
+    height: 10px;
+    width: 5%;
     text-align: center;
     text-align: center;
     position: absolute;
     top: 12px;
     right: 5px;
+    z-index: 3;
 }
 
 

@@ -11,6 +11,7 @@ define([
 
 		//shows options menu
 		showMenu: function(){
+			$('.menu-area').css('display', 'block');
 			$(".menu").css({
 				top: -$(".menu").height()-5
 			});
@@ -19,6 +20,7 @@ define([
 
 		//hides options menu
 		hideMenu: function (){
+			$('.menu-area').css('display', 'none');
 			$(".menu").delay(250).animate({
 				top: 0
 			}, 250);
@@ -48,7 +50,7 @@ define([
 		 		width: 195,
 		 		borderColor: "black",
 		 		height: 36,
-		 		zIndex: 1,
+		 		zIndex: 5,
 		 		borderWidth: 3
 		 	}).focus();
 		}
