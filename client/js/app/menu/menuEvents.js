@@ -2,17 +2,12 @@ define([
 	'jquery',
 	'lodash',
 	'./menuAnimations',
-	'./menuInfo'
+	'./menuInfo',
+
+	//jquery plug-ins
+	'jqueryui'
 	], function($, _, menuAnimations, menuInfo){
 	return {
-
-		//toggles delay on menu options
-		toggleDelay: function(){
-			var delayOps = _.slice(menuInfo.options, 1);
-			_(delayOps).each(function(cls){
-				$("."+cls).toggleClass(cls+"-D");
-			});
-		},
 
 		//shows options menu
 		showMenu: function(){
@@ -20,23 +15,13 @@ define([
 				top: -$(".menu").height()-5
 			});
 			menuAnimations.showAnimation(menuInfo.options);
-
-			curr = this
-			setTimeout(function(){
-				curr.toggleDelay();
-			}, 100);
 		},
 
 		//hides options menu
 		hideMenu: function (){
-			if(!$(".settings").hasClass("settings-D")){
-				this.toggleDelay();
-			}
-			if(!$('.menu').hasClass('menu-unhover')) $('.menu').toggleClass("menu-unhover");
-
-			$(".menu").css({
+			$(".menu").delay(250).animate({
 				top: 0
-			});
+			}, 250);
 			menuAnimations.hideAnimation(menuInfo.options);
 
 			this.hideReceiverField();
@@ -44,7 +29,9 @@ define([
 		//hides receiver field
 		hideReceiverField: function(){
 			//give event delegate back to add messenger button
-		 	menuAnimations.hoverAnimation("add-messenger");
+		 	//menuAnimations.hoverAnimation("add-messenger");
+		 	$('.menu-item').tooltip("enable");
+		 	$(".add-messenger").hover(function(event){$(this).css('padding-left', 15)}, function(event){$(this).css('padding-left', 10)});
 
 			$(".receiver").css({
 				borderColor: "transparent",
@@ -64,11 +51,6 @@ define([
 		 		zIndex: 1,
 		 		borderWidth: 3
 		 	}).focus();
-		},
-
-		//start the hover animations for all options
-		hoverStart: function(){
-			menuAnimations.hoverAnimation(menuInfo.options);
 		}
 	}	
 });

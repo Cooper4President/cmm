@@ -1,4 +1,4 @@
-.add-messenger, .settings, .logout, .menu{
+.menu-item{
     z-index: 2;
     padding-left: 10px;
     padding-top: 10px;
@@ -6,63 +6,87 @@
 
 }
 
-.logout {
+.menu-item:hover{
+    padding-left: 15px;
+}
+
+
+.menu-area {
+    position: absolute;
+    height: 300px;
+    width: 300px;
+}
+
+.shift-left.fa.fa-caret-left {
+    font-size: 75px;
+    text-align: center;
+    position: absolute;
+    top: 40%;
+    padding: 5px;
+    left: -40px;
+    color: rgba(0, 0, 0, 0.22);
+    transition: 0.25s all;
+}
+
+.shift-left.fa.fa-caret-left:hover {
+    color: black;
+    padding-left: 10px;
+}
+
+.shift-right.fa.fa-caret-right {
+    font-size: 73px;
+    text-align: center;
+    position: absolute;
+    top: 40%;
+    right: -40px;
+    padding: 5px;
+    color: rgba(0, 0, 0, 0.22);
+    transition: 0.25s all;
+}
+
+.shift-right.fa.fa-caret-right:hover {
+    color: black;
+    padding-right: 10px;
+}
+
+
+.logout.fa.fa-sign-out {
+    font-size: 48px;
+    text-align: center;
     position: absolute;
     top: 82px;
     left: -55;
     transition: 0.25s all;
     padding-bottom: 100px;
-
 }
 
-
-.logout-D{
-    transition-delay: 0.5s;
-}
-
-.logout.fa.fa-sign-out {
-    font-size: 48px;
-    text-align: center;
-}
-
-.settings {
+.settings.fa.fa-cog {
+    font-size: 47px;
+    text-align: right;
     position: absolute;
     top: 40px;
     left: -55px;
     transition: 0.25s all;
 }
 
-.settings-D{
-    transition-delay: 0.25s;
-}
-
-.settings.fa.fa-cog {
-    font-size: 47px;
-    text-align: right;
-}
 
 .menu.fa.fa-bars {
     font-size: 40px;
     text-align: center;
-}
-
-.menu-unhover{
-    color: rgba(0, 0, 0, 0.22);
-}
-
-.menu-hover{
-    color: black;
-}
-
-.menu {
     height: 40px;
     width: 40px;
     position: absolute;
     left: 0;
     top: 0;
     transition: 0.25s all;
+    color: rgba(0, 0, 0, 0.22);
+    padding: 10px;
+    z-index: 1;
 }
 
+.menu.fa.fa-bars:hover {
+    color: black;
+}
 
 .receiver{
     height: 36px;
@@ -79,16 +103,12 @@
     transition: 0.25s all linear;
 }
 
-
-.add-messenger{
-	cursor: pointer;
+.add-messenger.fa.fa-plus-square-o {
+    text-align: right;
+    font-size: 47px;
+    cursor: pointer;
     position: absolute;
     top: 0;
     left: -50px;
     transition: 0.25s all;
-}
-
-.add-messenger.fa.fa-plus-square-o {
-    text-align: right;
-    font-size: 47px;
 }

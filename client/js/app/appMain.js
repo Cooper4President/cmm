@@ -17,9 +17,6 @@ define([
 		//receiver handler
 		receiver();
 
-		//hover handler
-		menu.initHoverEvents();
-
 		//init menu button
 		menu.initMenu();
 

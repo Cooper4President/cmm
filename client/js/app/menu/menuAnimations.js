@@ -6,15 +6,16 @@ define([
 	], function($){
 	return {
 		showAnimation: function(cl){
-			var showMargin = 0;
 			var padding = 350;
 			var showStyle = {
-				left: showMargin,
+				left: 0,
 				paddingRight: padding
 			}
 			if(Array.isArray(cl)){
+				var dl = 0;
 				_(cl).each(function(cls){
-					$("."+cls).css(showStyle);
+					$("."+cls).delay(dl).animate(showStyle, 250);
+					dl += 250;
 				});
 			}else{
 				$("."+cl).css(showStyle);
@@ -29,52 +30,14 @@ define([
 				paddingRight: 0
 			}
 			if(Array.isArray(cl)){
+				var dl = 0;
 				_(cl).each(function(cls){
-					$("."+cls).css(hideStyle);
+					$("."+cls).delay(dl).animate(hideStyle, 250);
+					dl += 250;
 				});
 			}else{
 				$("."+cl).css(hideStyle);	
 			}
-		},
-				//delegates hover animations of menu options
-		hoverAnimation: function(cl){
-			var hoverDist = 5;
-			var hoverDist = 18;
-			var normDist = 10;
-
-			var toolTipOptions = {
-				track: true,
-				show: {
-					delay: 750,
-					effect: "fade"
-				},
-				hide: {
-					effect: "none"
-				}
-			}
-			if(Array.isArray(cl)){
-				_(cl).each(function(cls){
-					$("."+cls).tooltip(toolTipOptions).mouseenter(function(event){
-						$(this).css({
-							paddingLeft: hoverDist
-						})
-					}).mouseout(function(event){
-						$(this).css({
-							paddingLeft: normDist
-						});
-					}).tooltip("enable");		
-				});
-			}else{
-				$("."+cl).tooltip(toolTipOptions).mouseenter(function(event){
-					$(this).css({
-						paddingLeft: hoverDist
-					})
-				}).mouseout(function(event){
-					$(this).css({
-						paddingLeft: normDist
-					}).tooltip("enable");
-				});
-			}
-		}	
+		}
 	}
 });

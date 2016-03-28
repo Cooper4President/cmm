@@ -11,12 +11,18 @@ define([
 			var cur = this;
 			//initializes sortable chat windows
 			//$('.messenger-container').sortable({axis:'x'});
+			var toolTipOptions = {
+				track: true,
+				show: {
+					delay: 750,
+					effect: "fade"
+				},
+				hide: {
+					effect: "none"
+				}
+			}
 
-		    //delgate for menu hover
-		    $(".menu").hover(function(event){
-		    	$(this).toggleClass("menu-unhover");
-		    });
-
+			$('.menu-item').tooltip(toolTipOptions);
 			//delegates menu option enter
 			$(".menu").on("click", function(event){
 				menuEvents.showMenu();
@@ -34,9 +40,6 @@ define([
 		    	});
 		    	menuEvents.showReceiverField();
 			});
-		},
-		initHoverEvents: function(){
-			menuEvents.hoverStart();
 		}
 	}
 });
