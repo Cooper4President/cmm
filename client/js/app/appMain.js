@@ -11,14 +11,11 @@ define([
         //send authentication token to server
         chatSockets.sendAuthToken();
 
-		//add messenger handler
-		menu.initAddMessenger();
-
 		//receiver handler
 		receiver();
 
-		//init menu button
-		menu.initMenu();
+		//menu button handler
+		menu();
 
 		//resizes chat(s) on window resize
 		checkWindow();

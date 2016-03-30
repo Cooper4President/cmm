@@ -9,8 +9,8 @@ define([
 	'autogrow'
 	], function($, _, chatInfo, messenger, sort, resize, chatEvents){
 
-	//duration for animations
-	var duration = 250;
+	//chatInfo.animationDuration for animations
+	chatInfo.animationDuration;
 
 	function scaleToAdd(html){
 		$('.messenger-container').prepend(html);
@@ -40,11 +40,11 @@ define([
 				elm.animate({
 					width: widths[ind],
 					left: lft
-				}, duration);
+				}, chatInfo.animationDuration);
 				lft += widths[ind];
 			});
 		}
-		html.animate({left: 0}, duration);
+		html.animate({left: 0}, chatInfo.animationDuration);
 		chatInfo.center.unshift(html);
 	}
 
@@ -59,7 +59,7 @@ define([
 		_.each(shifting, function(elm){
 			elm.animate({
 				left: lft
-			},duration);
+			},chatInfo.animationDuration);
 			lft += elm.width();
 		});
 	}

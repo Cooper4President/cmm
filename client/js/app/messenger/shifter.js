@@ -1,6 +1,6 @@
 define(['jquery', 'lodash', './chatInfo'], function($, _, chatInfo){
 
-	var duration = 250;
+	//var chatInfo.animationDuration ;
 
 	return {
 		showLeft: function(){
@@ -30,7 +30,7 @@ define(['jquery', 'lodash', './chatInfo'], function($, _, chatInfo){
 				_.each(shift, function(elm){
 					elm.animate({
 						left: lft
-					}, duration);
+					}, chatInfo.animationDuration);
 					lft += elm.width();
 				});
 				if(chatInfo.right.length === 0) curr.hideLeft();
@@ -49,7 +49,7 @@ define(['jquery', 'lodash', './chatInfo'], function($, _, chatInfo){
 				_.each(shift, function(elm){
 					elm.animate({
 						left: lft
-					}, duration);
+					}, chatInfo.animationDuration);
 					lft += elm.width();
 				});
 				if(chatInfo.left.length === 0) curr.hideRight();

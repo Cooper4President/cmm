@@ -5,7 +5,7 @@ define([
 	'./shifter'
 	], function($, _, chatInfo, shifter){
 
-	var duration = 250;
+	chatInfo.animationDuration;
 	return function (html){
 		var chatId = html.attr('id');
 		_.remove(chatInfo.log, function(n){ return n.id === chatId });
@@ -20,7 +20,7 @@ define([
 			_.each(shift, function(elm){
 				elm.animate({
 					left: lft
-				},duration);
+				},chatInfo.animationDuration);
 				lft += elm.width();
 			});
 			html.remove();
@@ -34,7 +34,7 @@ define([
 			_.each(shift, function(elm){
 				elm.animate({
 					left: lft
-				},duration);
+				},chatInfo.animationDuration);
 				lft += elm.width();
 			});
 			html.remove();
@@ -47,7 +47,7 @@ define([
 				elm.animate({
 					width: newWidth,
 					left: lft,
-				}, duration);
+				}, chatInfo.animationDuration);
 				lft += newWidth;
 			});
 			html.remove();
