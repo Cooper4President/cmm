@@ -5,32 +5,38 @@
 module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-    	postcss: {
+        less: {
             options: {
-                processors: [
-                    require('autoprefixer')
+                plugins: [
+                 new (require('less-plugin-autoprefix')),
+                 new (require('less-plugin-clean-css'))
                 ]
             },
-            chat: {
-                src: 'client/css/styles/chat.css',
-                dest: 'client/css/prefix/chat-prefix.css'
-            },
-
             menu: {
-                src: 'client/css/styles/menu.css',
+                src : 'client/css/less/menu.less',
                 dest: 'client/css/prefix/menu-prefix.css'
             },
-
+            chat: {
+                src : 'client/css/less/chat.less',
+                dest: 'client/css/prefix/chat-prefix.css'
+            },
             index: {
-                src: 'client/css/styles/index.css',
+                src : 'client/css/less/index.less',
                 dest: 'client/css/prefix/index-prefix.css'
+            }
+        },
+        watch: {
+            scripts: {
+                files: ['client/css/less/*.less'],
+                tasks: ['less']
             }
         }
 
 });
 
     grunt.loadNpmTasks('grunt-postcss');
-    grunt.loadNpmTasks('grunt-contrib-handlebars');
-    grunt.registerTask('default', ['postcss']);
+    grunt.loadNpmTasks('grunt-contrib-less');
+    grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.registerTask('default', ['less']);
 
 };

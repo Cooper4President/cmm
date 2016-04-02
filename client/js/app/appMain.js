@@ -3,8 +3,9 @@ define([
 	'messenger/chatSockets',
 	'menu/menu',
 	'misc/checkWindow',
-	'messenger/shifter'
-	], function(receiver, chatSockets, menu, checkWindow, shifter){
+	'messenger/shifter',
+	'menu/friendsList'
+	], function(receiver, chatSockets, menu, checkWindow, shifter, friendsList){
 	//main function
 	return function(){
 
@@ -15,13 +16,15 @@ define([
 		receiver();
 
 		//menu button handler
-		menu();
+		menu.init();
 
 		//resizes chat(s) on window resize
 		checkWindow();
 
 		//initializes chat shifter
 		shifter.init();
+
+		friendsList();
 
 	}
 });

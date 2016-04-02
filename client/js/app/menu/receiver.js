@@ -30,7 +30,7 @@ define([
 				$(this).tooltip("disable").unbind("hover").css({
 					paddingLeft: 10
 		    	});
-				menuAnimations.showReceiverField();
+				menuAnimations.showReceiver();
 			});
 
 			$(".receiver").keydown(function(e) {
@@ -39,7 +39,7 @@ define([
 			    	//pulls receiver value and tests if valid
 			    	var rec = $('.receiver').val();
 					var noErr = queueMessenger(parseReceiver(rec)); //note: focus diverts to new chat
-					if(noErr) menuAnimations.hideReceiverField();
+					if(noErr) menuAnimations.hideReceiver();
 					if(chatInfo.left.length > 0) shifter.showRight();
 					if(chatInfo.right.length > 0) shifter.showLeft();
 
@@ -47,7 +47,7 @@ define([
 			    //esc out of receiver window
 			    else if(e.keyCode == 27){
 			    	e.preventDefault();
-			    	menuAnimations.hideReceiverField();
+			    	menuAnimations.hideReceiver();
 			    }
 		 	}).autogrow();
 		}

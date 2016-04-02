@@ -1,27 +1,56 @@
 .menu-item{
     z-index: 5;
-    padding-left: 10px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-
     cursor: pointer;
     position: absolute;
     transition: 0.25s all;
-    left: -55;
+    bottom: -100%;
 }
 
 .menu-item:hover{
-    padding-left: 15px;
+    padding-bottom: 15px;
 }
 
 
-.menu-area {
+.messenger-container {
+    transition: 1s all;
+}
+
+.friends-list {
     position: absolute;
-    height: 300px;
-    width: 300px;
-    z-index: 1;
-    visibility: hidden;
+    height: 100%;
+    width: 100%;
+    top: -100%;
+    overflow-y: scroll;
 }
+
+.backdrop {
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background: white;
+    opacity: 0;
+    filter: blur(7px);
+    transition: 1s all;
+}
+
+.add-messenger.fa.fa-plus-square-o {
+    font-size: 100px;
+}
+.friends-list-button.fa.fa-users.menu-item {
+    font-size: 100px;
+}
+
+.logout-button.fa.fa-sign-out {
+    font-size: 100px;
+}
+
+.settings-button.fa.fa-cog {
+    font-size: 100px;
+}
+
 
 .shift-left.fa.fa-caret-right {
     font-size: 75px;
@@ -29,7 +58,7 @@
     position: absolute;
     top: 40%;
     padding: 5px;
-    right: -40px;
+    right: -100%;
     color: rgba(0, 0, 0, 0.22);
     transition: 0.25s all;
     z-index: 1;
@@ -46,7 +75,7 @@
     text-align: center;
     position: absolute;
     top: 40%;
-    left: -40px;
+    left: -100%;
     padding: 5px;
     color: rgba(0, 0, 0, 0.22);
     transition: 0.25s all;
@@ -59,25 +88,6 @@
 }
 
 
-.friends-list.fa.fa-users.menu-item {
-    font-size: 40px;
-    text-align: center;
-    top: 84px;
-}
-
-.logout.fa.fa-sign-out {
-    font-size: 48px;
-    text-align: center;
-    top: 124px;
-    transition: 0.25s all;
-    padding-bottom: 100px;
-}
-
-.settings.fa.fa-cog {
-    font-size: 47px;
-    text-align: right;
-    top: 40px;
-}
 
 
 .menu.fa.fa-bars {
@@ -86,8 +96,7 @@
     height: 40px;
     width: 40px;
     position: absolute;
-    left: 0;
-    top: 0;
+    top: -100%;
     transition: 0.25s all;
     color: rgba(0, 0, 0, 0.22);
     padding: 10px;
@@ -114,9 +123,3 @@
     z-index: 5;
 }
 
-.add-messenger.fa.fa-plus-square-o {
-    text-align: right;
-    font-size: 47px;
-    top: 0;
-    transition: 0.25s all;
-}

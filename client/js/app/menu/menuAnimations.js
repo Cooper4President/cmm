@@ -4,43 +4,58 @@ define([
 	//jquery plug in
 	'jqueryui'
 	], function($){
+	var D = 350;
 	return {
 		showMenu: function(){
-			$('.menu-area').css('display', 'block');
-			$(".menu").css({
-				top: -$(".menu").height()-5
+			//$('.backdrop').css('display', 'block');
+			$('.messenger-container').css({
+			   'filter'         : 'blur(2px)',
+			   '-webkit-filter' : 'blur(2px)',
+			   '-moz-filter'    : 'blur(2px)',
+			   '-o-filter'      : 'blur(2px)',
+			   '-ms-filter'     : 'blur(2px)'			
 			});
-			var padding = 350;
-			var showStyle = {
-				left: 0,
-				paddingRight: padding
-			}
+
+			$(".menu").animate({
+				top: '-100%'
+			});
+			//var padding = D;
 			var dl = 0
-			$('.menu-item').each(function(elm){
-				$(this).delay(dl).animate(showStyle, 250);
-				dl += 250
+			$('.menu-item').each(function(){
+				var bt = 0.5*$(window).height() - 0.5*$(this).height();
+				$(this).delay(dl).animate({
+					bottom: bt
+				}, D);
+				dl += D;
 			});
 		},
 
 		//delegates hide animations for menu options
-		hideMenu: function(){
-			$('.menu-area').css('display', 'none');
-			$(".menu").delay(250).animate({
-				top: 0
-			}, 250);
-			var hideMargin = -55;
-			var hideStyle = {
-				left: hideMargin,
-				paddingRight: 0
+		hideMenu: function(mnu){
+			//$('.backdrop').css('display', 'none');
+			$('.messenger-container').css({
+			   'filter'         : 'blur(0px)',
+			   '-webkit-filter' : 'blur(0px)',
+			   '-moz-filter'    : 'blur(0px)',
+			   '-o-filter'      : 'blur(0px)',
+			   '-ms-filter'     : 'blur(0px)'			
+			});
+			if(mnu){
+				$(".menu").delay(D).animate({
+					top: 0
+				}, D);
 			}
 			var dl = 0
-			$('.menu-item').each(function(elm){
-				$(this).delay(dl).animate(hideStyle, 250);
-				dl += 250
+			$('.menu-item').each(function(){
+				var bt = -$(this).height()-5;
+				$(this).delay(dl).animate({
+					bottom: bt
+				}, D);
+				dl += D;
 			});
 		},
 		//hides receiver field
-		hideReceiverField: function(){
+		hideReceiver: function(){
 			//give event delegate back to add messenger button
 		 	$('.menu-item').tooltip("enable");
 		 	$(".add-messenger").hover(function(event){ $(this).css('padding-left', 15) }, function(event){ $(this).css('padding-left', 10) });
@@ -55,7 +70,7 @@ define([
 		},
 
 		//shows receiver field
-		showReceiverField: function(){
+		showReceiver: function(){
 		 	$(".receiver").css({
 		 		width: 195,
 		 		borderColor: "black",
@@ -63,6 +78,16 @@ define([
 		 		zIndex: 5,
 		 		borderWidth: 3
 		 	}).focus();
+		},
+		showFriends: function(){
+			$('.friends-list').animate({
+				top: 0
+			},D);
+		},
+		hideFriends: function(){
+			$('.friends-list').animate({
+				top: '-100%'
+			},D);
 		}
 	}
 });

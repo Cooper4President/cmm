@@ -53,23 +53,23 @@ define([
 		html.find(".remove-messenger").on("click",function(event){
 			enqueueMessenger(html);
 		});
-	    html.find('.cmd').keydown(function(e) {
+	    html.find('.cmd').keydown(function(event) {
 			var chatId = $(this).closest('.chat-element').attr('id');
 			//enter key submit
-		    if (e.keyCode === 13) {
-				e.preventDefault();
+		    if (event.keyCode === 13) {
+				event.preventDefault();
 				enterKeyHandler(chatId); 
 		    }
 
 		    //up arrow to go through chat log
-		    if(e.keyCode === 38){
-		    	e.preventDefault();
+		    if(event.keyCode === 38){
+		    	event.preventDefault();
 				upArrowHandler(chatId);
 		    }
 
 		    //down arrow to go through chat log
-		    if(e.keyCode === 40){
-		    	e.preventDefault();
+		    if(event.keyCode === 40){
+		    	event.preventDefault();
  				downArrowHandler(chatId);
 		    }
 		});

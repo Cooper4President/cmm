@@ -10,10 +10,10 @@ define(['jquery', 'lodash', './chatInfo'], function($, _, chatInfo){
 			$('.shift-right').css('left', 0);
 		},
 		hideLeft: function(){
-			$('.shift-left').css('right', -40);
+			$('.shift-left').css('right', '-100%');
 		},
 		hideRight: function(){
-			$('.shift-right').css('left', -40);
+			$('.shift-right').css('left', '-100%');
 		},
 		init: function(){
 			var curr = this;
