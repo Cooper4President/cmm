@@ -3,18 +3,10 @@ define([
 	'lodash', 
 	'./chatInfo',
 	'hbs!templates/messenger',
-	'./sort',
-	'./resize',
 	'./chatEvents',
-	'misc/misc',
-	'misc/people',
-	'./shifter',
-	'menu/menuAnimations',
+	'misc/people'
 
-	//jquery plug-ins
-	'autogrow',
-	'select2'
-	], function($, _, chatInfo, messenger, sort, resize, chatEvents, misc, people, shifter, menuAnimations){
+	], function($, _, chatInfo, messenger, chatEvents, people){
 
 	//chatInfo.animationDuration for animations
 	chatInfo.animationDuration;
@@ -71,22 +63,6 @@ define([
 		});
 	}
 
-	function parseReceiver(recList){
-		//if(recRaw === "") return null;
-		//var recList = _.map(_.split(recRaw, ","), function(n){return _.trim(n)});
-		var found = false
-		_(recList).each(function(entry){
-			if(_.includes(entry, " ") || _.includes(entry, "\n"))found = true;
-			if(entry === "") found = true;
-		});
-		_(chatInfo.log).each(function(entry){
-			if(misc.checkIfEqual(recList, entry.receivers)) found = true;
-		});
-
-		if(found) return null;
-		else return recList;
-	}
-
 	return function(){
 		var 
 			chatId = "chat-" + ++chatInfo.count,
@@ -98,53 +74,6 @@ define([
 		if(chatInfo.count > chatInfo.chatsPerWindow) shiftToAdd(html);
 		else scaleToAdd(html);
 		chatEvents(html);
-		$('.receivers').select2({
-			placeholder: "Select chat members"
-		});
-		if(chatInfo.left.length > 0) shifter.showRight();
-		if(chatInfo.right.length > 0) shifter.showLeft();
-		resize(chatId);
-		html.find('.chat-head').find('input').focus();
-		$('.chat-head').find('.submit').on('click', function(event){
-
-
-			var rec = html.find('.receivers').val();//parseReceiver($(this).val());
-
-			var found = false;
-			try{
-
-				_.each(chatInfo.log, function(entry){
-					if(misc.checkIfEqual(rec, entry.receivers)) found = true;
-				});
-			}catch (err){
-				alert('user name(s) invalid');
-			}
-
-			if(!found){
-
-				menuAnimations.showButton();
-
-				var recFormat = _.join(rec, ", ");
-
-				html.find('.chat-head').find('.submit').remove();
-				html.find('.chat-head').find('.select2').remove();
-				html.find('.chat-head').find('.receivers').remove();
-				html.find('.chat-head').append("<div class='chat-title'>"+ recFormat +"</div>");
-
-				//html.find('.receivers').replaceWith("<div class='chat-title'>"+ recFormat +"</div>");
-
-				chatInfo.updateChatLog(chatId, {recEnt: rec});
-
-
-
-				sort(chatId);
-				//focus on new chat window
-				html.find('.chat-head').find('input').focus().autogrow();				
-			}else{
-				alert('user name(s) invalid');
-			}
-
-		});
 		return chatId;
 	}
 });
