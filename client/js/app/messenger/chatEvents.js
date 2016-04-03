@@ -85,16 +85,12 @@ define([
 			var rec = html.find('.receivers').val();//parseReceiver($(this).val());
 
 			var found = false;
-			try{
 
-				_.each(chatInfo.log, function(entry){
-					if(misc.checkIfEqual(rec, entry.receivers)) found = true;
-				});
-			}catch (err){
-				alert('user name(s) invalid');
-			}
+			_.each(chatInfo.log, function(entry){
+				if(misc.checkIfEqual(rec, entry.receivers)) found = true;
+			});
 
-			if(!found){
+			if(!found && rec !== null){
 
 				menuAnimations.showButton();
 
@@ -113,8 +109,10 @@ define([
 
 				sort(chatId);
 				//focus on new chat window
-				html.find('.chat-head').find('input').focus().autogrow();				
+				html.find('.chat-head').find('input').focus().autogrow();
+				keyDownHandler(html);
 			}else{
+				return false;
 				alert('user name(s) invalid');
 			}
 
@@ -122,22 +120,8 @@ define([
 
 	}
 
-
-	return function(html){
-		receiverHandler(html);
-
-		$('.receivers').select2({
-			placeholder: "Select chat members"
-		});
-		if(chatInfo.left.length > 0) shifter.showRight();
-		if(chatInfo.right.length > 0) shifter.showLeft();
-		resize(html.attr('id'));
-		html.find('.chat-head').find('input').focus();
-
-		html.find(".remove-messenger").on("click",function(event){
-			enqueueMessenger(html);
-		});
-	    html.find('.cmd').keydown(function(event) {
+	function keyDownHandler(html){
+	    html.find('.cmd').prop('disabled', false).focus().keydown(function(event) {
 			var chatId = $(this).closest('.chat-element').attr('id');
 			//enter key submit
 		    if (event.keyCode === 13) {
@@ -156,6 +140,23 @@ define([
 		    	event.preventDefault();
  				downArrowHandler(chatId);
 		    }
+		}).autogrow();
+	}
+
+
+	return function(html){
+		var cont = receiverHandler(html);
+
+		$('.receivers').select2({
+			placeholder: "Select chat members"
+		});
+		if(chatInfo.left.length > 0) shifter.showRight();
+		if(chatInfo.right.length > 0) shifter.showLeft();
+		resize(html.attr('id'));
+		html.find('.chat-head').find('input').focus();
+
+		html.find(".remove-messenger").on("click",function(event){
+			enqueueMessenger(html);
 		});
 	}
 });
