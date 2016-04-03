@@ -36,10 +36,12 @@ define([
 			//delegates menu option enter
 			$(".menu").on("click", function(event){
 				menuAnimations.showMenu();
+				menuAnimations.hideButton();
 			});
 			$('body').keydown(function(event){
 				if(event.keyCode === 27) {
-					menuAnimations.hideMenu(true);
+					menuAnimations.hideMenu();
+					menuAnimations.showButton();
 				}
 			});
 		}

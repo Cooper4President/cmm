@@ -8,11 +8,13 @@ define([
 	'./chatEvents',
 	'misc/misc',
 	'misc/people',
+	'./shifter',
+	'menu/menuAnimations',
 
 	//jquery plug-ins
 	'autogrow',
 	'select2'
-	], function($, _, chatInfo, messenger, sort, resize, chatEvents, misc, people){
+	], function($, _, chatInfo, messenger, sort, resize, chatEvents, misc, people, shifter, menuAnimations){
 
 	//chatInfo.animationDuration for animations
 	chatInfo.animationDuration;
@@ -95,9 +97,12 @@ define([
 			});
 		if(chatInfo.count > chatInfo.chatsPerWindow) shiftToAdd(html);
 		else scaleToAdd(html);
+		chatEvents(html);
 		$('.receivers').select2({
 			placeholder: "Select chat members"
 		});
+		if(chatInfo.left.length > 0) shifter.showRight();
+		if(chatInfo.right.length > 0) shifter.showLeft();
 		resize(chatId);
 		html.find('.chat-head').find('input').focus();
 		$('.chat-head').find('.submit').on('click', function(event){
@@ -117,6 +122,8 @@ define([
 
 			if(!found){
 
+				menuAnimations.showButton();
+
 				var recFormat = _.join(rec, ", ");
 
 				html.find('.chat-head').find('.submit').remove();
@@ -129,7 +136,6 @@ define([
 				chatInfo.updateChatLog(chatId, {recEnt: rec});
 
 
-				chatEvents(html);
 
 				sort(chatId);
 				//focus on new chat window

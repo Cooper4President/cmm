@@ -6,6 +6,18 @@ define([
 	], function($){
 	var D = 350;
 	return {
+
+		showButton: function(){	
+			$(".menu").animate({
+				top: 0
+			}, D);
+		},
+		hideButton: function(){		
+			$(".menu").animate({
+				top: '-100%'
+			}), D;
+		},
+
 		showMenu: function(){
 			//$('.backdrop').css('display', 'block');
 			$('.messenger-container').css({
@@ -16,9 +28,6 @@ define([
 			   '-ms-filter'     : 'blur(2px)'			
 			});
 
-			$(".menu").animate({
-				top: '-100%'
-			});
 			//var padding = D;
 			var dl = 0
 			$('.menu-item').each(function(){
@@ -31,7 +40,7 @@ define([
 		},
 
 		//delegates hide animations for menu options
-		hideMenu: function(mnu){
+		hideMenu: function(){
 			//$('.backdrop').css('display', 'none');
 			$('.messenger-container').css({
 			   'filter'         : 'blur(0px)',
@@ -40,9 +49,6 @@ define([
 			   '-o-filter'      : 'blur(0px)',
 			   '-ms-filter'     : 'blur(0px)'			
 			});
-			$(".menu").delay(D).animate({
-				top: 0
-			}, D);
 			var dl = 0
 			$('.menu-item').each(function(){
 				var bt = -$(this).height()-5;

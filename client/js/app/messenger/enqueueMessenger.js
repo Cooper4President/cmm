@@ -2,11 +2,13 @@ define([
 	'jquery', 
 	'lodash',
 	'./chatInfo',
-	'./shifter'
-	], function($, _, chatInfo, shifter){
+	'./shifter',
+	'menu/menuAnimations'
+	], function($, _, chatInfo, shifter, menuAnimations){
 
 	chatInfo.animationDuration;
 	return function (html){
+		menuAnimations.showButton();
 		var chatId = html.attr('id');
 		_.remove(chatInfo.log, function(n){ return n.id === chatId });
 		chatInfo.count--;
