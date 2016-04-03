@@ -5,12 +5,14 @@ define([
 	'hbs!templates/message', 
 	'./commands', //dependency that runs commands
 	'./chatSockets'
-	], function($, _, chatInfo, message, commands , chatSockets){ //command first refrenced as arguemnt to this module
+	], function($, _, chatInfo, message, commands , chatSockets){ //command first referenced as argument to this module
 	//define private function outside of return like this
 
 	//simple get receivers function
 	function getReceivers(id){
-		return $("#"+id).data().receivers;
+		return _.filter(chatInfo.log, function(entry){
+			if(entry.id === id) return entry;
+		})[0].recievers;
 	}
 	//checks if chat box is overflowed
 	function checkScrollbar(chatId){ 
@@ -28,7 +30,7 @@ define([
 		if(inp === undefined) var inp = cmd.val();
 		if(inp != ""){
 			//update chatlog with new message
-			chatInfo.updateChatLog(id, inp);
+			chatInfo.updateChatLog(id, {message: inp});
 
 			//send the message to the server
 			var testing = getReceivers(id);

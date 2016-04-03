@@ -9,6 +9,7 @@
     "requirejs": "^2.1.22",
     "require-handlebars-plugin": "^1.0.0",
     "jquery": "^2.2.1",
-    "jquery-ui": "^1.11.4"
+    "jquery-ui": "^1.11.4",
+    "select2": "^4.0.2"
   }
 }

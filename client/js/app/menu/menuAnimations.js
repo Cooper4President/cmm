@@ -40,11 +40,9 @@ define([
 			   '-o-filter'      : 'blur(0px)',
 			   '-ms-filter'     : 'blur(0px)'			
 			});
-			if(mnu){
-				$(".menu").delay(D).animate({
-					top: 0
-				}, D);
-			}
+			$(".menu").delay(D).animate({
+				top: 0
+			}, D);
 			var dl = 0
 			$('.menu-item').each(function(){
 				var bt = -$(this).height()-5;
@@ -78,16 +76,6 @@ define([
 		 		zIndex: 5,
 		 		borderWidth: 3
 		 	}).focus();
-		},
-		showFriends: function(){
-			$('.friends-list').animate({
-				top: 0
-			},D);
-		},
-		hideFriends: function(){
-			$('.friends-list').animate({
-				top: '-100%'
-			},D);
-		}
+		}	
 	}
 });

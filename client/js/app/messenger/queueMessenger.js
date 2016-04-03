@@ -6,8 +6,13 @@ define([
 	'./sort',
 	'./resize',
 	'./chatEvents',
-	'autogrow'
-	], function($, _, chatInfo, messenger, sort, resize, chatEvents){
+	'misc/misc',
+	'misc/people',
+
+	//jquery plug-ins
+	'autogrow',
+	'select2'
+	], function($, _, chatInfo, messenger, sort, resize, chatEvents, misc, people){
 
 	//chatInfo.animationDuration for animations
 	chatInfo.animationDuration;
@@ -64,35 +69,76 @@ define([
 		});
 	}
 
-	return function(rec){
-		if(rec){
-			var 
-				chatId = "chat-" + ++chatInfo.count,
-				format = _.join(rec, ', '),
-				context = {id: chatId, formatted: format},
-				html = $(messenger(context)).css({
-					'width': chatInfo.defaultWidth(),
-					'left': -chatInfo.defaultWidth()
-				}).data("receivers", rec);
-			if(chatInfo.count > chatInfo.chatsPerWindow) shiftToAdd(html);
-			else scaleToAdd(html);
+	function parseReceiver(recList){
+		//if(recRaw === "") return null;
+		//var recList = _.map(_.split(recRaw, ","), function(n){return _.trim(n)});
+		var found = false
+		_(recList).each(function(entry){
+			if(_.includes(entry, " ") || _.includes(entry, "\n"))found = true;
+			if(entry === "") found = true;
+		});
+		_(chatInfo.log).each(function(entry){
+			if(misc.checkIfEqual(recList, entry.receivers)) found = true;
+		});
 
-			sort(chatId);
-			resize(chatId);
+		if(found) return null;
+		else return recList;
+	}
 
-			chatInfo.updateChatLog(chatId);
+	return function(){
+		var 
+			chatId = "chat-" + ++chatInfo.count,
+			context = {id: chatId, friends: people},
+			html = $(messenger(context)).css({
+				'width': chatInfo.defaultWidth(),
+				'left': -chatInfo.defaultWidth()
+			});
+		if(chatInfo.count > chatInfo.chatsPerWindow) shiftToAdd(html);
+		else scaleToAdd(html);
+		$('.receivers').select2({
+			placeholder: "Select chat members"
+		});
+		resize(chatId);
+		html.find('.chat-head').find('input').focus();
+		$('.chat-head').find('.submit').on('click', function(event){
 
-			chatEvents(html);
 
-			//focus on new chat window
-			html.find('.cmd').focus().autogrow();
+			var rec = html.find('.receivers').val();//parseReceiver($(this).val());
+
+			var found = false;
+			try{
+
+				_.each(chatInfo.log, function(entry){
+					if(misc.checkIfEqual(rec, entry.receivers)) found = true;
+				});
+			}catch (err){
+				alert('user name(s) invalid');
+			}
+
+			if(!found){
+
+				var recFormat = _.join(rec, ", ");
+
+				html.find('.chat-head').find('.submit').remove();
+				html.find('.chat-head').find('.select2').remove();
+				html.find('.chat-head').find('.receivers').remove();
+				html.find('.chat-head').append("<div class='chat-title'>"+ recFormat +"</div>");
+
+				//html.find('.receivers').replaceWith("<div class='chat-title'>"+ recFormat +"</div>");
+
+				chatInfo.updateChatLog(chatId, {recEnt: rec});
 
 
-			return chatId;
+				chatEvents(html);
 
-		}else{
-			alert('a username was invalid');
-			return null;
-		}
+				sort(chatId);
+				//focus on new chat window
+				html.find('.chat-head').find('input').focus().autogrow();				
+			}else{
+				alert('user name(s) invalid');
+			}
+
+		});
+		return chatId;
 	}
 });

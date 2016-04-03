@@ -3,11 +3,10 @@ define([
 	'lodash', 
 	'./menuAnimations', 
 	'messenger/chatInfo', 
-	//'messenger/chat',
 	'messenger/queueMessenger',
 	'misc/misc',
 	'messenger/shifter'
-	], function($, _, menuAnimations, chatInfo, queueMessenger /*chat*/, misc, shifter){
+	], function($, _, menuAnimations, chatInfo, queueMessenger, misc, shifter){
 	//parses raw text of receiver field
 	function parseReceiver(recRaw){
 		if(recRaw === "") return null;

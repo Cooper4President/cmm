@@ -4,8 +4,8 @@ define([
 	'menu/menu',
 	'misc/checkWindow',
 	'messenger/shifter',
-	'menu/friendsList'
-	], function(receiver, chatSockets, menu, checkWindow, shifter, friendsList){
+	'menu/addMessenger'	
+	], function(receiver, chatSockets, menu, checkWindow, shifter, addMessenger){
 	//main function
 	return function(){
 
@@ -24,7 +24,6 @@ define([
 		//initializes chat shifter
 		shifter.init();
 
-		friendsList();
-
+		addMessenger();
 	}
 });

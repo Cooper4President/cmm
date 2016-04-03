@@ -1,7 +1,12 @@
 <div id="{{id}}" class="chat-element">
 	<div class="chat">
 		<div class="chat-head">
-			<div class="chat-title">{{formatted}}</div>
+				<select class="receivers" multiple="multiple">
+					{{#each friends}}
+						<option value="{{name}}">{{name}}</option>
+					{{/each}}
+				</select>
+				<div class="submit fa fa-envelope-o"></div>
 			<div class="remove-messenger fa fa-times"></div>
 		</div>
 		<div class='chat-box'>

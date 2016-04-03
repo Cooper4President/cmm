@@ -40,7 +40,6 @@ define([
 			$('body').keydown(function(event){
 				if(event.keyCode === 27) {
 					menuAnimations.hideMenu(true);
-					menuAnimations.hideFriends();
 				}
 			});
 		}
