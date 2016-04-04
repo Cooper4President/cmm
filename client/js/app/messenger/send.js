@@ -1,3 +1,7 @@
+/*
+	Sends message to be sent to specific chat window as a command and sends message to server
+*/
+
 define([
 	'jquery' , 
 	'lodash', 
@@ -12,7 +16,7 @@ define([
 	function getReceivers(id){
 		return _.filter(chatInfo.log, function(entry){
 			if(entry.id === id) return entry;
-		})[0].recievers;
+		})[0].receivers;
 	}
 	//checks if chat box is overflowed
 	function checkScrollbar(chatId){ 
@@ -30,7 +34,7 @@ define([
 		if(inp === undefined) var inp = cmd.val();
 		if(inp != ""){
 			//update chatlog with new message
-			chatInfo.updateChatLog(id, {message: inp});
+			chatInfo.updateChatLog(id, inp);
 
 			//send the message to the server
 			var testing = getReceivers(id);

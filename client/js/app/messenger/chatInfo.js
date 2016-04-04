@@ -1,12 +1,18 @@
+/*
+	Stores chat window related information
+*/
+
 define(['lodash'], function(_){
 	return {
-		log: [],
-		center: [],
-		left: [],
-		right: [],
-		count: 0,
-		chatsPerWindow: 3,
-		animationDuration: 250,
+		log: [], //log for chat windows
+		center: [], //chat windows that are in the main view
+		left: [], //chat windows that are off to the left of screen
+		right: [], //chat windows that are off to the right of screen
+		count: 0, //total count of chat windows
+		chatsPerWindow: 3, //number of chat windows for main view
+		animationDuration: 250, //duration for all animations
+
+		//gives the current default width for chat windows
 		defaultWidth: function(){
 			if(this.count){
 				if(this.count > this.chatsPerWindow) return $(window).width()/this.chatsPerWindow;
@@ -14,28 +20,25 @@ define(['lodash'], function(_){
 			}else return $(window).width();
 		},
 
-		//updates chat log, adds new entry if receiver not found
-		updateChatLog: function(chatId, obj){
+		//updates chat log
+		updateChatLog: function(chatId, message){
 
 			//finds receiver and updates messages
-			var found = false;
-			var rtn;
-			_(this.log).each(function(entry){
-				if(entry.id === chatId){
-					found = true;
-					if(obj.message !== undefined) entry.messages.unshift(obj.message);
-					rtn = entry;
-				}
-			});
-
-			if(!found && obj.recEnt !== 0){
-				if(obj.message !== undefined) this.log.push({id:chatId, messages:[obj.message], receivers: obj.recEnt,currentMessage:-1});
-				else this.log.push({id:chatId, messages:[], receivers: obj.recEnt,currentMessage:-1});
-				rtn = _.last(this.log);
+			if(message !== undefined){
+				_(this.log).each(function(entry){
+					if(entry.id === chatId){
+						entry.messages.unshift(message);
+					}
+				});
+			}else{
+				throw message;
 			}
+		},
 
-			return rtn;
+		//adds new chat log entry
+		newChatLogEntry: function(chatId, rec){
+			if (rec) this.log.push({id:chatId, messages:[], receivers: rec,currentMessage:-1});
+			else throw rec;
 		}
-
 	}
 });

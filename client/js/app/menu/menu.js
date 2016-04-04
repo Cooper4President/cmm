@@ -1,12 +1,18 @@
+/*
+	Module defines event handlers for options
+*/
+
 define([
 	'jquery', 
 	'./menuAnimations', 
+	'messenger/queueMessenger',
 
 	//jquery plug ins
 	'jqueryui'
-	], function($, menuAnimations){
+	], function($, menuAnimations, queueMessenger){
 
 	return {
+		//sets up menu options to be evenly across length of window
 		setUp: function(){
 			var step = $(window).width()/($('.menu-item').length+1);
 			var lft = step;
@@ -18,7 +24,9 @@ define([
 			});
 		},
 
+		//initializes menu functions
 		init: function(){
+			//sets up and shows menu on start
 			this.setUp();
 			menuAnimations.showMenu();
 			var toolTipOptions = {
@@ -32,17 +40,30 @@ define([
 				}
 			}
 
+			//adds tool tip to menu item
 			$('.menu-item').tooltip(toolTipOptions);
-			//delegates menu option enter
-			$(".menu").on("click", function(event){
-				menuAnimations.showMenu();
-				menuAnimations.hideButton();
+			
+			//delegates menu click
+			$(".menu").click(function(event){
+				menuAnimations.showMenu().hideButton();
 			});
+
+			//delegates escape out of menu by pressing escape
 			$('body').keydown(function(event){
 				if(event.keyCode === 27) {
-					menuAnimations.hideMenu();
-					menuAnimations.showButton();
+					menuAnimations.hideMenu().showButton();
 				}
+			});
+
+			//delegates escape out of menu by clicking background
+			$('.backdrop').click(function(event){
+					menuAnimations.hideMenu().showButton();
+			});
+
+			//delegates add messenger menu option click event
+			$('.add-messenger-button').click(function(event){
+				menuAnimations.hideMenu();
+				queueMessenger();
 			});
 		}
 	}

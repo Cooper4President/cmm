@@ -1,3 +1,7 @@
+/*
+	Prompts help info for user
+*/
+
 define(['jquery', 'hbs!templates/message'], function($, message){
 	function append(chatId,data){
 		$("#"+chatId).find('.container').append(message({help: data}));

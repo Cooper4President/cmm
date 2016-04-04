@@ -1,3 +1,7 @@
+/*
+	Module returns today's date formatted
+*/
+
 define(function(){
 	var today = new Date();
 	var dd = today.getDate();

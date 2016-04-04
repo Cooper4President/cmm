@@ -1,3 +1,7 @@
+/*
+	Defines sockets to communicate with server
+*/
+
 define([
 	'jquery',
 	'socket_io',

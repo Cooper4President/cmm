@@ -1,3 +1,7 @@
+/*
+	Defines animations for menu events
+*/
+
 define([
 	'jquery',
 
@@ -5,21 +9,29 @@ define([
 	'jqueryui'
 	], function($){
 	var D = 350;
-	return {
+	var api = {
 
+		//shows button to open menu
 		showButton: function(){	
 			$(".menu").animate({
 				top: 0
 			}, D);
-		},
-		hideButton: function(){		
-			$(".menu").animate({
-				top: '-100%'
-			}), D;
+			return api;
 		},
 
+		//hides button for menu
+		hideButton: function(){	
+			var tp = -$('.menu').height() - 5;	
+			$(".menu").animate({
+				top: tp
+			}), D;
+			return api;
+		},
+
+		// shows menu options
 		showMenu: function(){
-			//$('.backdrop').css('display', 'block');
+			$('.backdrop').css('display', 'block');
+			//all the fun for blurring chat boxes
 			$('.messenger-container').css({
 			   'filter'         : 'blur(2px)',
 			   '-webkit-filter' : 'blur(2px)',
@@ -28,7 +40,7 @@ define([
 			   '-ms-filter'     : 'blur(2px)'			
 			});
 
-			//var padding = D;
+			//loops through each item and displays with a delay
 			var dl = 0
 			$('.menu-item').each(function(){
 				var bt = 0.5*$(window).height() - 0.5*$(this).height();
@@ -37,11 +49,14 @@ define([
 				}, D);
 				dl += D;
 			});
+
+			return api;
 		},
 
 		//delegates hide animations for menu options
 		hideMenu: function(){
-			//$('.backdrop').css('display', 'none');
+			//similar to show menu but opposite direction
+			$('.backdrop').css('display', 'none');
 			$('.messenger-container').css({
 			   'filter'         : 'blur(0px)',
 			   '-webkit-filter' : 'blur(0px)',
@@ -57,31 +72,9 @@ define([
 				}, D);
 				dl += D;
 			});
-		},
-		//hides receiver field
-		hideReceiver: function(){
-			//give event delegate back to add messenger button
-		 	$('.menu-item').tooltip("enable");
-		 	$(".add-messenger").hover(function(event){ $(this).css('padding-left', 15) }, function(event){ $(this).css('padding-left', 10) });
-
-			$(".receiver").css({
-				borderColor: "transparent",
-				width: 0,
-				height: 36,
-				zIndex: 0,
-				borderWidth: 0
-			}).val("");
-		},
-
-		//shows receiver field
-		showReceiver: function(){
-		 	$(".receiver").css({
-		 		width: 195,
-		 		borderColor: "black",
-		 		height: 36,
-		 		zIndex: 5,
-		 		borderWidth: 3
-		 	}).focus();
-		}	
+			return api;
+		}
 	}
+
+	return api;
 });

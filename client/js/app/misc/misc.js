@@ -1,3 +1,7 @@
+/*
+	Misc functions
+*/
+
 define({
 	//checks if two arrays are equal
 	checkIfEqual: function (arr1, arr2){

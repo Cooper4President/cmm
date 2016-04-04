@@ -1,3 +1,7 @@
+/*
+	Gives specific chat window sortable property, to be sorted with other chat windows
+*/
+
 define(['jquery', './chatInfo'], function($, chatInfo){
 
 	function swap(a, b){
@@ -19,7 +23,7 @@ define(['jquery', './chatInfo'], function($, chatInfo){
 		//checks drag
 		var isDrag = false;
 		var dist, startLeft;
-		//drag delegate
+		//detects drag on chat head
 		$('#'+id).find('.head').mousedown(function (event){
 			var elm = $('#'+id);
 			isDrag = true;
@@ -27,6 +31,7 @@ define(['jquery', './chatInfo'], function($, chatInfo){
 			startLeft = parseInt(elm.css('left'));
 		});
 		//sorts windows based on current window position
+		//some really complicated logic...
 		$('body').mousemove(function (event){
 			if(isDrag){
 				var elm = $('#'+id);

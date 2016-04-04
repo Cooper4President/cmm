@@ -1,3 +1,7 @@
+/*
+	defines chat events for chat windows
+*/
+
 define([
 	'jquery',
 	'lodash',
@@ -17,8 +21,10 @@ define([
 
 	], function($, _, send, chatInfo, enqueueMessenger, sort, resize, menuAnimations, shifter, misc){
 	var saveCmd;
-	//handles down arrow functionality
+
+	//handles down arrow functionality for chat window
 	function downArrowHandler(chatId){
+		//loops through and finds next message to display from chat log
 		_(chatInfo.log).each(function(entry){
 			if(entry.id === chatId){
 				var cmd = $("#"+entry.id).find('.cmd');
@@ -34,8 +40,9 @@ define([
 		});
 	}
 
-	//handles up arrow functionality
+	//handles up arrow functionality for chat windows
 	function upArrowHandler(chatId){
+		//loops through and finds next message to display from chat log
 		_(chatInfo.log).each(function(entry){
 			if(entry.id === chatId){
 				var cmd = $("#"+entry.id).find('.cmd');
@@ -49,9 +56,11 @@ define([
 			}
 		}); 
 	}
-	//handles enter key functionality
+
+	//handles enter key functionality for chat windows
 	function enterKeyHandler(chatId){
 		send(chatId);
+		//loops through and sets current message for history loop
 		_(chatInfo.log).each(function(entry){
 			if(entry.id === chatId) {
 				entry.currentMessage = -1;
@@ -60,56 +69,46 @@ define([
 		});
 	}
 
-	function parseReceiver(recList){
-		//if(recRaw === "") return null;
-		//var recList = _.map(_.split(recRaw, ","), function(n){return _.trim(n)});
-		var found = false
-		_(recList).each(function(entry){
-			if(_.includes(entry, " ") || _.includes(entry, "\n"))found = true;
-			if(entry === "") found = true;
-		});
-		_(chatInfo.log).each(function(entry){
-			if(misc.checkIfEqual(recList, entry.receivers)) found = true;
-		});
 
-		if(found) return null;
-		else return recList;
-	}
-
-
+	//handles receiver set up and execution
 	function receiverHandler(html){
 		$('.head').find('.submit').on('click', function(event){
 
 
+			//create chat id and pull chat receivers
 			var chatId = html.attr('id')
-			var rec = html.find('.receivers').val();//parseReceiver($(this).val());
+			var rec = html.find('.receivers').val();
 
+			//finds if receivers already have active chat window displayed
 			var found = false;
-
 			_.each(chatInfo.log, function(entry){
 				if(misc.checkIfEqual(rec, entry.receivers)) found = true;
 			});
 
+			//check if valid input
 			if(!found && rec !== null){
 
 				menuAnimations.showButton();
 
+				//joins receivers into formatted list
 				var recFormat = _.join(rec, ", ");
 
+				//replaces receiver elements with formatted title
 				html.find('.head').find('.submit').remove();
 				html.find('.head').find('.select2').remove();
 				html.find('.head').find('.receivers').remove();
 				html.find('.head').append("<div class='title'>"+ recFormat +"</div>");
 
-				//html.find('.receivers').replaceWith("<div class='title'>"+ recFormat +"</div>");
+				//add new log entry
+				chatInfo.newChatLogEntry(chatId, rec);
 
-				chatInfo.updateChatLog(chatId, {recEnt: rec});
-
-
-
+				//gives window sortable property
 				sort(chatId);
+
 				//focus on new chat window
 				html.find('.head').find('input').focus().autogrow();
+
+				//grants key down functions to chat window
 				keyDownHandler(html);
 			}else{
 				return false;
@@ -120,6 +119,7 @@ define([
 
 	}
 
+	//gives chat window ability to receiver input
 	function keyDownHandler(html){
 	    html.find('.cmd').prop('disabled', false).focus().keydown(function(event) {
 			var chatId = $(this).closest('.chat').attr('id');
@@ -144,17 +144,25 @@ define([
 	}
 
 
+	//sets up events for chat window
 	return function(html){
 		var cont = receiverHandler(html);
 
+		//initializes select2 plug in
 		$('.receivers').select2({
 			placeholder: "Select chat members"
 		});
+
+		//displays shifter if needed
 		if(chatInfo.left.length > 0) shifter.showRight();
 		if(chatInfo.right.length > 0) shifter.showLeft();
+
+		//gives chat window resize property
 		resize(html.attr('id'));
 		html.find('.head').find('input').focus();
 
+
+		//remove messenger if needed
 		html.find(".remove-messenger").on("click",function(event){
 			enqueueMessenger(html);
 		});

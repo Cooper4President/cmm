@@ -1,3 +1,7 @@
+/*
+	gives chat window resize property
+*/
+
 define(['jquery'], function($){
 	//enables resizable chat window
 	return function(id){
