@@ -52,3 +52,5 @@ sql.getpassword('craig');
 sql.getpassword('DNE');
 
 // end testing section
+sql.logroom('craigpub','craig','hello world');
+sql.getroomlog('craigpub');

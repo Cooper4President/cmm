@@ -97,8 +97,8 @@ Ideally this will:
 	    if (err){
 		error=err; // untill I learn all the possible errors
 		if (err.errno==1){
-		    error=[{error:'Table Exists',code:'3'}];
-		    result='Table Exists';
+		    error=[{Error:'Table '+name+' Exists',code:'2'}];
+		    result='Table '+name+' Exists';
 		}
 		
 	    } else {
@@ -119,7 +119,7 @@ Ideally this will:
 	    if (err){
 		error=err; // until I learn the errors
 		if (err.errno=13){
-		    error=[{error:'Uniqueness Error',code:'2'}];
+		    error=[{Error:'Uniqueness Error',code:'2'}];
 		    result='Failled to add '+values+' to '+table;
 		}
 	    } else {
@@ -134,10 +134,12 @@ Ideally this will:
 	    cb(err,null);
 	    return;
 	}
-	db.all('SELECT ? From ? WHERE ?',[columnlist,table,req],function(err,results){
+	db.all('SELECT ? From ? WHERE ?',[columnlist,table,req],function(err,res){
 	    var error=null;
+	    var results=res;
 	    if (err){
 		error=err;
+		result='get item test';
 	    }
 	    cb(error,results);
 	});
@@ -148,12 +150,13 @@ Ideally this will:
 	    cb(err,null);
 	    return;
 	}
-	db.all('SELECT '+column+' FROM '+table,function(err,results){
+	db.all('SELECT '+column+' FROM '+table,[],function(err,res){
 	    var error=null;
+	    var results=res;
 	    if (err){
 		error=err;
 		if (err.errno=1){
-		    error=[{error:'Table does not exist',code:'1'}];
+		    error=[{Error:'Table '+table+' does not exist',code:'1'}];
 		}
 	    }
 	    cb(error,results);
@@ -169,35 +172,44 @@ Ideally this will:
 	    cb=defaultcallback;
 	}
 	var error=null;
-	var result=null;
+	var result='add user to room test';
 	// need to include check for user existance
 	db.serialize(function(){
 	    db.all('SELECT priv FROM rooms WHERE room==?',[roomname],function(err,res1){
 		if (err) {
 		    error=err; // temporary
 		    if (err.errno=1){
-			error=[{error:'Room '+roomname+' does not exist.',code:'1'}]
+			error=[{Error:'Room '+roomname+' does not exist.',code:'1'}];
 		    }
-		    cb(error,null);
+		    cb(error,'add user to room test');
 		    return;
 		}
-		var priv = res1.priv
-		cb(priv,res1);
+		if (res1[0]==undefined){
+		    error=[{Error: 'Can not join room '+roomname+' does not exist',code: '1'}];
+		    cb (error,null);
+		    return;
+		}
+		var pr=res1[0].priv;
 		db.all('SELECT owner FROM '+roomname+'users WHERE user==?',[who],function(err,res2){
+		    var own='false';
 		    if(err){
 			error=err; // temproary
 			if (err.errno=1){
-			    error=[{error:'Room '+roomname+' does not exist.',code:'1'}]
+			    error=[{Error:'Room '+roomname+' does not exist.',code:'1'}]
 			}
 			cb(error,null);
 			return;
 		    }
-		    var own=res2.owner;
+		    if (res2[0]==undefined){
+			error=[{Error: who+' is not in room '+roomname,code:'1'}];
+		    } else {
+			own=res2[0].owner;
+		    }
 		    if (own=='false'){
-			if(priv='true'){
+			if(pr=='true'){
 			    // tell the client that they cant add users to the room
-			    error=[{error:'Permissions Error',code:'3'}];
-			    result=who+' lacks access privalages to room '+roomname;
+			    error=[{Error:'Permissions Error',code:'3'}];
+			    result= who+' lacks access privalages to room '+roomname;
 			    cb(error,result);
 			    return;
 			}
@@ -207,8 +219,8 @@ Ideally this will:
 			if (err){
 			    error=err; // temp fix
 			    if (err.errno==19){
-				error=[{error:'Uniqueness Error',code:'2'}];
-				result=username+' is already in the room';
+				error=[{Error:'Uniqueness Error',code:'2'}];
+				result=username+' is already in the room '+roomname;
 			    }
 			} else {
 			    result=username+' has been added to room';
@@ -219,10 +231,12 @@ Ideally this will:
 	    });
 	});
     }
-//##################### Externally Accessible ######################    
+    
+    //##################### Externally Accessible ######################
+    
     cmmsql.prototype.adduser=function(username,password,cb){
 	var error=null;
-	var result=null;
+	var result='add user test';
 	if (cb==null){
 	    cb=defaultcallback;
 	}
@@ -230,7 +244,7 @@ Ideally this will:
 	    if (err){
 		error=err; //tmpfix
 		if (err.errno==19){
-		    error=[{error:'Uniqueness Error',code:'2'}];
+		    error=[{Error:'Uniqueness Error',code:'2'}];
 		    result='User '+username+' already exists'
 		}
 	    }else{
@@ -258,23 +272,23 @@ Ideally this will:
 	    cb=dcb;
 	}
 	var error=null;
-	var result=null;
+	var result='create room test';
 	db.serialize(function(){
 	    db.run('INSERT into rooms(room,priv,creator) VALUES (?,?,?)',[roomname,priv,creator],function(err){
 		if (err){
 		    error=err;
 		    if (err.errno==19){
-			error=[{error:'Uniqueness Error',code:'2'}];
+			error=[{Error:'Uniqueness Error',code:'2'}];
 			result='Room '+roomname+' already exists.';
 		    }
 		    cb(error,result)
 		    return;
 		}
 		createtable(null,roomname,'time','user,message',dcb);
-		createtable(null,roomname+'users','user','owner',dcb);
+		createtable(null,roomname+'users','user','owner,blocked',dcb);
 		addusertoroom(null,roomname,creator,'true',cb);
 		userlist.forEach(function(value,index,array){
-		    addusertoroom(null,roomname,value,'true',creator,cb);
+		    addusertoroom(null,roomname,value,'false',creator,cb);
 		});
 	    });
 	    
@@ -286,14 +300,19 @@ Ideally this will:
 	if (cb==null) {
 	    cb=defaultcallback;
 	}
-	additem(null,roomname,'time,user,message',Date.now()+','+username+','+message,cb);
+	db.run('INSERT into '+roomname+'(time,user,message) VALUES (?,?,?)',[Date.now(),username,message],function(err,res){
+	    if (err) {
+		cb(err,'log test');
+	    }
+	});
+	
     }
     
     cmmsql.prototype.getroomlog=function(roomname,cb){
 	if (cb==null) {
 	    cb=defaultcallback;
 	}
-	listtable(roomname,cb);
+	listcolumn(null,roomname,'*',cb);
     }
     
     cmmsql.prototype.joinroom=function(roomname,username,isowner,who,cb){
@@ -301,23 +320,30 @@ Ideally this will:
 	    cb=defaultcallback;
 	}
 	var error=null;
-	var result=null;
+	var result='join room test';
 	if (roomname=='mainroom'){
 	    // tell the user they are a moron
-	    error=[{error:'Uniqueness Error',code:'2'}];
+	    error=[{Error:'Uniqueness Error',code:'2'}];
 	    result='User '+username+' is already in this room';
 	}else if (roomname=='users'){
-	    error=[{error:'Accessibility Error',code:'1'}];
+	    error=[{Error:'Accessibility Error',code:'1'}];
 	    result='Room users does not exist.';
 	}else if (roomname=='rooms'){
-	    error=[{error:'Accessibility Error',code:'1'}];
+	    error=[{Error:'Accessibility Error',code:'1'}];
 	    result='Room rooms does not exist.';
 	}
 	if(error){
 	    cb(error,result);
 	    return;
 	}
-	addusertoroom(null,roomname,username,isowner,who,cb);
+	db.all('SELECT user FROM users WHERE user==?',[username],function(err,res){
+	    if (res[0]==undefined){
+		error=[{Error: 'User '+username+' does not exist',code: '3'}];
+		cb(error,null);
+		return;
+	    }
+	    addusertoroom(null,roomname,username,isowner,who,cb);
+	});
     }
     
     cmmsql.prototype.leaveroom=function(roomname,username,cb){
@@ -357,10 +383,32 @@ Ideally this will:
 	    if (err){
 		error=err;
 	    }
-	    cb(error,res);
+	    if (res[0]==undefined){
+		error=[{Error: "User "+username+" does not exist",code: "1"}];
+	    }else{
+		result=res[0].password;
+	    }
+	    cb(error,result);
 	});
     }
-    
+
+    cmmsql.prototype.banuser=function(room,who,banned){
+
+    }
+
+    cmmsql.prototype.isbanned=function(room,user){
+	var error;
+	var result;
+	db.all('SELECT banned from '+room+'users WHERE username==?',[user],function(err,res){
+	    if (err){
+		error=err;
+	    }
+	    if (res[0]!=undefined){
+		result=res[0].banned;
+	    }
+	    cb(err,result);
+	});
+    }
 }
 //####################################################
 
