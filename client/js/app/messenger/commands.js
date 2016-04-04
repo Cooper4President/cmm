@@ -213,10 +213,11 @@ define([ //list of dependencies to load for this module
 		}
 		else{
 			startWord = words[colorIndex+1];
-			endWord = words[words.length-1];
-			regex = new RegExp(startWord + '.*' + endWord);
+			// endWord = words[words.length-1];
+			regex = new RegExp(startWord + '.*');
 			targetStr = inp.match(regex);	
 		}
+		alert(targetStr);
 		
 		inp = inp.replace(targetStr, "<font color=\"" + color + "\">" + targetStr + "</font>");
 
