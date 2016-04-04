@@ -182,6 +182,7 @@ Ideally this will:
 		    return;
 		}
 		var priv = res1.priv
+		cb(priv,res1);
 		db.all('SELECT owner FROM '+roomname+'users WHERE user==?',[who],function(err,res2){
 		    if(err){
 			error=err; // temproary
@@ -218,7 +219,7 @@ Ideally this will:
 	    });
 	});
     }
-//##################### Externally Accessible Functions ######################    
+//##################### Externally Accessible ######################    
     cmmsql.prototype.adduser=function(username,password,cb){
 	var error=null;
 	var result=null;
@@ -331,7 +332,7 @@ Ideally this will:
 	    cb=defaultcallback;
 	}
 	var error=null;
-	db.all('SELECT users FROM ? WHERE owner=?',[roomname+'users','true'],function(err,res){
+	db.all('SELECT user FROM ? WHERE owner==?',[roomname+'users','true'],function(err,res){
 	    if (err){
 		error=err;
 	    }
@@ -356,15 +357,12 @@ Ideally this will:
 	    if (err){
 		error=err;
 	    }
-	    if (res){
-		result=res.password;
-	    }
-	    cb(error,result);
+	    cb(error,res);
 	});
     }
     
 }
-//##########################  END OF THE CLASS  ##########################
+//####################################################
 
 // Now make it importable
 module.exports=cmmsql
