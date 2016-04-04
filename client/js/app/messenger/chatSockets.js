@@ -1,4 +1,14 @@
-define(['jquery','socket_io','jquery_cookie'], function($, io){
+/*
+	Defines sockets to communicate with server
+*/
+
+define([
+	'jquery',
+	'socket_io',
+
+	//jquery plug ins
+	'jquery_cookie'
+	], function($, io){
 	var socket = io();
 
 

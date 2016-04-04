@@ -1,19 +1,42 @@
 <html>
-  <head>
-    <title>chat--</title>
-    <script data-main="home" src="js/bower_components/requirejs/require.js"></script>
-    <link rel="stylesheet" type="text/css" href="css/prefix/index-prefix.css">
-  </head>
-  <body>
-    <div class="login-container home-item">
-      <h1>Welcome to Chat--</h1>
-      <div>Please enter login info bellow</div>
-      <input type="text" class="username" placeholder="Username">
-      <input type="password" class="password" placeholder="Password">
-      <input type="submit" value="Submit" class="login">
-    </div>
+	<head>
+		<title>chat--</title>
+		<script data-main="home" src="js/bower_components/requirejs/require.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/prefix/index-prefix.css">
+	</head>
+	<body>
+		<div class="sign-up home-item">
+				<h1>Sign Up</h1>
+				<div>Please enter account information bellow</div>
+				<input type="text" class="new-user" placeholder="Username">
+				<input type="text" class="new-email" placeholder="Email">
+				<input type="password" class="new-pass" placeholder="Password">
+				<div style="margin: 10px">
+					<div class="sign button">Sign Up</div>
+					<div class="conjunction">Have an account?</div>
+					<div class="login-re button">Log In</div>
+				</div>
+			</div>
+		</div>
+		<div class="start home-item">
+			<h1>Welcome to Chat--</h1>
+			<div class="sign-up-op button">Sign Up</div>
+			<div class="conjunction">or</div>
+			<div class="login-op button">Log In</div>
+		</div>
+		<div class="login home-item">
+			<h1 class="login-prompt">Log In</h1>
+			<div>Please enter login info bellow</div>
+			<input type="text" class="username" placeholder="Username or Email">
+			<input type="password" class="password" placeholder="Password">
+			<div style="margin: 10px">
+				<div class="log button">Log In</div>
+				<div class="conjunction">Don't have an account?</div>
+				<div class="sign-up-re button">Sign Up</div>
+			</div>
+		</div>
 
-  </body>
+	</body>
 
 
 </html>

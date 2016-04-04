@@ -1,14 +1,22 @@
 <div id="{{id}}" class="chat">
-	<div class="chat-head">
-		<div class="chat-title">{{formated}}</div>
-		<div class="remove-messenger fa fa-times"></div>
-	</div>
-	<div class='chat-box'>
-		<div class='chat-wrapper'>
-			<div class="chat-container"></div>
+	<div class="element">
+		<div class="head">
+			<select class="receivers" multiple="multiple">
+				{{#each friends}}
+					<option value="{{name}}">{{name}}</option>
+				{{/each}}
+			</select>
+			<div class="submit fa fa-envelope-o"></div>
+			<div class="remove-messenger fa fa-times"></div>
+		</div>
+		<div class='box'>
+			<div class='wrapper'>
+				<div class="container"></div>
+			</div>
+		</div>
+		<div class="user-container">
+			<textarea type="text" class="cmd" placeholder="Press Enter to send" disabled="true"></textarea>
 		</div>
 	</div>
-	<div class="user-container">
-		<textarea type="text" class="cmd" placeholder="Press Enter to send"></textarea>
-	</div>
-<div>
+	<div class="resize-bar"></div>
+</div>

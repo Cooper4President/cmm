@@ -7,7 +7,8 @@ requirejs.config({
         jqueryui: '../bower_components/jquery-ui/jquery-ui',
         lodash: '../bower_components/lodash/lodash',
         autogrow: '../bower_components/autogrow/autogrow',
-        jquery_cookie: '../bower_components/jquery.cookie/jquery.cookie'
+        jquery_cookie: '../bower_components/jquery.cookie/jquery.cookie',
+        select2: '../bower_components/select2/dist/js/select2.min'
     },
     shim: {
     	autogrow: ['jquery'],
@@ -16,6 +17,6 @@ requirejs.config({
     }
 });
 
-requirejs(['app-main'], function(main){
+requirejs(['appMain'], function(main){
    main();
 });
