@@ -150,6 +150,7 @@ Ideally this will:
 	    cb(err,null);
 	    return;
 	}
+<<<<<<< HEAD
 	db.all('SELECT '+column+' FROM '+table,[],function(err,res){
 	    var error=null;
 	    var results=res;
@@ -210,6 +211,7 @@ Ideally this will:
 			    // tell the client that they cant add users to the room
 			    error=[{Error:'Permissions Error',code:'3'}];
 			    result= who+' lacks access privalages to room '+roomname;
+
 			    cb(error,result);
 			    return;
 			}
