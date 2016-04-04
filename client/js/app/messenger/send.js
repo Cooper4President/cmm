@@ -38,7 +38,6 @@ define([
 
 			//send the message to the server
 			var testing = getReceivers(id);
-
 			chatSockets.sendChatMsg(id, testing, inp);
 
 			//run message as a command and post it to respective chat window

@@ -42,7 +42,6 @@ define([ //list of dependencies to load for this module
 				switch(cmdInfo.cmdName){
 					case "--color":
 						inp = setFontColor(words, cmdInfo, inp);
-						alert(inp);
 						if(error){
 							error = false;
 							return{error: inp};
@@ -216,7 +215,6 @@ define([ //list of dependencies to load for this module
 			regex = new RegExp(startWord + '.*');
 			targetStr = inp.match(regex);	
 		}
-		alert(targetStr);
 		
 		inp = inp.replace(targetStr, "<font color=\"" + color + "\">" + targetStr + "</font>");
 
