@@ -78,7 +78,7 @@ define([
 
 
 	function receiverHandler(html){
-		$('.chat-head').find('.submit').on('click', function(event){
+		$('.head').find('.submit').on('click', function(event){
 
 
 			var chatId = html.attr('id')
@@ -96,12 +96,12 @@ define([
 
 				var recFormat = _.join(rec, ", ");
 
-				html.find('.chat-head').find('.submit').remove();
-				html.find('.chat-head').find('.select2').remove();
-				html.find('.chat-head').find('.receivers').remove();
-				html.find('.chat-head').append("<div class='chat-title'>"+ recFormat +"</div>");
+				html.find('.head').find('.submit').remove();
+				html.find('.head').find('.select2').remove();
+				html.find('.head').find('.receivers').remove();
+				html.find('.head').append("<div class='title'>"+ recFormat +"</div>");
 
-				//html.find('.receivers').replaceWith("<div class='chat-title'>"+ recFormat +"</div>");
+				//html.find('.receivers').replaceWith("<div class='title'>"+ recFormat +"</div>");
 
 				chatInfo.updateChatLog(chatId, {recEnt: rec});
 
@@ -109,7 +109,7 @@ define([
 
 				sort(chatId);
 				//focus on new chat window
-				html.find('.chat-head').find('input').focus().autogrow();
+				html.find('.head').find('input').focus().autogrow();
 				keyDownHandler(html);
 			}else{
 				return false;
@@ -122,7 +122,7 @@ define([
 
 	function keyDownHandler(html){
 	    html.find('.cmd').prop('disabled', false).focus().keydown(function(event) {
-			var chatId = $(this).closest('.chat-element').attr('id');
+			var chatId = $(this).closest('.chat').attr('id');
 			//enter key submit
 		    if (event.keyCode === 13) {
 				event.preventDefault();
@@ -153,7 +153,7 @@ define([
 		if(chatInfo.left.length > 0) shifter.showRight();
 		if(chatInfo.right.length > 0) shifter.showLeft();
 		resize(html.attr('id'));
-		html.find('.chat-head').find('input').focus();
+		html.find('.head').find('input').focus();
 
 		html.find(".remove-messenger").on("click",function(event){
 			enqueueMessenger(html);

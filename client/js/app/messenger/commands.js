@@ -21,7 +21,7 @@ define([ //list of dependencies to load for this module
 			username: user.name
 		}
 
-		var container = $("#"+chatId).find('.chat-container');
+		var container = $("#"+chatId).find('.container');
 		//match the -- delimiter to find all commands in the input
 		if(_.includes(inp , '--')){
 			//get all space seperated words

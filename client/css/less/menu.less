@@ -1,88 +1,66 @@
-.menu-item{
-    z-index: 5;
-    cursor: pointer;
-    position: absolute;
-    transition: 0.25s all;
-    bottom: -100%;
-}
 
-.menu-item:hover{
-    padding-bottom: 15px;
-}
 
 
 .messenger-container {
     transition: 1s all;
 }
 
-/*.friends{
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    top: -100%;
-    overflow-y: hidden;
-    .list{
-        height: 94%;
-        overflow: auto;
-        column-width: 90px;
-        .friend{
-            cursor: pointer;
-        }
-        input{
-            margin: 1px;
-        }
-    }
-    .submit{
-        height: 3%;
-        width: 115px;
-        border: 1px solid #000;
-        text-align: center;
-        border-radius: 5px;
-        margin: 1px;
-        bottom: 1px;    
-    }
-}*/
 .menu-options {
     .fa {
         font-size: 100px;
     }
+    .menu-item{
+        z-index: 5;
+        cursor: pointer;
+        position: absolute;
+        transition: 0.25s all;
+        bottom: -100%;
+    }
+    .menu-item:hover{
+        padding-bottom: 15px;
+    }
 }
 
 
-.shift-left.fa.fa-caret-right {
-    font-size: 75px;
-    text-align: center;
-    position: absolute;
-    top: 40%;
-    padding: 5px;
-    right: -100%;
-    color: rgba(0, 0, 0, 0.22);
-    transition: 0.25s all;
-    z-index: 1;
+.shifters{
 
+    .shift-left.fa.fa-caret-right {
+        font-size: 75px;
+        text-align: center;
+        position: absolute;
+        top: 40%;
+        padding: 5px;
+        right: -100%;
+        color: rgba(0, 0, 0, 0.22);
+        transition: 0.25s all;
+        z-index: 1;
+
+    }
+
+    .shift-left.fa.fa-caret-right:hover {
+        color: black;
+        padding-right: 10px;
+    }
+
+    .shift-right.fa.fa-caret-left {
+        font-size: 73px;
+        text-align: center;
+        position: absolute;
+        top: 40%;
+        left: -100%;
+        padding: 5px;
+        color: rgba(0, 0, 0, 0.22);
+        transition: 0.25s all;
+        z-index: 1;
+    }
+
+    .shift-right.fa.fa-caret-left:hover {
+        color: black;
+        padding-left: 10px;
+    }
 }
 
-.shift-left.fa.fa-caret-right:hover {
-    color: black;
-    padding-right: 10px;
-}
 
-.shift-right.fa.fa-caret-left {
-    font-size: 73px;
-    text-align: center;
-    position: absolute;
-    top: 40%;
-    left: -100%;
-    padding: 5px;
-    color: rgba(0, 0, 0, 0.22);
-    transition: 0.25s all;
-    z-index: 1;
-}
-
-.shift-right.fa.fa-caret-left:hover {
-    color: black;
-    padding-left: 10px;
-}
 
 
 
@@ -102,21 +80,5 @@
 
 .menu.fa.fa-bars:hover {
     color: black;
-}
-
-.receiver{
-    height: 36px;
-    width: 0;
-    border-width: 0;
-    position: absolute;
-    left: 50px;
-    top: 13px;
-    z-index: 2;
-    border-radius: 4px;
-    outline: none;
-    border-style: solid;
-    border-color: transparent;
-    transition: 0.25s all linear;
-    z-index: 5;
 }
 

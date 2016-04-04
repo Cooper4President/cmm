@@ -16,7 +16,7 @@ define([
 	}
 	//checks if chat box is overflowed
 	function checkScrollbar(chatId){ 
-		var container = $("#"+chatId).find('.chat-container');
+		var container = $("#"+chatId).find('.container');
 		var elt, hasOverflow = (elt = container).innerWidth() > elt[0].scrollWidth;
 		if(hasOverflow) container.scrollTop(container[0].scrollHeight);
 	}
@@ -25,7 +25,7 @@ define([
 	//Send only has one public function so we can just return the function itself
 	return function(id, inp){
 		var chatId = "#"+id;
-		var container = $(chatId).find('.chat-container');
+		var container = $(chatId).find('.container');
 		var cmd = $(chatId).find('.cmd');
 		if(inp === undefined) var inp = cmd.val();
 		if(inp != ""){

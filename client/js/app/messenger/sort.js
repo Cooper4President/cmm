@@ -20,7 +20,7 @@ define(['jquery', './chatInfo'], function($, chatInfo){
 		var isDrag = false;
 		var dist, startLeft;
 		//drag delegate
-		$('#'+id).find('.chat-head').mousedown(function (event){
+		$('#'+id).find('.head').mousedown(function (event){
 			var elm = $('#'+id);
 			isDrag = true;
 			dist = event.pageX - parseInt(elm.css('left'));
