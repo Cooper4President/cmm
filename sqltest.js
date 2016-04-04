@@ -1,8 +1,9 @@
-// This is for testing and sample code
+// This is for testing and also makes for good sample code
 var cmmsql=require('./cmmsql');
 
 // create a new database named cmm.db
 var sql=new cmmsql('cmm.db');
+
 
 // add some users to the database they are all by default
 // put in to the main chat room.
