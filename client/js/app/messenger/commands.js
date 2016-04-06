@@ -15,9 +15,6 @@ define([ //list of dependencies to load for this module
 	//this returns a function, as this is the only function that this modele requires, it can also be anything that
 	//can be returned (such as an object, which most modules in this case return)
 
-	globalColor = "";
-	globalBold = false;
-
 	return function(chatId, inp){ 
 		//this is the main object to store command data
 		var envelope = {
@@ -44,22 +41,14 @@ define([ //list of dependencies to load for this module
 
 				//Handle each command
 				switch(cmdInfo.cmdName){
-					case "--color":
-						var colorInfo = setFontColor(words, cmdInfo, inp);
-						if(colorInfo.isError){
-							return {error: colorInfo.errorMsg};
+					case "--font":
+						var fontInfo = setFont(words, cmdInfo, inp);
+						if(fontInfo.isError){
+							return {error: fontInfo.errorMsg};
 						}
 						else{
-							inp = colorInfo.inp;
-						}
-						break;
-					case "--bold":
-						var boldInfo = setBold(words, cmdInfo, inp);
-						if(boldInfo.isError){
-							return {error: boldInfo.errorMsg};
-						}
-						else{
-							inp = boldInfo.inp;
+							inp = fontInfo.inp;
+							words = fontInfo.words;
 						}
 						break;
 					default:
@@ -225,156 +214,153 @@ define([ //list of dependencies to load for this module
 		return commands;
 	}
 
-	function setFontColor(words, cmdInfo, inp){
-		var colorInfo = {};	
+	function setFont(words, cmdInfo, inp){
+		var returnData = {}
 
-		if(_.indexOf(words, cmdInfo.cmdName) + cmdInfo.argList.length == words.length-1){
-			colorInfo.isError = true;
-			colorInfo.errorMsg = "Cannot set color at the end of a message. You must specify a target. Type --help for help."
-			return colorInfo;
-		}
+		fontCmdIndex = _.indexOf(words, cmdInfo.cmdName);
+		var startWord = nextValidWord(words, fontCmdIndex);
 
-		if(cmdInfo.argList.length > 1){
-			colorInfo.isError = true;
-			colorInfo.errorMsg = "The " + cmdInfo.cmdName + " command does not support multiple arguments. Type --help for help."
-		}
+		numArgs = cmdInfo.argList.length;
 
-		//The color will be the first word after the --color command and whatever argument they pass.
-		var startIndex = _.indexOf(words, cmdInfo.cmdName)
+		var targetStr;
+		var targetRegex;
 
-		var colorIndex = startIndex + cmdInfo.argList.length + 1;
-		var color = words[colorIndex];
+		//We will use these later to set the font, after parsing the arguments
+		var globalFlag = false;
+		var selectionFlag = false;
+		var boldFlag, italicFlag, colorFlag, sizeFlag = false;
+		var color = "black";
+		var size = "3";
 
-		var regex;
-
-		if(cmdInfo.argList.length > 0){
-			var arg = cmdInfo.argList[0];
+		for(var i = 0; i<numArgs; i++){
+			var arg =  cmdInfo.argList[i];
 
 			switch(arg){
 				case "&word":
-					regex = new RegExp(words[colorIndex + 1]);
+					if(startWord == ""){
+						returnData.isError = true;
+						returnData.errorMsg = "Error: No valid word available following " + cmdInfo.cmdName + " command. Type --help for help."
+						return returnData;
+					}
+					targetRegex = new RegExp(cmdInfo.cmdName + ".*" + startWord);
 					break;
 				case "&message":
-					regex = new RegExp(".*");
+					targetRegex = new RegExp(".*");
 					break;
 				case "&selection":
 					//The ? makes the regex non-greedy, so it will just match the first brackets
-					regex = new RegExp("\{.*?\}");
+					selectionFlag = true;
+					targetRegex = new RegExp("\{.*?\}");
 					break;
 				case "&all":
-					globalColor = color;
+					globalFlag = true;
+					break;
+				case "&bold":
+					boldFlag = true;
+					break;
+				case "&italics":
+					//fall through to italic case, so both are accepted
+				case "&italic":
+					italicFlag = true;
 					break;
 				default:
-					colorInfo.isError = true;
-					colorInfo.errorMsg = arg + " is not a recognized argument for " + cmdInfo.cmdName + ". Type --help for help.";
-					return colorInfo;
+					arg = arg.replace('&', '');
+					_.trim(arg);
+					if(arg.match(/^[1-7]$/)){
+						sizeFlag = true;
+						size = arg;
+					}
+					else if(isValidColor(arg)){
+						colorFlag = true;
+						color = arg;
+					}
+					else{
+						returnData.isError = true;
+						returnData.errorMsg = "&" + arg + " is not a valid argument for " + cmdInfo.cmdName + ". Type --help for help.";
+						return returnData;
+						
+					}
 					break;
 			}
 		}
-		else{
-			startWord = words[colorIndex+1];
-			regex = new RegExp(startWord + '.*');	
+
+		if(!targetRegex){
+			targetRegex = new RegExp(cmdInfo.cmdName + ".*" + startWord + ".*");
 		}
-		
-		//Need to clean up the command and args from inp and words so they don't get displayed
-		inp = inp.replace(color, '');
-		words.splice(colorIndex, 1);
+
+		targetStr = inp.match(targetRegex)[0];
+
+		var fontStr = addFontTags(targetStr, sizeFlag, colorFlag, boldFlag, italicFlag, color, size);
+		inp = inp.replace(targetStr, fontStr);
+
 		inp = cleanupInp(cmdInfo, inp);
 		words = cleanupWords(cmdInfo, words);
 
-		if(inp != ""){
-			//find the target portion of the string using the regex
-			var targetStr = inp.match(regex);
+		//Need to remove command and args from the inp string and words array
+		returnData.inp = inp;
+		returnData.words = words;
 
-			//add html color tags around the target string portion of the message
-			inp = inp.replace(targetStr, "<font color=\"" + color + "\">" + targetStr + "</font>");
-
-			//Need to remove brackets from selected text
-			if(cmdInfo.argList[0] == "&selection"){
-				var removedBrackets = targetStr[0].replace(/^\{/,'');
-				removedBrackets = removedBrackets.replace(/\}$/,'');
-				inp = inp.replace(targetStr, removedBrackets);
-			}
-
-			colorInfo.inp = inp;
-		}
-
-		return colorInfo;
+		return returnData;
 	}
 
-	function setBold(words, cmdInfo, inp){
-		var boldInfo = {};	
-
-		if(_.indexOf(words, cmdInfo.cmdName) + cmdInfo.argList.length == words.length-1){
-			boldInfo.isError = true;
-			boldInfo.errorMsg = "Cannot set bold at the end of a message. You must specify a target. Type --help for help."
-			return boldInfo;
+	function addFontTags(fontStr, sizeFlag, colorFlag, boldFlag, italicFlag, color, size){
+		if(boldFlag){
+			fontStr = "<b>" + fontStr + "</b>";
 		}
 
-		if(cmdInfo.argList.length > 1){
-			boldInfo.isError = true;
-			boldInfo.errorMsg = "The " + cmdInfo.cmdName + " command does not support multiple arguments. Type --help for help."
+		if(italicFlag){
+			fontStr = "<i>" + fontStr + "</i>";
 		}
 
-		//The bold will be the first word after the --bold command and whatever argument they pass.
-		var startIndex = _.indexOf(words, cmdInfo.cmdName)
-
-		var boldIndex = startIndex + cmdInfo.argList.length;
-
-		var regex;
-
-		if(cmdInfo.argList.length > 0){
-			var arg = cmdInfo.argList[0];
-
-			switch(arg){
-				case "&word":
-					regex = new RegExp(words[boldIndex + 1]);
-					break;
-				case "&message":
-					regex = new RegExp(".*");
-					break;
-				case "&selection":
-					//The ? makes the regex non-greedy, so it will just match the first brackets
-					regex = new RegExp("\{.*?\}");
-					break;
-				case "&all":
-					globalbold = true;
-					break;
-				default:
-					boldInfo.isError = true;
-					boldInfo.errorMsg = arg + " is not a recognized argument for " + cmdInfo.cmdName + ". Type --help for help.";
-					return boldInfo;
-					break;
+		if(colorFlag || sizeFlag){
+			var fontTag = "<font ";
+			if(colorFlag){
+				fontTag = fontTag + "color=\"" + color + "\" ";
 			}
-		}
-		else{
-			startWord = words[boldIndex+1];
-			regex = new RegExp(startWord + '.*');	
-		}
-		
-		//Need to clean up the command and args from inp and words so they don't get displayed
-		inp = cleanupInp(cmdInfo, inp);
-		words = cleanupWords(cmdInfo, words);
-
-		if(inp != ""){
-			//find the target portion of the string using the regex
-			var targetStr = inp.match(regex);
-
-			//add html color tags around the target string portion of the message
-			inp = inp.replace(targetStr, "<b>" + targetStr + "</b>");
-			alert(inp);
-
-			//Need to remove brackets from selected text
-			if(cmdInfo.argList[0] == "&selection"){
-				var removedBrackets = targetStr[0].replace(/^\{/,'');
-				removedBrackets = removedBrackets.replace(/\}$/,'');
-				inp = inp.replace(targetStr, removedBrackets);
+			if(sizeFlag){
+				fontTag = fontTag + "size=\"" + size + "\" ";
 			}
 
-			boldInfo.inp = inp;
+			fontTag = fontTag + ">";
+
+			fontStr = fontTag + fontStr + "</font>";
 		}
 
-		return boldInfo;
+		return fontStr;
+
+	}
+
+	function removeBrackets(targetStr){
+		//Need to remove brackets from selected text
+		var removedBrackets = targetStr.replace(/^\{/,'');
+		removedBrackets = removedBrackets.replace(/\}$/,'');
+		return removedBrackets;
+	}
+
+	function nextValidWord(words, startIndex){
+		for(var i = startIndex; i < words.length; i++){
+			if(!words[i].match(/^(&|-{2})/)){
+				return words[i];
+			}
+		}
+		return "";
+	}
+
+	//Creates a temporay image element, tries to set the color of it, and if it fails then the argument is not a valid color.
+	//Modified function a StackOverflow post: http://stackoverflow.com/questions/6386090/validating-css-color-names
+	function isValidColor(arg) {
+	    //Alter the following conditions according to your need.
+	    if (arg === "") { return false; }
+	    if (arg === "inherit") { return false; }
+	    if (arg === "transparent") { return false; }
+
+	    var image = document.createElement("img");
+	    image.style.color = "rgb(0, 0, 0)";
+	    image.style.color = arg;
+	    if (image.style.color !== "rgb(0, 0, 0)") { return true; }
+	    image.style.color = "rgb(255, 255, 255)";
+	    image.style.color = arg;
+	    return (image.style.color !== "rgb(255, 255, 255)");
 	}
 
 	//function to remove command and arguments from the message input
