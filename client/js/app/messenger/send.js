@@ -41,7 +41,7 @@ define([
 			chatSockets.sendChatMsg(id, testing, inp);
 
 			//run message as a command and post it to respective chat window
-			container.append(message(commands(id, inp))); //since the command module only returns a funciton we call it like this
+			container.append(message(commands(id, inp))); //since the command module only returns a function we call it like this
 			
 			//check scroll bar and clear field
 			checkScrollbar(id);							

@@ -15,7 +15,8 @@ define([ //list of dependencies to load for this module
 	//this returns a function, as this is the only function that this modele requires, it can also be anything that
 	//can be returned (such as an object, which most modules in this case return)
 
-	var error = false;
+	globalColor = "";
+	globalBold = false;
 
 	return function(chatId, inp){ 
 		//this is the main object to store command data
@@ -25,6 +26,9 @@ define([ //list of dependencies to load for this module
 		
 		//The chat container
 		var container = $("#"+chatId).find('.chat-container');
+
+		//Strip any existing html tags that the user might have entered, to prevent malicious script injections
+		inp = inp.replace(/(<([^>]+)>)/ig,"")
 
 		//match the -- delimiter to find all commands in the input
 		if(_.includes(inp , '--')){
@@ -41,10 +45,21 @@ define([ //list of dependencies to load for this module
 				//Handle each command
 				switch(cmdInfo.cmdName){
 					case "--color":
-						inp = setFontColor(words, cmdInfo, inp);
-						if(error){
-							error = false;
-							return{error: inp};
+						var colorInfo = setFontColor(words, cmdInfo, inp);
+						if(colorInfo.isError){
+							return {error: colorInfo.errorMsg};
+						}
+						else{
+							inp = colorInfo.inp;
+						}
+						break;
+					case "--bold":
+						var boldInfo = setBold(words, cmdInfo, inp);
+						if(boldInfo.isError){
+							return {error: boldInfo.errorMsg};
+						}
+						else{
+							inp = boldInfo.inp;
 						}
 						break;
 					default:
@@ -53,13 +68,20 @@ define([ //list of dependencies to load for this module
 						break;
 				}
 			}
+
 			inp = _.trim(inp);
-			if(inp != "") envelope.message = inp; 
-			return envelope;
-		}else{
+		}
+
+		if(inp != ""){
 			envelope.message = inp;
-			return envelope;		
-		} 
+		 
+			if(globalColor){
+				envelope.message = inp.fontcolor(globalColor);
+			}
+
+		}
+
+		return envelope;
 	}
 
 	// return function(chatId ,inp){ 
@@ -182,10 +204,12 @@ define([ //list of dependencies to load for this module
 
 	function parseCommands(words){
 		var commands = [];
+		var cmdCount = 0;
+		var cmd, arg, word;
+
 		for(var i=0; i<words.length; i++){
-			cmdCount = 0;
-			var word = words[i];
-			var cmd, arg;
+			word = words[i];
+			
 			if(_.startsWith(word,'--')){
 				cmd = words[i];
 				commands.push({'cmdName': cmd, 'argList' : []});
@@ -202,28 +226,155 @@ define([ //list of dependencies to load for this module
 	}
 
 	function setFontColor(words, cmdInfo, inp){
-		var colorIndex = _.indexOf(words, cmdInfo.cmdName) + cmdInfo.argList.length + 1;
+		var colorInfo = {};	
 
-		color = words[colorIndex];
+		if(_.indexOf(words, cmdInfo.cmdName) + cmdInfo.argList.length == words.length-1){
+			colorInfo.isError = true;
+			colorInfo.errorMsg = "Cannot set color at the end of a message. You must specify a target. Type --help for help."
+			return colorInfo;
+		}
 
-		if(colorIndex+1 == words.length-1){
-			targetStr = words[colorIndex+1];
+		if(cmdInfo.argList.length > 1){
+			colorInfo.isError = true;
+			colorInfo.errorMsg = "The " + cmdInfo.cmdName + " command does not support multiple arguments. Type --help for help."
+		}
+
+		//The color will be the first word after the --color command and whatever argument they pass.
+		var startIndex = _.indexOf(words, cmdInfo.cmdName)
+
+		var colorIndex = startIndex + cmdInfo.argList.length + 1;
+		var color = words[colorIndex];
+
+		var regex;
+
+		if(cmdInfo.argList.length > 0){
+			var arg = cmdInfo.argList[0];
+
+			switch(arg){
+				case "&word":
+					regex = new RegExp(words[colorIndex + 1]);
+					break;
+				case "&message":
+					regex = new RegExp(".*");
+					break;
+				case "&selection":
+					//The ? makes the regex non-greedy, so it will just match the first brackets
+					regex = new RegExp("\{.*?\}");
+					break;
+				case "&all":
+					globalColor = color;
+					break;
+				default:
+					colorInfo.isError = true;
+					colorInfo.errorMsg = arg + " is not a recognized argument for " + cmdInfo.cmdName + ". Type --help for help.";
+					return colorInfo;
+					break;
+			}
 		}
 		else{
 			startWord = words[colorIndex+1];
-			// endWord = words[words.length-1];
-			regex = new RegExp(startWord + '.*');
-			targetStr = inp.match(regex);	
+			regex = new RegExp(startWord + '.*');	
 		}
 		
-		inp = inp.replace(targetStr, "<font color=\"" + color + "\">" + targetStr + "</font>");
-
+		//Need to clean up the command and args from inp and words so they don't get displayed
 		inp = inp.replace(color, '');
 		words.splice(colorIndex, 1);
 		inp = cleanupInp(cmdInfo, inp);
 		words = cleanupWords(cmdInfo, words);
+
+		if(inp != ""){
+			//find the target portion of the string using the regex
+			var targetStr = inp.match(regex);
+
+			//add html color tags around the target string portion of the message
+			inp = inp.replace(targetStr, "<font color=\"" + color + "\">" + targetStr + "</font>");
+
+			//Need to remove brackets from selected text
+			if(cmdInfo.argList[0] == "&selection"){
+				var removedBrackets = targetStr[0].replace(/^\{/,'');
+				removedBrackets = removedBrackets.replace(/\}$/,'');
+				inp = inp.replace(targetStr, removedBrackets);
+			}
+
+			colorInfo.inp = inp;
+		}
+
+		return colorInfo;
+	}
+
+	function setBold(words, cmdInfo, inp){
+		var boldInfo = {};	
+
+		if(_.indexOf(words, cmdInfo.cmdName) + cmdInfo.argList.length == words.length-1){
+			boldInfo.isError = true;
+			boldInfo.errorMsg = "Cannot set bold at the end of a message. You must specify a target. Type --help for help."
+			return boldInfo;
+		}
+
+		if(cmdInfo.argList.length > 1){
+			boldInfo.isError = true;
+			boldInfo.errorMsg = "The " + cmdInfo.cmdName + " command does not support multiple arguments. Type --help for help."
+		}
+
+		//The bold will be the first word after the --bold command and whatever argument they pass.
+		var startIndex = _.indexOf(words, cmdInfo.cmdName)
+
+		var boldIndex = startIndex + cmdInfo.argList.length;
+
+		var regex;
+
+		if(cmdInfo.argList.length > 0){
+			var arg = cmdInfo.argList[0];
+
+			switch(arg){
+				case "&word":
+					regex = new RegExp(words[boldIndex + 1]);
+					break;
+				case "&message":
+					regex = new RegExp(".*");
+					break;
+				case "&selection":
+					//The ? makes the regex non-greedy, so it will just match the first brackets
+					regex = new RegExp("\{.*?\}");
+					break;
+				case "&all":
+					globalbold = true;
+					break;
+				default:
+					boldInfo.isError = true;
+					boldInfo.errorMsg = arg + " is not a recognized argument for " + cmdInfo.cmdName + ". Type --help for help.";
+					return boldInfo;
+					break;
+			}
+		}
+		else{
+			startWord = words[boldIndex+1];
+			regex = new RegExp(startWord + '.*');	
+		}
 		
-		return inp;
+		//Need to clean up the command and args from inp and words so they don't get displayed
+		inp = cleanupInp(cmdInfo, inp);
+		words = cleanupWords(cmdInfo, words);
+
+		if(inp != ""){
+			//find the target portion of the string using the regex
+			var targetStr = inp.match(regex);
+
+			//add html color tags around the target string portion of the message
+			inp = inp.replace(targetStr, "<b>" + targetStr + "</b>");
+			alert(inp);
+
+			//Need to remove brackets from selected text
+			if(cmdInfo.argList[0] == "&selection"){
+				var removedBrackets = targetStr[0].replace(/^\{/,'');
+				removedBrackets = removedBrackets.replace(/\}$/,'');
+				inp = inp.replace(targetStr, removedBrackets);
+			}
+
+			boldInfo.inp = inp;
+		}
+
+		return boldInfo;
 	}
 
 	//function to remove command and arguments from the message input
@@ -242,6 +393,7 @@ define([ //list of dependencies to load for this module
 		}
 		return words;
 	}
+
 
 });
 
