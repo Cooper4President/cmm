@@ -11,7 +11,7 @@ Vision: An enhanced, extensible, and enjoyable web chat experience.
 Automated Tests:
 	For our automated testing we used QUnit (http://qunitjs.com/)
 	We tested the output of commands to ensure that the output is what the user wants.
-	We also tested the account creation to ensure users can create new profiles and will not create
+	We also tested the account creation to ensure users can create new profiles and can't create
 	any duplicates. And We also tested user login to ensure that users can access the chat client.
 	There are screen shots of the tests available github (https://github.com/Cooper4President/cmm) in the
 	testScreenshots directory, but it is possible to run natively on your machine.
@@ -25,3 +25,4 @@ Automated Tests:
 	project directory. 
 
 User Acceptance Tests:
+	
