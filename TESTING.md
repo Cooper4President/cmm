@@ -10,7 +10,7 @@ Vision: An enhanced, extensible, and enjoyable web chat experience.
 
 Automated Tests:
 	For our automated testing we used QUnit (http://qunitjs.com/)
-	We tested the output of commands to ensure that the output is what the user wants.
+	We tested the output of text manipulation commands to ensure that the output is what the user wants.
 	We also tested the account creation to ensure users can create new profiles and can't create
 	any duplicates. And We also tested user login to ensure that users can access the chat client.
 	There are screen shots of the tests available github (https://github.com/Cooper4President/cmm) in the
@@ -24,5 +24,6 @@ Automated Tests:
 	look at indexTest.js and chatTest.js. The modules for the chat testing is located in client/app/testing path in the cmm 
 	project directory. 
 
-User Acceptance Tests:
+User Acceptance Tests: 
+	Located in the cmmUserAcceptanceTests.pdf file.
 	

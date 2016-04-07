@@ -1,3 +1,7 @@
+/*
+	Only works on text manipulation commands, Look at User Acceptance Tests for other commands
+*/
+
 define(['QUnit', 'messenger/commands', 'misc/date', 'misc/user'], function(QUnit, commands, date, user){
 	return function(){
 		//tests command module
