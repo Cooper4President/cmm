@@ -17,7 +17,7 @@ require.config({
 });
 
 requirejs(['QUnit', 'socket_io'], function(QUnit, io){
-	var testAccount = {username: 'test6',  password: 'pass6'};
+	var testAccount = {username: 'test8',  password: 'pass8'};
 
 	
 
@@ -30,12 +30,14 @@ requirejs(['QUnit', 'socket_io'], function(QUnit, io){
 	//gets called when account creation is a success
 
 	QUnit.test('testing account functions', function(assert){
+
+		var done = assert.async();
 		socket.emit('account create attempt', testAccount);
 		//expect(0);
 		//makes sure is true
 		socket.on('account create success', function(){
-			//accountCreate = true;
 			assert.ok(true);
+			done();
 		});
 		//assert.ok(accountCreate);
 	});
