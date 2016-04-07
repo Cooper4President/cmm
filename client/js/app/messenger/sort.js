@@ -2,22 +2,7 @@
 	Gives specific chat window sortable property, to be sorted with other chat windows
 */
 
-define(['jquery', './chatInfo'], function($, chatInfo){
-
-	function swap(a, b){
-		var ai, bi;
-		_.each(chatInfo.center, function(elm, ind){
-			if(elm.is(a)){
-				ai = ind;
-			}else if(elm.is(b)){
-				bi = ind;
-			}
-		});
-
-		chatInfo.center[ai] = b;
-		chatInfo.center[bi] = a;
-	}
-
+define(['jquery', './chatInfo', 'misc/misc'], function($, chatInfo, misc){
 	//enables sorting chat window
 	return function (id){
 		//checks drag
@@ -41,21 +26,20 @@ define(['jquery', './chatInfo'], function($, chatInfo){
 				if(elm.next().length > 0) rightBound = parseInt(elm.next().css('left'));
 				if(elm.prev().length > 0) leftBound = parseInt(elm.prev().css('left')) + elm.prev().width();
 				if(event.pageX < leftBound){
-					if(!(event.pageX > startLeft + elm.prev().width())){
+					if(event.pageX < startLeft + elm.prev().width()){
 						var tempLeft = parseInt(elm.prev().css('left'));
 						elm.prev().css('left', tempLeft + elm.width());
 						startLeft = startLeft - elm.prev().width();
-						swap(elm, elm.prev());
+						misc.swap(elm, elm.prev());
 						elm.after(elm.prev());
 					}
 				}
 				if(event.pageX > rightBound){
-					if(!(event.pageX < startLeft + elm.next().width())){
-						var tempLeft = parseInt(elm.next().css('left'));
+					if(event.pageX > startLeft + elm.next().width()){
 						var diff = elm.width() - elm.next().width();
 						elm.next().css('left', startLeft);
 						startLeft = startLeft + elm.next().width();
-						swap(elm, elm.next());
+						misc.swap(elm, elm.next());
 						elm.before(elm.next());
 					}
 				}
@@ -71,5 +55,5 @@ define(['jquery', './chatInfo'], function($, chatInfo){
 				elm.css('left', lft).css('z-index', 0);
 			}
 		});
-	}
+	};
 });

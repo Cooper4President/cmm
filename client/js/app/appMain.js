@@ -19,5 +19,5 @@ define([
 
 		//initializes chat shifter
 		shifter.init();
-	}
+	};
 });

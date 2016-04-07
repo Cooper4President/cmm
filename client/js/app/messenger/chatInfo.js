@@ -40,5 +40,5 @@ define(['lodash'], function(_){
 			if (rec) this.log.push({id:chatId, messages:[], receivers: rec,currentMessage:-1});
 			else throw rec;
 		}
-	}
+	};
 });

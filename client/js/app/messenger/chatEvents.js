@@ -24,7 +24,7 @@ define([
 
 	//handles down arrow functionality for chat window
 	function downArrowHandler(chatId){
-		//loops through and finds next message to display from chat log
+		//loops through chat history and finds next message to display from chat log
 		_(chatInfo.log).each(function(entry){
 			if(entry.id === chatId){
 				var cmd = $("#"+entry.id).find('.cmd');
@@ -42,7 +42,7 @@ define([
 
 	//handles up arrow functionality for chat windows
 	function upArrowHandler(chatId){
-		//loops through and finds next message to display from chat log
+		//loops through chat history and finds next message to display from chat log
 		_(chatInfo.log).each(function(entry){
 			if(entry.id === chatId){
 				var cmd = $("#"+entry.id).find('.cmd');
@@ -76,7 +76,7 @@ define([
 
 
 			//create chat id and pull chat receivers
-			var chatId = html.attr('id')
+			var chatId = html.attr('id');
 			var rec = html.find('.receivers').val();
 
 			//finds if receivers already have active chat window displayed
@@ -111,8 +111,8 @@ define([
 				//grants key down functions to chat window
 				keyDownHandler(html);
 			}else{
-				return false;
 				alert('user name(s) invalid');
+				return false;
 			}
 
 		});
@@ -166,5 +166,5 @@ define([
 		html.find(".remove-messenger").on("click",function(event){
 			enqueueMessenger(html);
 		});
-	}
+	};
 });

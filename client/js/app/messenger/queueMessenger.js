@@ -22,10 +22,10 @@ define([
 		//only executes if there is already a chat window displayed
 		if(chatInfo.center.length > 0){
 			var
-				shrink = $(window).width() - html.width(), 
-				scale = shrink/$(window).width(), //scale for chat windows
+				shrink = $('body').width() - html.width(), 
+				scale = shrink/$('body').width(), //scale for chat windows
 				minW = parseInt(html.css('minWidth')), //pulls minimum width of chat window 
-				widths = _.map(chatInfo.center, function(n){ return n.width()*scale }), //scaled chat window widths
+				widths = _.map(chatInfo.center, function(n){ return n.width()*scale; }), //scaled chat window widths
 				minCount = 0, //number of windows with minimum width after scale
 				diff = 0, //offset of scale accounting for minimum width to distribute
 				lft = html.width(); //starting offset
@@ -85,8 +85,9 @@ define([
 
 	//sets up chat window to be added
 	return function(){
+		chatInfo.count++;
 		var 
-			chatId = "chat-" + ++chatInfo.count,
+			chatId = "chat-" + chatInfo.count,
 			context = {id: chatId, friends: user.friends},
 			html = $(messenger(context)).css({ //get hmtl element of chat window
 				'width': chatInfo.defaultWidth(),
@@ -99,5 +100,5 @@ define([
 		//gives chat window events
 		chatEvents(html);
 		return chatId;
-	}
+	};
 });

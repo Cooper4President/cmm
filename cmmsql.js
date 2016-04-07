@@ -343,7 +343,6 @@ function cmmsql(database) {
 
 // This is for testing and sample code
 
-/*
 // create a new database named cmm.db
 var sql=new cmmsql('cmm.db');
 // add some users to the database they are all by default
@@ -378,6 +377,5 @@ sql.listusers('mainroom');
 sql.createroom('bobroom',['user0','user1'],'bob','false');
 sql.listusers('bobroom');
 sql.joinroom('DNE','craig','true','craig');
-*/
 
 // end testing section

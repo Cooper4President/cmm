@@ -38,7 +38,7 @@ define([
 				hide: {
 					effect: "none"
 				}
-			}
+			};
 
 			//adds tool tip to menu item
 			$('.menu-item').tooltip(toolTipOptions);
@@ -66,5 +66,5 @@ define([
 				queueMessenger();
 			});
 		}
-	}
+	};
 });

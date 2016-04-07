@@ -11,7 +11,7 @@ define(['jquery', 'lodash', 'messenger/chatInfo', 'menu/menu'], function($, _, c
 			//aligns viewable chat windows to the window size
 			if(chatInfo.center.length > 0){
 				var cont = _.sumBy(chatInfo.center, function(n){ return n.width(); });
-				var scale = $(window).width()/cont;
+				var scale = $('body').width()/cont;
 
 				//scales viewable windows to fit screen
 				var shift = _.union(chatInfo.center, chatInfo.right);

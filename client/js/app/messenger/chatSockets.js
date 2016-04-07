@@ -67,6 +67,6 @@ define([
 
 			socket.emit('chat submit', { chatRoomId: chatRoomId, receivers: chatReceivers, msg: chatMsg });
 		}
-	}
+	};
 
 });

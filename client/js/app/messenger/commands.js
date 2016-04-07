@@ -18,7 +18,7 @@ define([ //list of dependencies to load for this module
 		//this is the main object to store command data
 		var envelope = {
 			username: user.name
-		}
+		};
 
 		var container = $("#"+chatId).find('.container');
 		//match the -- delimiter to find all commands in the input
@@ -90,7 +90,7 @@ define([ //list of dependencies to load for this module
 							envelope.image = {
 								url: imgUrl,
 								width: 0.8*container.width()
-							}
+							};
 							inp = _.replace(inp, imgUrl, '');
 						}
 						else{
@@ -107,23 +107,22 @@ define([ //list of dependencies to load for this module
 						var searchUrl = 'https://www.google.com/search?q=' + searchStr;
 						window.open(searchUrl, '_blank');
 						return; //might want to change if we don't want stand alone function
-						break;
+						//break;
 					default:
 						var err = "Error: Command " + cmd.bold() + " not found. Type --help for help";
 						return {error: err};
-						break;
 					}
 					inp = _.replace(inp, cmd, ''); //removes command reference in input after each command
 				}
 			}
 			inp = _.trim(inp);
-			if(inp != "") envelope.message = inp; 
+			if(inp !== "") envelope.message = inp; 
 			return envelope;
 		}else{
 			envelope.message = inp;
 			return envelope;		
 		} 
-	}
+	};
 });
 
 //parses command and updates the chat

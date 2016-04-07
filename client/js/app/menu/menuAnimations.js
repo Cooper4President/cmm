@@ -10,7 +10,6 @@ define([
 	], function($){
 	var D = 350;
 	var api = {
-
 		//shows button to open menu
 		showButton: function(){	
 			$(".menu").animate({
