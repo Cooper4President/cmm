@@ -15,6 +15,8 @@ define([ //list of dependencies to load for this module
 	//this returns a function, as this is the only function that this modele requires, it can also be anything that
 	//can be returned (such as an object, which most modules in this case return)
 
+	globalFontAttributes = {};
+
 	return function(chatId, inp){ 
 		//this is the main object to store command data
 		var envelope = {
@@ -62,12 +64,10 @@ define([ //list of dependencies to load for this module
 		}
 
 		if(inp != ""){
-			envelope.message = inp;
-		 
-			if(globalColor){
-				envelope.message = inp.fontcolor(globalColor);
+			if(globalFontAttributes){
+				inp = addFontTags(globalFontAttributes, inp);	
 			}
-
+			envelope.message = inp;
 		}
 
 		return envelope;
@@ -215,7 +215,17 @@ define([ //list of dependencies to load for this module
 	}
 
 	function setFont(words, cmdInfo, inp){
-		var returnData = {}
+		var returnData = {};
+		var fontAttributes = {
+			global: false,
+			selection: false,
+			bold: false,
+			italic: false,
+			color: false,
+			size: false,
+			colorStr: "black",
+			sizeStr: "3"
+		};
 
 		fontCmdIndex = _.indexOf(words, cmdInfo.cmdName);
 		var startWord = nextValidWord(words, fontCmdIndex);
@@ -224,13 +234,6 @@ define([ //list of dependencies to load for this module
 
 		var targetStr;
 		var targetRegex;
-
-		//We will use these later to set the font, after parsing the arguments
-		var globalFlag = false;
-		var selectionFlag = false;
-		var boldFlag, italicFlag, colorFlag, sizeFlag = false;
-		var color = "black";
-		var size = "3";
 
 		for(var i = 0; i<numArgs; i++){
 			var arg =  cmdInfo.argList[i];
@@ -248,77 +251,86 @@ define([ //list of dependencies to load for this module
 					targetRegex = new RegExp(".*");
 					break;
 				case "&selection":
-					//The ? makes the regex non-greedy, so it will just match the first brackets
-					selectionFlag = true;
+					//The ? makes the regex non-greedy, so it will just match the first set of brackets brackets
+					fontAttributes.selection = true;
 					targetRegex = new RegExp("\{.*?\}");
 					break;
 				case "&all":
-					globalFlag = true;
+					fontAttributes.global = true;
 					break;
 				case "&bold":
-					boldFlag = true;
+					fontAttributes.bold = true;
 					break;
 				case "&italics":
 					//fall through to italic case, so both are accepted
 				case "&italic":
-					italicFlag = true;
+					fontAttributes.italic = true;
 					break;
 				default:
 					arg = arg.replace('&', '');
 					_.trim(arg);
 					if(arg.match(/^[1-7]$/)){
-						sizeFlag = true;
-						size = arg;
+						fontAttributes.size = true;
+						fontAttributes.sizeStr = arg;
 					}
 					else if(isValidColor(arg)){
-						colorFlag = true;
-						color = arg;
+						fontAttributes.color = true;
+						fontAttributes.colorStr = arg;
 					}
 					else{
 						returnData.isError = true;
 						returnData.errorMsg = "&" + arg + " is not a valid argument for " + cmdInfo.cmdName + ". Type --help for help.";
-						return returnData;
-						
+						return returnData;	
 					}
 					break;
 			}
+		}
+
+		if(fontAttributes.global){
+			globalFontAttributes = fontAttributes;
 		}
 
 		if(!targetRegex){
 			targetRegex = new RegExp(cmdInfo.cmdName + ".*" + startWord + ".*");
 		}
 
-		targetStr = inp.match(targetRegex)[0];
+		targetStr = inp.match(targetRegex);
 
-		var fontStr = addFontTags(targetStr, sizeFlag, colorFlag, boldFlag, italicFlag, color, size);
-		inp = inp.replace(targetStr, fontStr);
+		if(targetStr != ""){
+			var fontStr = addFontTags(fontAttributes, targetStr);
+			inp = inp.replace(targetStr, fontStr);
 
-		inp = cleanupInp(cmdInfo, inp);
-		words = cleanupWords(cmdInfo, words);
+			if(fontAttributes.selection){
+				inp = removeBrackets(inp, targetStr[0])
+			}
 
-		//Need to remove command and args from the inp string and words array
-		returnData.inp = inp;
-		returnData.words = words;
+			inp = cleanupInp(cmdInfo, inp);
+			words = cleanupWords(cmdInfo, words);
+
+			//Need to remove command and args from the inp string and words array
+			returnData.inp = inp;
+			returnData.words = words;
+		}
 
 		return returnData;
 	}
 
-	function addFontTags(fontStr, sizeFlag, colorFlag, boldFlag, italicFlag, color, size){
-		if(boldFlag){
+	function addFontTags(fontAttributes, fontStr){
+		if(fontAttributes.bold){
 			fontStr = "<b>" + fontStr + "</b>";
 		}
 
-		if(italicFlag){
+		if(fontAttributes.italic){
 			fontStr = "<i>" + fontStr + "</i>";
 		}
 
-		if(colorFlag || sizeFlag){
+		if(fontAttributes.color || fontAttributes.size){
 			var fontTag = "<font ";
-			if(colorFlag){
-				fontTag = fontTag + "color=\"" + color + "\" ";
+			if(fontAttributes.color){
+				fontTag = fontTag + "color=\"" + fontAttributes.colorStr + "\" ";
 			}
-			if(sizeFlag){
-				fontTag = fontTag + "size=\"" + size + "\" ";
+			if(fontAttributes.size){
+				fontTag = fontTag + "size=\"" + fontAttributes.sizeStr + "\" ";
 			}
 
 			fontTag = fontTag + ">";
@@ -327,14 +339,15 @@ define([ //list of dependencies to load for this module
 		}
 
 		return fontStr;
-
 	}
 
-	function removeBrackets(targetStr){
+	function removeBrackets(inp, targetStr){
 		//Need to remove brackets from selected text
-		var removedBrackets = targetStr.replace(/^\{/,'');
+		var removedBrackets = targetStr;
+		removedBrackets = removedBrackets.replace(/^\{/,'');
 		removedBrackets = removedBrackets.replace(/\}$/,'');
-		return removedBrackets;
+		inp = inp.replace(targetStr, removedBrackets);
+		return inp;
 	}
 
 	function nextValidWord(words, startIndex){
@@ -383,11 +396,3 @@ define([ //list of dependencies to load for this module
 
 });
 
-//parses command and updates the chat
-
-		// for(i=0; i< argList.length, i++){
-		// 	arg = argList[i]
-		// 	switch(arg){
-		// 		case ''
-		// 	}
-		// }
