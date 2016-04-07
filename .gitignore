@@ -1,3 +1,4 @@
 node_modules/*
 cmm.db
+*.js~
 bower_components/*
