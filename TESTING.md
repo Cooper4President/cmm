@@ -1,10 +1,11 @@
 #Testing
 
-**Team:** name
-		Oliver Ehrhardt,
-		Cooper Matous,
-		Morgan Allen,
-		Craig Cornett,
+**Team:**
+
+	Oliver Ehrhardt,
+	Cooper Matous,
+	Morgan Allen,
+	Craig Cornett
 
 **Project Tittle:** Chat-- (cmm)
 
