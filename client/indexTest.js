@@ -17,7 +17,8 @@ require.config({
 });
 
 requirejs(['QUnit', 'socket_io'], function(QUnit, io){
-	var testAccount = {username: 'new3',  password: 'pass3'};
+	var date = new Date();
+	var testAccount = {username: date.getTime(),  password: 'pass'};
 
 	
 
@@ -39,8 +40,17 @@ requirejs(['QUnit', 'socket_io'], function(QUnit, io){
 			assert.ok(true);
 			done();
 		});
+
+	});
+
+	QUnit.test('testing duplicate account creation', function(assert){
+
+		var done = assert.async();
+
+
+		socket.emit('account create attempt', testAccount);
 		socket.on('account create fail', function(){
-			assert.ok(false);
+			assert.ok(true);
 			done();
 		});
 
@@ -53,7 +63,7 @@ requirejs(['QUnit', 'socket_io'], function(QUnit, io){
 		socket.emit('login attempt', testAccount);
 
 		socket.on('login success', function(token){
-			assert.ok(true);
+			assert.ok(token);
 			done();
 		});
 	});
