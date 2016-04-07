@@ -1,14 +1,16 @@
-Team:
+#Testing
+
+**Team:**
 	Oliver Ehrhardt
 	Cooper Matous
 	Morgan Allen
 	Craig Cornett 
 
-Project Tittle: Chat-- (cmm)
+**Project Tittle:** Chat-- (cmm)
 
-Vision: An enhanced, extensible, and enjoyable web chat experience.
+**Vision:** An enhanced, extensible, and enjoyable web chat experience.
 
-Automated Tests:
+**Automated Tests:**
 	For our automated testing we used QUnit (http://qunitjs.com/)
 	We tested the output of text manipulation commands to ensure that the output is what the user wants.
 	We also tested the account creation to ensure users can create new profiles and can't create
@@ -24,6 +26,6 @@ Automated Tests:
 	look at indexTest.js and chatTest.js. The modules for the chat testing is located in client/app/testing path in the cmm 
 	project directory. 
 
-User Acceptance Tests: 
+**User Acceptance Tests:**
 	Located in the cmmUserAcceptanceTests.pdf file.
 	
