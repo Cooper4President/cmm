@@ -1,12 +1,12 @@
 /*
 cmmsql.js
 
-Written by: Craig Cornett
-
-
-sqlite interface for cmm
+sqlite database interface for cmm
+The purpose is to ease the management of a database for keeping track of Chat rooms, users, and custom commands
 
 How to use:
+A callback function is expected to take 2 arguements (error,return).
+return is either an object list or plain text.
 
 1) create a new sql object:
 
@@ -34,7 +34,13 @@ private is text equal to 'true' or 'false' any other values will be replaced wit
 
 sql_object_name.joinroom(roomname,joining_user,owner,who,callback);
 
+5) log messages to chatrooms
 
+sql_object_name.logroom(room,username,message,callback);
+
+6) get room logs
+
+sql_object_name.getroomlog(room,callback);
 
 
 Error Codes
@@ -75,8 +81,9 @@ Ideally this will:
 2. Clean up any lost/broken rooms.
 */
 	db.serialize(function(){
-	    db.run('SELECT name FROM sqlite_master WHERE type=?',['table'],function(err,res){
-		defaultcallback(err,res);
+	    defaultcallback(null,'self repair');
+	    db.all('SELECT room FROM rooms',[],function(err,res){
+		defaultcallback(null,res);
 		if (res){
 		    res.forEach(function(){		    
 			// here is where the magic happens
@@ -98,7 +105,6 @@ Ideally this will:
 		error=err; // untill I learn all the possible errors
 		if (err.errno==1){
 		    error=[{Error:'Table '+name+' Exists',code:'2'}];
-		    result='Table '+name+' Exists';
 		}
 		
 	    } else {
@@ -150,7 +156,6 @@ Ideally this will:
 	    cb(err,null);
 	    return;
 	}
-<<<<<<< HEAD
 	db.all('SELECT '+column+' FROM '+table,[],function(err,res){
 	    var error=null;
 	    var results=res;
@@ -169,68 +174,19 @@ Ideally this will:
 	    cb(err,null);
 	    return;
 	}
-	if (cb==null){
-	    cb=defaultcallback;
-	}
 	var error=null;
-	var result='add user to room test';
-	// need to include check for user existance
-	db.serialize(function(){
-	    db.all('SELECT priv FROM rooms WHERE room==?',[roomname],function(err,res1){
-		if (err) {
-		    error=err; // temporary
-		    if (err.errno=1){
-			error=[{Error:'Room '+roomname+' does not exist.',code:'1'}];
-		    }
-		    cb(error,'add user to room test');
-		    return;
+	var result=null;
+	
+	db.run('INSERT into '+roomname+'users (user,owner) VALUES (?,?)',[username,isowner],function(err){
+	    if (err){
+		error=err; // temp fix
+		if (err.errno==19){
+		    error=[{Error:username+' is already in the room '+roomname,code:'2'}];
 		}
-		if (res1[0]==undefined){
-		    error=[{Error: 'Can not join room '+roomname+' does not exist',code: '1'}];
-		    cb (error,null);
-		    return;
-		}
-		var pr=res1[0].priv;
-		db.all('SELECT owner FROM '+roomname+'users WHERE user==?',[who],function(err,res2){
-		    var own='false';
-		    if(err){
-			error=err; // temproary
-			if (err.errno=1){
-			    error=[{Error:'Room '+roomname+' does not exist.',code:'1'}]
-			}
-			cb(error,null);
-			return;
-		    }
-		    if (res2[0]==undefined){
-			error=[{Error: who+' is not in room '+roomname,code:'1'}];
-		    } else {
-			own=res2[0].owner;
-		    }
-		    if (own=='false'){
-			if(pr=='true'){
-			    // tell the client that they cant add users to the room
-			    error=[{Error:'Permissions Error',code:'3'}];
-			    result= who+' lacks access privalages to room '+roomname;
-
-			    cb(error,result);
-			    return;
-			}
-			isowner=='false';
-		    }			    
-		    db.run('INSERT into '+roomname+'users (user,owner) VALUES (?,?)',[username,isowner],function(err){
-			if (err){
-			    error=err; // temp fix
-			    if (err.errno==19){
-				error=[{Error:'Uniqueness Error',code:'2'}];
-				result=username+' is already in the room '+roomname;
-			    }
-			} else {
-			    result=username+' has been added to room';
-			}
-			cb(error,result);
-		    });
-		});
-	    });
+	    } else {
+		result=username+' has been added to room';
+	    }
+	    cb(error,result);
 	});
     }
     
@@ -238,7 +194,7 @@ Ideally this will:
     
     cmmsql.prototype.adduser=function(username,password,cb){
 	var error=null;
-	var result='add user test';
+	var result=null;
 	if (cb==null){
 	    cb=defaultcallback;
 	}
@@ -246,10 +202,11 @@ Ideally this will:
 	    if (err){
 		error=err; //tmpfix
 		if (err.errno==19){
-		    error=[{Error:'Uniqueness Error',code:'2'}];
-		    result='User '+username+' already exists'
+		    error=[{Error:'User '+username+' already exists',code:'2'}];
 		}
 	    }else{
+		createtable(error,username+'friends','friend','blocked',defaultcallback);
+		createtable(error,username+'commands','command','method',defaultcallback);
 		result='User '+username+' added sucessfully';
 	    }
 	    cb(error,result);
@@ -274,24 +231,27 @@ Ideally this will:
 	    cb=dcb;
 	}
 	var error=null;
-	var result='create room test';
+	var result=null;
 	db.serialize(function(){
 	    db.run('INSERT into rooms(room,priv,creator) VALUES (?,?,?)',[roomname,priv,creator],function(err){
 		if (err){
 		    error=err;
 		    if (err.errno==19){
-			error=[{Error:'Uniqueness Error',code:'2'}];
-			result='Room '+roomname+' already exists.';
+			error=[{Error:'Room '+roomname+' already exists.',code:'2'}];
 		    }
 		    cb(error,result)
 		    return;
+		} else {
+		    createtable(null,roomname,'time','user,message',dcb);
+		    createtable(null,roomname+'users','user','owner,blocked',function(err,res){
+			addusertoroom(null,roomname,creator,'true',creator,dcb);
+			userlist.forEach(function(value,index,array){
+			    addusertoroom(null,roomname,value,'false',creator,dcb);
+			});
+		    });
+		    result='Room '+roomname+' created';
+		    cb(error,result);
 		}
-		createtable(null,roomname,'time','user,message',dcb);
-		createtable(null,roomname+'users','user','owner,blocked',dcb);
-		addusertoroom(null,roomname,creator,'true',cb);
-		userlist.forEach(function(value,index,array){
-		    addusertoroom(null,roomname,value,'false',creator,cb);
-		});
 	    });
 	    
 	});
@@ -304,7 +264,7 @@ Ideally this will:
 	}
 	db.run('INSERT into '+roomname+'(time,user,message) VALUES (?,?,?)',[Date.now(),username,message],function(err,res){
 	    if (err) {
-		cb(err,'log test');
+		cb(err,null);
 	    }
 	});
 	
@@ -322,7 +282,7 @@ Ideally this will:
 	    cb=defaultcallback;
 	}
 	var error=null;
-	var result='join room test';
+	var result=null;
 	if (roomname=='mainroom'){
 	    // tell the user they are a moron
 	    error=[{Error:'Uniqueness Error',code:'2'}];
@@ -344,36 +304,61 @@ Ideally this will:
 		cb(error,null);
 		return;
 	    }
-	    addusertoroom(null,roomname,username,isowner,who,cb);
+	    db.serialize(function(){
+		db.all('SELECT priv FROM rooms WHERE room==?',[roomname],function(err,res1){
+		    if (err) {
+			error=err; // temporary
+			if (err.errno=1){
+			    error=[{Error:'Room '+roomname+' does not exist.',code:'1'}];
+			}
+			cb(error,null);
+			return;
+		    }
+		    if (res1[0]==undefined){
+			error=[{Error: 'Can not join room '+roomname+' does not exist',code: '1'}];
+			cb (error,null);
+			return;
+		    }
+		    var pr=res1[0].priv;
+		    db.all('SELECT owner FROM '+roomname+'users WHERE user==?',[who],function(err,res2){
+			var own='false';
+			if(err){
+			    error=err; // temproary
+			    if (err.errno=1){
+				error=[{Error:'Room '+roomname+' does not exist.',code:'1'}]
+			    }
+			    cb(error,null);
+			    return;
+			}
+			if (res2[0]==undefined){
+			    error=[{Error: who+' is not in room '+roomname,code:'1'}];
+			} else {
+			    own=res2[0].owner;
+			}
+			if (own=='false'){
+			    if(pr=='true'){
+				error=[{Error: who+' lacks access privalages to room '+roomname,code:'3'}];
+				cb(error,result);
+				return;
+			    }
+			    isowner=own;
+			}		
+			addusertoroom(null,roomname,username,isowner,who,cb);
+		    });
+		});
+	    });
 	});
     }
     
-    cmmsql.prototype.leaveroom=function(roomname,username,cb){
+    cmmsql.prototype.isowner=function(roomname,username,cb){
 	if (cb==null) {
 	    cb=defaultcallback;
 	}
-	// need to implement this
-    }
-    
-    cmmsql.prototype.listowners=function(roomname,cb){
-	if (cb==null) {
-	    cb=defaultcallback;
-	}
-	var error=null;
-	db.all('SELECT user FROM ? WHERE owner==?',[roomname+'users','true'],function(err,res){
-	    if (err){
-		error=err;
-	    }
-	    cb(error,res);
+	db.all('SELECT owner FROM '+roomname+'users WHERE user==?',[username],function(err,res){
+	    defaultcallback('owner test',res);
+	    cb(err,res);
 	});
-    }
-    
-    cmmsql.prototype.kickout=function(roomname,userkicked,kicker,cb){
-	if (cb==null) {
-	    cb=defaultcallback;
 	}
-	// need to implement this
-    }
     
     cmmsql.prototype.getpassword=function(username,cb){
 	if (cb==null) {
@@ -394,10 +379,6 @@ Ideally this will:
 	});
     }
 
-    cmmsql.prototype.banuser=function(room,who,banned){
-
-    }
-
     cmmsql.prototype.isbanned=function(room,user){
 	var error;
 	var result;
@@ -411,8 +392,116 @@ Ideally this will:
 	    cb(err,result);
 	});
     }
-}
-//####################################################
 
-// Now make it importable
+    cmmsql.prototype.addfriend=function(friend,who,blocked){
+	var error=null;
+	var result=null;
+	db.run('INSERT into '+who+'friends (friend,blocked) VALUES(?,?)',[friend,blocked],function(err,res){
+	    if (err){
+		error=err; // the catch all for errors
+		if (err.errno=13){
+		    error=[{Error: 'User '+friend+' is already in '+who+' friend list',code: '1'}];
+		}
+	    } else {
+		if (blocked='true'){
+		    result=friend+' was blocked by '+who;
+		}else{
+		    result=friend+' was added to '+who+' friend list';
+		}
+	    }
+	});
+    }
+
+    cmmsql.prototype.isblocked=function(username,who,cb){
+	if (cb==null) {
+	    cb=defaultcallback;
+	}
+	var error=null;
+	var result=null;
+	db.all('SELECT blocked FROM '+who+'friends WHERE friend==?',[username],function(err,res){
+	    if (err){
+		error=err;
+
+	    }
+	    if (res[0] != undefined){
+		result=res[0].blocked;
+	    } else {
+		error=[{Error: 'Either user '+who+' or '+username+' does not exist',code: '1'}]
+	    }
+	    cb(error,result);
+	});
+    }
+
+    cmmsql.prototype.getfriends=function(who,cb){
+	if (cb==null) {
+	    cb=defaultcallback;
+	}
+	var error=null;
+	var result=null;
+	db.run('SELECT friend FROM '+who+'friends WHERE blocked==?',['false'],function(err,res){
+	    if (err) {
+		error=err;
+	    }
+	    cb(err,res);
+	    if (res != undefined){
+		result=res0;
+	    }
+	    cb(error,result);
+	});
+    }
+
+    
+
+    
+// ##################### to be implemented ####################
+
+    cmmsql.prototype.getcustomcommand=function(who,command,cb){
+	if (cb==null) {
+	    cb=defaultcallback;
+	}
+	getitem(null,who+'commands','command',command,cb)
+	}
+
+
+
+    
+    cmmsql.prototype.setban=function(room,who,banned,cb){
+	if (cb==null) {
+	    cb=defaultcallback;
+	}
+	
+    }
+
+    cmmsql.prototype.setblock=function(username,who,blocked,cb){
+	if (cb==null) {
+	    cb=defaultcallback;
+	}
+    }
+    
+    cmmsql.prototype.kickout=function(roomname,userkicked,kicker,cb){
+	if (cb==null) {
+	    cb=defaultcallback;
+	}
+	
+    }
+
+    cmmsql.prototype.leaveroom=function(roomname,username,cb){
+	if (cb==null) {
+	    cb=defaultcallback;
+	}
+	
+    }
+
+
+    cmmsql.prototype.removefriend=function(username,who,cb){
+	if (cb==null) {
+	    cb=defaultcallback;
+	}
+	
+    }
+
+
+}
+
+// Make it importable
 module.exports=cmmsql

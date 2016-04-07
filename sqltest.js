@@ -29,7 +29,10 @@ sql.createroom('craigpub',[],'craig','false');
 // bob can join this room but he cant claim ownership
 sql.joinroom('craigpub','bob','true','bob');
 sql.listusers('craigpub');
-sql.listowners('craigpub');
+sql.isowner('craigpub','craig',function(err,res){
+    console.log('this should be true: '+res);
+    console.log('Error: '+err);
+});
 
 // as the owner of the room craig can kick bob out
 sql.kickout('craigpub','bob','craig');
@@ -46,11 +49,28 @@ sql.listusers('mainroom');
 sql.createroom('bobroom',['user0','user1'],'bob','false');
 sql.listusers('bobroom');
 
-sql.joinroom('DNE','craig','true','craig');
+// lets check craigs password
+sql.getpassword('craig',function(err,res){
+    console.log('Craigs password is '+res);
+});
 
-sql.getpassword('craig');
+// try to do stuff with rooms/users that don't exist
+sql.joinroom('DNE','craig','true','craig');
 sql.getpassword('DNE');
 
-// end testing section
+
 sql.logroom('craigpub','craig','hello world');
 sql.getroomlog('craigpub');
+
+sql.addfriend('user0','craig','false');
+sql.addfriend('bob','craig','true');
+
+sql.isblocked('bob','craig');
+sql.isblocked('user0','craig');
+sql.isblocked('DNE','craig');
+
+sql.getfriends('craig');
+
+sql.getroomlog('craigpubusers',function (err,res){
+    console.log('listing craigpubusers',res);
+});
