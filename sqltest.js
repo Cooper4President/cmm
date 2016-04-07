@@ -5,10 +5,14 @@ var cmmsql=require('./cmmsql');
 var sql=new cmmsql('cmm.db');
 
 
-// add some users to the database they are all by default
+// try to add some users to the database they are all by default
 // put in to the main chat room.
 sql.adduser('craig','password');
 sql.adduser('bob','stuff');
+sql.adduser('user0','pass0');
+sql.adduser('user1','pass1');
+sql.adduser('user2','pass2');
+sql.adduser('user3','pass3');
 
 // list users in the main chat room
 sql.listusers('mainroom');
@@ -31,20 +35,11 @@ sql.joinroom('craigpub','bob','true','bob');
 sql.listusers('craigpub');
 sql.isowner('craigpub','craig',function(err,res){
     console.log('this should be true: '+res);
-    console.log('Error: '+err);
 });
 
 // as the owner of the room craig can kick bob out
 sql.kickout('craigpub','bob','craig');
 sql.listusers('craigpub');
-
-// create some more users
-sql.adduser('user0','pass0');
-sql.adduser('user1','pass1');
-sql.adduser('user2','pass2');
-sql.adduser('user3','pass3');
-sql.listusers('mainroom');
-
 
 sql.createroom('bobroom',['user0','user1'],'bob','false');
 sql.listusers('bobroom');
@@ -69,8 +64,11 @@ sql.isblocked('bob','craig');
 sql.isblocked('user0','craig');
 sql.isblocked('DNE','craig');
 
-sql.getfriends('craig');
+sql.getfriends('craig',function(err,res){
+    console.log('craig friends are: '+res);
+});
 
-sql.getroomlog('craigpubusers',function (err,res){
-    console.log('listing craigpubusers',res);
+sql.addcommand('bluedate','--color blue --date','craig');
+sql.getcommand('bluedate','craig',function(err,res){
+    console.log('bluedate :'+res);
 });

@@ -79,7 +79,9 @@ Ideally this will:
 
 1. Ensure that any room which has an owner will exist and be properly setup.
 2. Clean up any lost/broken rooms.
-*/
+
+commented out due to lack of functionality
+
 	db.serialize(function(){
 	    defaultcallback(null,'self repair');
 	    db.all('SELECT room FROM rooms',[],function(err,res){
@@ -91,6 +93,7 @@ Ideally this will:
 		}
 	    });
 	});
+*/
     }
     
     function createtable(err,name,uniqueid,collumnlist,cb){
@@ -177,7 +180,7 @@ Ideally this will:
 	var error=null;
 	var result=null;
 	
-	db.run('INSERT into '+roomname+'users (user,owner) VALUES (?,?)',[username,isowner],function(err){
+	db.run('INSERT into '+roomname+'users (user,owner,banned) VALUES (?,?,?)',[username,isowner,'false'],function(err){
 	    if (err){
 		error=err; // temp fix
 		if (err.errno==19){
@@ -243,7 +246,7 @@ Ideally this will:
 		    return;
 		} else {
 		    createtable(null,roomname,'time','user,message',dcb);
-		    createtable(null,roomname+'users','user','owner,blocked',function(err,res){
+		    createtable(null,roomname+'users','user','owner,banned',function(err,res){
 			addusertoroom(null,roomname,creator,'true',creator,dcb);
 			userlist.forEach(function(value,index,array){
 			    addusertoroom(null,roomname,value,'false',creator,dcb);
@@ -354,9 +357,17 @@ Ideally this will:
 	if (cb==null) {
 	    cb=defaultcallback;
 	}
+	var error=null;
+	var result='false';
 	db.all('SELECT owner FROM '+roomname+'users WHERE user==?',[username],function(err,res){
-	    defaultcallback('owner test',res);
-	    cb(err,res);
+	    if (err){
+		error=err;
+	    }
+	    
+	    if (res!=undefined && res[0]!=undefined){
+		result=res[0].owner;
+	    }
+	    cb(error,result);
 	});
 	}
     
@@ -393,7 +404,10 @@ Ideally this will:
 	});
     }
 
-    cmmsql.prototype.addfriend=function(friend,who,blocked){
+    cmmsql.prototype.addfriend=function(friend,who,blocked,cb){
+	if (cb==null){
+	    cb=defaultcallback;
+	}
 	var error=null;
 	var result=null;
 	db.run('INSERT into '+who+'friends (friend,blocked) VALUES(?,?)',[friend,blocked],function(err,res){
@@ -409,6 +423,7 @@ Ideally this will:
 		    result=friend+' was added to '+who+' friend list';
 		}
 	    }
+	    cb(error,result);
 	});
     }
 
@@ -438,30 +453,57 @@ Ideally this will:
 	}
 	var error=null;
 	var result=null;
-	db.run('SELECT friend FROM '+who+'friends WHERE blocked==?',['false'],function(err,res){
+	db.all('SELECT friend FROM '+who+'friends WHERE blocked==?',['false'],function(err,res){
 	    if (err) {
 		error=err;
 	    }
-	    cb(err,res);
-	    if (res != undefined){
-		result=res0;
+	    if (res!=undefined && res[0] != undefined){
+		result=res[0].friend;
 	    }
 	    cb(error,result);
 	});
     }
 
+    cmmsql.prototype.addcommand=function(command,method,who,cb){
+	if (cb==null){
+	    cb=defaultcallback;
+	}
+	var error=null;
+	var result=null;
+	db.run('INSERT into '+who+'commands(command,method) VALUES (?,?)',[command,method],function(err,res){
+	    if (err){
+		error=err;
+		if(err.errno=19){
+		    error=[{Error:'Command '+command+' already exists',code:'2'}];
+		}
+	    }else{
+		result='command '+command+' added';
+	    }
+	    cb(error,result);
+	});
+    }
+    
+    cmmsql.prototype.getcommand=function(command,who,cb){
+	if (cb==null) {
+	    cb=defaultcallback;
+	}
+	var error=null;
+	var result=null;
+	db.all('SELECT method FROM '+who+'commands WHERE command==?',[command],function(err,res){
+	    if (err){
+		error=err;
+	    }
+	    if (res != undefined && res[0]!=undefined){
+		result=res[0].method;
+	    }
+	    cb(error,result);	
+	});
+    }
+    
     
 
     
 // ##################### to be implemented ####################
-
-    cmmsql.prototype.getcustomcommand=function(who,command,cb){
-	if (cb==null) {
-	    cb=defaultcallback;
-	}
-	getitem(null,who+'commands','command',command,cb)
-	}
-
 
 
     
