@@ -341,12 +341,15 @@ function cmmsql(database) {
 }
 //##########################  END OF THE CLASS  ##########################
 
-// This is for testing and sample code
+/*// This is for testing and sample code
 
 // create a new database named cmm.db
 var sql=new cmmsql('cmm.db');
 // add some users to the database they are all by default
 // put in to the main chat room.
+
+//sql.adduser('test', 'mysupersecretpassword');
+
 sql.adduser('craig','password');
 sql.adduser('bob','stuff');
 // list users in the main chat room
@@ -378,4 +381,4 @@ sql.createroom('bobroom',['user0','user1'],'bob','false');
 sql.listusers('bobroom');
 sql.joinroom('DNE','craig','true','craig');
 
-// end testing section
+// end testing section*/

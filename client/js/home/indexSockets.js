@@ -11,7 +11,7 @@ define(['socket_io', './animations'], function(io, animations){
 
 	//sent by server when attempt to create neww user account fails
 	socket.on('account create fail', function(){
-		//todo
+		alert("oh no :(");
 	});
 
 	//sent by server when login attempt succeeds
@@ -46,6 +46,6 @@ define(['socket_io', './animations'], function(io, animations){
 		sendUser: function(user, pass){
 			socket.emit('login attempt', { username: user, password: pass });
 		}
-	}
+	};
 
 });

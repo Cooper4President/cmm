@@ -16,7 +16,7 @@ define(['jquery', './indexData', './animations'], function($, indexData, animati
 				indexData.storeLoginData();
 		    }
 		});
-	}
+	};
 });
 
 

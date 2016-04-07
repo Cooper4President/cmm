@@ -10,7 +10,7 @@ define(['jquery', './indexSockets'], function($, indexSockets){
 				alert("Username Invalid");
 			}
 		},
-		storeAccountData: function(user, email, pass){
+		storeAccountData: function(){
 			var user = $('.new-user').val();
 			var email = $('.new-email').val(); //create account with email??
 			var pass = $('.new-pass').val();
@@ -20,5 +20,5 @@ define(['jquery', './indexSockets'], function($, indexSockets){
 				alert("Username Invalid");
 			}		
 		}
-	}
+	};
 });
