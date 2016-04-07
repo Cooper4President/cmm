@@ -24,5 +24,6 @@ Automated Tests:
 	look at indexTest.js and chatTest.js. The modules for the chat testing is located in client/app/testing path in the cmm 
 	project directory. 
 
-User Acceptance Tests:
+User Acceptance Tests: 
+	Located in the cmmUserAcceptanceTests.pdf file.
 	
