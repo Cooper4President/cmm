@@ -1,5 +1,6 @@
 define(['jquery','QUnit', 'messenger/commands', 'misc/date', 'misc/user'], function($, QUnit, commands, date, user){
 	return function(){
+		//tests command module
 		QUnit.test("command testing", function(assert){
 			var testId = "chat-1";
 
