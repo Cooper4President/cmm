@@ -25,7 +25,7 @@
 	
 	npm install -g bower && npm install && bower install
 	
-	From there you can run the local server by running 'node server-main.js' in the console, then point your
+From there you can run the local server by running 'node server-main.js' in the console, then point your
 	browser to http://localhost:3000/indexTest.html for account and login testing and http://localhost:3000/chatTest.html
 	for command testing. If you wish to look at the source code that generated these tests, 
 	look at indexTest.js and chatTest.js. The modules for the chat testing is located in client/app/testing path in the cmm 
