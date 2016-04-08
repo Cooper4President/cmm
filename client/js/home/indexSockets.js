@@ -11,7 +11,7 @@ define(['socket_io', './animations'], function(io, animations){
 
 	//sent by server when attempt to create neww user account fails
 	socket.on('account create fail', function(){
-		alert("oh no :(");
+		alert("Username invalid");
 	});
 
 	//sent by server when login attempt succeeds
