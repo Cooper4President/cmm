@@ -4,5 +4,5 @@ define(['./login', './start', './signUp', './animations'],function(login, start,
 		login();
 		start();
 		signUp();
-	}
+	};
 });
