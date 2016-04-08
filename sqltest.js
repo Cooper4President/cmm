@@ -1,10 +1,10 @@
 // This is for testing and also makes for good sample code
+
+// create a new database named cmmtest.db
+console.log('creating database');
 var cmmsql=require('./cmmsql');
-
-// create a new database named cmm.db
-var sql=new cmmsql('cmm.db');
-
-
+var sql=new cmmsql('cmmtest.db');
+    
 // try to add some users to the database they are all by default
 // put in to the main chat room.
 sql.adduser('craig','password');
@@ -34,7 +34,7 @@ sql.createroom('craigpub',[],'craig','false');
 sql.joinroom('craigpub','bob','true','bob');
 sql.listusers('craigpub');
 sql.isowner('craigpub','craig',function(err,res){
-    console.log('this should be true: '+res);
+    console.log('craig is owner so this should be true: '+res);
 });
 
 // as the owner of the room craig can kick bob out
@@ -60,8 +60,13 @@ sql.getroomlog('craigpub');
 sql.addfriend('user0','craig','false');
 sql.addfriend('bob','craig','true');
 
-sql.isblocked('bob','craig');
-sql.isblocked('user0','craig');
+sql.isblocked('bob','craig',function(err,res){
+    console.log('bob should be blocked by craig');
+    console.log('blocked='+res);
+});
+sql.isblocked('user0','craig',function(err,res){
+    console.log('should be false: '+res);
+});
 sql.isblocked('DNE','craig');
 
 sql.getfriends('craig',function(err,res){
@@ -71,4 +76,14 @@ sql.getfriends('craig',function(err,res){
 sql.addcommand('bluedate','--color blue --date','craig');
 sql.getcommand('bluedate','craig',function(err,res){
     console.log('bluedate :'+res);
+});
+
+sql.setban('craigpub','craig','user3','true');
+sql.isbanned('craigpub','user2',function(err,res){
+    console.log('user2 should not be banned');
+    console.log('Banned: '+res);
+});
+sql.isbanned('craigpub','user3',function(err,res){
+    console.log('user3 can not be banned from craigpub as they arent in the room');
+    console.log('Banned: '+res);
 });
