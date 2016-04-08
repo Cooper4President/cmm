@@ -27,7 +27,7 @@
 	
  Then point your
 	browser to http://localhost:3000/indexTest.html for account and login testing and http://localhost:3000/chatTest.html
-	for command testing. If you wish to look at the source code that generated these tests, 
+	for command testing, both inside the client folder. If you wish to look at the source code that generated these tests, 
 	look at indexTest.js and chatTest.js. The modules for the chat testing is located in client/app/testing path in the cmm 
 	project directory. 
 
