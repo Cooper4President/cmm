@@ -216,7 +216,6 @@ function registerEventFuncs(socket, socketId, clientIp){
     console.log(activeUsers);
     console.log('attempting to logout ' + token);
     for(var key in activeUsers){
-      console.log(key);
       //if user is in list of active users...
       if(key == token){
         //remove user from list of active users
