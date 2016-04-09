@@ -9,7 +9,8 @@
     "less-plugin-autoprefix": "^1.5.1",
     "less-plugin-clean-css": "^1.5.1",
     "socket.io": "^1.4.5",
-    "sqlite3": "~3.1.1"
+    "sqlite3": "~3.1.1",
+    "wolfram": "^0.3.2"
   },
   "devDependencies": {
     "grunt-contrib-less": "^1.2.0",
