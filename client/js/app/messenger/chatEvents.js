@@ -13,13 +13,14 @@ define([
 	'menu/menuAnimations',
 	'messenger/shifter',
 	'misc/misc',
+	'./chatSockets',
 
 	//jquery plug-ins
 	'autogrow',
 	'select2'
 
 
-	], function($, _, send, chatInfo, enqueueMessenger, sort, resize, menuAnimations, shifter, misc){
+	], function($, _, send, chatInfo, enqueueMessenger, sort, resize, menuAnimations, shifter, misc, chatSockets){
 	var saveCmd;
 
 	//handles down arrow functionality for chat window
@@ -88,6 +89,9 @@ define([
 			//check if valid input
 			if(!found && rec !== null){
 
+				chatSockets.requestRoomId(rec, true, function(id){
+					html.data('roomId', id);
+				});
 				menuAnimations.showButton();
 
 				//joins receivers into formatted list
@@ -146,7 +150,12 @@ define([
 
 	//sets up events for chat window
 	return function(html){
-		var cont = receiverHandler(html);
+
+		receiverHandler(html);
+
+		//gives chat window resize property
+		resize(html.attr('id'));
+		html.find('.head').find('input').focus();
 
 		//initializes select2 plug in
 		$('.receivers').select2({
@@ -157,9 +166,6 @@ define([
 		if(chatInfo.left.length > 0) shifter.showRight();
 		if(chatInfo.right.length > 0) shifter.showLeft();
 
-		//gives chat window resize property
-		resize(html.attr('id'));
-		html.find('.head').find('input').focus();
 
 
 		//remove messenger if needed

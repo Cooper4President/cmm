@@ -31,13 +31,6 @@ define([
 		alert(msgData.sender + ' sent you a message:\n' + msgData.msg);
 	});
 
-	//occurs when the server has created a new chatroom and sent the unique id
-	socket.on('room create success', function(chatRoomId){
-		//chatRoomId - unique ID of the chat 'thread' this message belongs to
-
-		//TEMPORARY: placeholder for actual functionality
-		alert('Chatroom created with unique chatRoomId: ' + chatRoomId);
-	});
 
 
 	return{
@@ -48,10 +41,14 @@ define([
 
 		//request server to create a new chatroom
 		//server will respond with the unique room id once it is created
-		requestCreateRoom: function(chatReceivers, isPrivate){
+		requestRoomId: function(chatReceivers, isPrivate, createRoom){
 			//chatReceivers - list of usernames who are to be included in room
 			//isPrivate - true/false whether the room should be set to private
 			socket.emit('room create request', {chatReceivers: chatReceivers, isPrivate: isPrivate});
+			//occurs when the server has created a new chatroom and sent the unique id
+			socket.on('room create success', function(chatRoomId){
+				createRoom(chatRoomId);
+			});
 		},
 
 		//send auth token to server

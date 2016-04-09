@@ -180,6 +180,7 @@ function registerEventFuncs(socket, socketId, clientIp){
             //add user to list of active sessions
             activeUsers[token] = userInfo.username;
 
+
             console.log('user login. generated token: ' + token +
             ' for user: ' + userInfo.username);
             numActiveUsers++;
@@ -212,14 +213,18 @@ function registerEventFuncs(socket, socketId, clientIp){
 
   //used when a user requests to be logged out
   socket.on('logout', function(token){
+    console.log(activeUsers);
+    console.log('attempting to logout ' + token);
     for(var key in activeUsers){
+      console.log(key);
       //if user is in list of active users...
       if(key == token){
         //remove user from list of active users
         delete activeUsers[token];
         //set the socket status to not-authenticated
         activeSockets[socketId].authenticated = false;
-
+        console.log(token + ' logged out');
+        socket.emit('logout success');
         break;
       }
     }

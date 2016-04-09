@@ -6,10 +6,10 @@ define([
 	'jquery', 
 	'./menuAnimations', 
 	'messenger/queueMessenger',
-
+	'./menuSockets',
 	//jquery plug ins
 	'jqueryui'
-	], function($, menuAnimations, queueMessenger){
+	], function($, menuAnimations, queueMessenger, menuSockets){
 
 	return {
 		//sets up menu options to be evenly across length of window
@@ -64,6 +64,11 @@ define([
 			$('.add-messenger-button').click(function(event){
 				menuAnimations.hideMenu();
 				queueMessenger();
+			});
+
+			//delegates logout button
+			$('.logout-button').click(function(event){
+				menuSockets.logout();
 			});
 		}
 	};
