@@ -82,11 +82,23 @@ define([ //list of dependencies to load for this module
 						break;
 					case "--calc":
 						inp = cleanupInp(cmdInfo, inp);
+
+						// define(function (require) {
+					 //    	var wolfram = require('wolfram').createClient("6JXTUY-T4HRKH26ER", opts);
+					 //    	wolfram.query(inp, function (err, result) {
+						// 	if (err) throw err;
+						// 		console.log("Result: %j", result);
+						// 	});
+						// });
+
 						var wolfram = require('wolfram').createClient("6JXTUY-T4HRKH26ER", opts);
+
 						wolfram.query(inp, function (err, result) {
 							if (err) throw err;
-  							console.log("Result: %j", result);
+								console.log("Result: %j", result);
 						});
+						
+						
 						break;
 					default:
 						var err = "Command " + cmdInfo.cmdName + " not found. Type --help for help";
