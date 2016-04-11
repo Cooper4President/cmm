@@ -64,7 +64,7 @@ define([
 			var dist = html.width()/(chatInfo.center.length-1);
 
 			//reconfigure chat info
-			_.pull(chatInfo.center, html);
+			_.remove(chatInfo.center, function(elm){return elm.is(html);});
 
 			//scale each window in view
 			lft = 0;
