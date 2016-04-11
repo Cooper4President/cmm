@@ -17,7 +17,7 @@ define([
 
 	//sent by server when attempt to create neww user account fails
 	socket.on('account create fail', function(){
-		alert("User name invalid");
+		alert("Username invalid");
 	});
 
 	//sent by server when login attempt succeeds
