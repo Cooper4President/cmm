@@ -9,11 +9,14 @@ define([ //list of dependencies to load for this module
 	'misc/date', //third aguement date
 	'misc/help', //etc...
 	'./chatInfo', 
-	'misc/user'
-	], function($, _, date, help, chatInfo, user){ //references to the modules in order of dependencies
+	'misc/user',
+	'socket_io'
+	], function($, _, date, help, chatInfo, user, io, wolfram){ //references to the modules in order of dependencies
 	//when you return something in a module, you are simply stating what are the public functions of this module
 	//this returns a function, as this is the only function that this modele requires, it can also be anything that
 	//can be returned (such as an object, which most modules in this case return)
+
+	var socket = io();
 
 	globalFontAttributes = {};
 
@@ -83,20 +86,23 @@ define([ //list of dependencies to load for this module
 					case "--calc":
 						inp = cleanupInp(cmdInfo, inp);
 
-						// define(function (require) {
-					 //    	var wolfram = require('wolfram').createClient("6JXTUY-T4HRKH26ER", opts);
-					 //    	wolfram.query(inp, function (err, result) {
+						var wolfram = define(['require', 'wolfram'], function (require) {
+					    	var wolfram = require('wolfram').createClient("6JXTUY-T4HRKH26ER", opts);
+
+				    		wolfram.query(inp, function (err, result) {
+								if (err) throw err;
+								console.log("Result: %j", result);
+							});
+						});
+
+				    	
+
+						// var wolfram = require('wolfram').createClient("6JXTUY-T4HRKH26ER", opts);
+
+						// wolfram.query(inp, function (err, result) {
 						// 	if (err) throw err;
 						// 		console.log("Result: %j", result);
-						// 	});
 						// });
-
-						var wolfram = require('wolfram').createClient("6JXTUY-T4HRKH26ER", opts);
-
-						wolfram.query(inp, function (err, result) {
-							if (err) throw err;
-								console.log("Result: %j", result);
-						});
 						
 						
 						break;

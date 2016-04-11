@@ -26,6 +26,9 @@ var cmmsql = require('./cmmsql.js');
 //create new object for the sql database
 var db = new cmmsql('cmm.db');
 
+//for wolfram alpha api, used in --calculate command
+var wolfram = require('wolfram-alpha').createClient("6JXTUY-T4HRKH26ER");
+
 
 //port number that the server listens on
 var portNum = 3000;
