@@ -81,5 +81,5 @@ define([
 		if(chatInfo.left.length === 0) shifter.hideRight();
 		if(chatInfo.right.length === 0) shifter.hideLeft();
 
-	}
+	};
 });

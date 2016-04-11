@@ -14,6 +14,7 @@ define(['jquery', './chatInfo', 'misc/misc'], function($, chatInfo, misc){
 			isDrag = true;
 			dist = event.pageX - parseInt(elm.css('left'));
 			startLeft = parseInt(elm.css('left'));
+			elm.css('opacity', 0.8)
 		});
 		//sorts windows based on current window position
 		//some really complicated logic...
@@ -52,7 +53,7 @@ define(['jquery', './chatInfo', 'misc/misc'], function($, chatInfo, misc){
 				var lft;
 				if(elm.prev().length > 0) lft = parseInt(elm.prev().css('left')) + elm.prev().width();
 				else lft = 0;
-				elm.css('left', lft).css('z-index', 0);
+				elm.css('left', lft).css('z-index', 0).css('opacity', 1);
 			}
 		});
 	};
