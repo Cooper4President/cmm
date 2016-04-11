@@ -3,36 +3,39 @@
 */
 
 define([
-	'jquery', 
-	'lodash', 
+	'jquery',
+	'lodash',
 	'./chatInfo',
 	'hbs!templates/messenger',
 	'./chatEvents',
-	'misc/user'
+	'misc/user',
+	'./shifter'
 
-	], function($, _, chatInfo, messenger, chatEvents, user){
+], function($, _, chatInfo, messenger, chatEvents, user, shifter) {
 
 
 	//scales to add if chats are within chats per window threshold
-	function scaleToAdd(html){
+	function scaleToAdd(html) {
 
 		//appends chat window
 		$('.messenger-container').prepend(html);
 
 		//only executes if there is already a chat window displayed
-		if(chatInfo.center.length > 0){
+		if (chatInfo.center.length > 0) {
 			var
-				shrink = $('body').width() - html.width(), 
-				scale = shrink/$('body').width(), //scale for chat windows
+				shrink = $('body').width() - html.width(),
+				scale = shrink / $('body').width(), //scale for chat windows
 				minW = parseInt(html.css('minWidth')), //pulls minimum width of chat window 
-				widths = _.map(chatInfo.center, function(n){ return n.width()*scale; }), //scaled chat window widths
+				widths = _.map(chatInfo.center, function(n) {
+					return n.width() * scale;
+				}), //scaled chat window widths
 				minCount = 0, //number of windows with minimum width after scale
 				diff = 0, //offset of scale accounting for minimum width to distribute
 				lft = html.width(); //starting offset
 
 			//find all windows with minimum width after scale
-			_.each(widths, function(ent, ind){
-				if(ent <= minW){
+			_.each(widths, function(ent, ind) {
+				if (ent <= minW) {
 					diff += minW - ent;
 					widths[ind] = minW;
 					minCount++;
@@ -40,15 +43,15 @@ define([
 			});
 
 			//distribute offset from min width windows
-			var dist = diff/(widths.length - minCount);
-			if(dist){
-				_.each(widths, function(ent, ind){
-					if(ent !== minW) widths[ind] -= dist;
+			var dist = diff / (widths.length - minCount);
+			if (dist) {
+				_.each(widths, function(ent, ind) {
+					if (ent !== minW) widths[ind] -= dist;
 				});
 			}
 
 			//distribute widths to each window respectively
-			_.each(chatInfo.center, function(elm, ind){
+			_.each(chatInfo.center, function(elm, ind) {
 				elm.animate({
 					width: widths[ind],
 					left: lft
@@ -58,44 +61,39 @@ define([
 		}
 
 		//animates new window show and sets up chat info
-		html.animate({left: 0}, chatInfo.animationDuration);
+		html.animate({
+			left: 0
+		}, chatInfo.animationDuration);
 		chatInfo.center.unshift(html);
 	}
 
 	//adds window if chats per window is above threshold
-	function shiftToAdd(html){
+	function shiftToAdd(html) {
 
 		//sets up chat configuration for overflow
-		html.width(_.last(chatInfo.center).width());
+		//html.width(_.last(chatInfo.center).width());
 		_.first(chatInfo.center).before(html);
-		chatInfo.right.unshift(_.last(chatInfo.center));
-		_.pull(chatInfo.center, _.last(chatInfo.center));
-		chatInfo.center.unshift(html);
-
+		chatInfo.left.push(html);
 		//shifts each window in center and right views to the right
-		var shifting = _.union(chatInfo.center, chatInfo.right);
-		var lft = 0;
-		_.each(shifting, function(elm){
-			elm.animate({
-				left: lft
-			},chatInfo.animationDuration);
-			lft += elm.width();
-		});
+		shifter.rightShift();
 	}
 
 	//sets up chat window to be added
-	return function(){
+	return function() {
 		chatInfo.count++;
 		chatInfo.id++;
-		var 
+		var
 			chatId = "chat-" + chatInfo.id,
-			context = {id: chatId, friends: user.friends},
+			context = {
+				id: chatId,
+				friends: user.friends
+			},
 			html = $(messenger(context)).css({ //get hmtl element of chat window
 				'width': chatInfo.defaultWidth(),
 				'left': -chatInfo.defaultWidth()
 			});
 		//checks whether to shift or scale to add
-		if(chatInfo.count > chatInfo.chatsPerWindow) shiftToAdd(html);
+		if (chatInfo.count > chatInfo.chatsPerWindow) shiftToAdd(html);
 		else scaleToAdd(html);
 
 		//gives chat window events
