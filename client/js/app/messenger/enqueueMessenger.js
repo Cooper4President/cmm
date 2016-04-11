@@ -18,8 +18,10 @@ define([
 		var chatId = html.attr('id');
 
 		//removes window from chat log
-		_.remove(chatInfo.log, function(n){ return n.id === chatId });
+		_.remove(chatInfo.log, function(n){ return n.id === chatId; });
 		chatInfo.count--;
+
+		var shift,lft;
 
 		//pulls in a window that is overflowed off to the right if exists
 		if(chatInfo.right.length > 0){ //pulls in a window that is overflowed off to the right if exists
@@ -31,8 +33,8 @@ define([
 			_.pull(chatInfo.right, _.first(chatInfo.right));
 			
 			//shifts windows from the right
-			var shift = _.union(chatInfo.center, chatInfo.right);
-			var lft = 0;
+			shift = _.union(chatInfo.center,_.first( chatInfo.right));
+			lft = 0;
 			_.each(shift, function(elm){
 				elm.animate({
 					left: lft
@@ -48,8 +50,8 @@ define([
 			_.pull(chatInfo.left, _.last(chatInfo.left));
 
 			//shifts windows from the left
-			var shift = _.union(chatInfo.left, chatInfo.center);
-			var lft = -_.sumBy(chatInfo.left, function(n){ return n.width() });
+			shift = _.union(_.last(chatInfo.left), chatInfo.center);
+			lft = 0;
 			_.each(shift, function(elm){
 				elm.animate({
 					left: lft
@@ -59,13 +61,13 @@ define([
 		}else{ //scales windows if there is now overflow
 
 			//find distribution
-			var dist = html.width()/(chatInfo.center.length-1)
+			var dist = html.width()/(chatInfo.center.length-1);
 
 			//reconfigure chat info
 			_.pull(chatInfo.center, html);
 
 			//scale each window in view
-			var lft = 0;
+			lft = 0;
 			_.each(chatInfo.center, function(elm){
 				var newWidth = elm.width() + dist;
 				elm.animate({
