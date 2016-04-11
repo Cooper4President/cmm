@@ -11,7 +11,7 @@ define(['lodash'], function(_){
 		count: 0, //total count of chat windows
 		chatsPerWindow: 3, //number of chat windows for main view
 		animationDuration: 250, //duration for all animations
-
+		id: 0, //unique id counter 
 		//gives the current default width for chat windows
 		defaultWidth: function(){
 			if(this.count){

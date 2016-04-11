@@ -86,8 +86,9 @@ define([
 	//sets up chat window to be added
 	return function(){
 		chatInfo.count++;
+		chatInfo.id++;
 		var 
-			chatId = "chat-" + chatInfo.count,
+			chatId = "chat-" + chatInfo.id,
 			context = {id: chatId, friends: user.friends},
 			html = $(messenger(context)).css({ //get hmtl element of chat window
 				'width': chatInfo.defaultWidth(),
