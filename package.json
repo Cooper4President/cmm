@@ -13,7 +13,6 @@
   },
   "devDependencies": {
     "grunt-contrib-less": "^1.2.0",
-    "grunt-contrib-watch": "^1.0.0",
-    "grunt-jsbeautifier": "^0.2.12"
+    "grunt-contrib-watch": "^1.0.0"
   }
 }

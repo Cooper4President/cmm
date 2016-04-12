@@ -8,5 +8,5 @@ define(['jquery', './animations'], function($, animations) {
         $('.sign-up-op').on('click', function(event) {
             animations.bottom('start').center('sign-up');
         });
-    }
+    };
 });

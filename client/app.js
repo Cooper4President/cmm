@@ -11,12 +11,12 @@ requirejs.config({
         select2: '../bower_components/select2/dist/js/select2.min'
     },
     shim: {
-    	autogrow: ['jquery'],
-    	jquery_cookie: ['jquery'],
-    	jqueryui: ['jquery']
+        autogrow: ['jquery'],
+        jquery_cookie: ['jquery'],
+        jqueryui: ['jquery']
     }
 });
 
-requirejs(['appMain'], function(main){
-   main();
+requirejs(['appMain'], function(main) {
+    main();
 });

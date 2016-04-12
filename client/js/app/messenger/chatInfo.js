@@ -22,8 +22,6 @@ define(['lodash'], function(_) {
 
         //updates chat log
         updateChatLog: function(chatId, message) {
-            var jya;
-
             //finds receiver and updates messages
             if (message !== undefined) {
                 _(this.log).each(function(entry) {
