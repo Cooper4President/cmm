@@ -66,7 +66,14 @@ define([
 			//chatMsg - contents of the message
 
 			socket.emit('chat submit', { chatRoomId: chatRoomId, receivers: chatReceivers, msg: chatMsg });
+		},
+
+		wolframQuery: function(inp, callback){
+			socket.emit('wolfram', inp);
+			socket.on('wolfram success', function(result){
+				callback(result);
+			});
 		}
-	}
+	};
 
 });

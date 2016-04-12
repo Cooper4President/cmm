@@ -99,8 +99,18 @@ function registerEventFuncs(socket, socketId, clientIp){
         socket.emit('account create success');
       }
     });
-  });
 
+
+  });
+  socket.on('wolfram', function(inp){
+    wolfram.query(inp, function(err, result){
+      if(err) socket.emit("wolfram error");
+      else{
+        console.log(result);
+        socket.emit("wolfram success", result);
+      }
+    });
+  });
   //authentication event (NOT to be confused with login event)
   socket.on('auth attempt', function(token){
     for(var key in activeUsers){

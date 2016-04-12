@@ -25,6 +25,7 @@ define(['jquery'], function($){
 				if(event.pageX > left + minW && width < cont-minW){
 					elm.width(width);
 					elm.next().css('left', event.pageX).width(cont-width);
+					elm.find('.img').width(0.8*elm.width());
 				}
 			}
 		}).mouseup(function(event){

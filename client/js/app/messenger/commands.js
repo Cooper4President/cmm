@@ -10,13 +10,12 @@ define([ //list of dependencies to load for this module
 	'misc/help', //etc...
 	'./chatInfo', 
 	'misc/user',
-	'socket_io'
-	], function($, _, date, help, chatInfo, user, io, wolfram){ //references to the modules in order of dependencies
+	'./chatSockets'
+	], function($, _, date, help, chatInfo, user, chatSockets){ //references to the modules in order of dependencies
 	//when you return something in a module, you are simply stating what are the public functions of this module
 	//this returns a function, as this is the only function that this modele requires, it can also be anything that
 	//can be returned (such as an object, which most modules in this case return)
 
-	var socket = io();
 
 	globalFontAttributes = {};
 
@@ -64,7 +63,8 @@ define([ //list of dependencies to load for this module
 							envelope.image = {
 								url: imgUrl,
 								width: 0.8*container.width()
-							}
+							};
+							
 							inp = _.replace(inp, imgUrl, '');
 						}
 						else{
@@ -74,7 +74,7 @@ define([ //list of dependencies to load for this module
 						break;
 					case "--newtab":
 						window.open('', '_blank');
-						inp = inp.replace(cmdInfo.cmdName, '')
+						inp = inp.replace(cmdInfo.cmdName, '');
 						break;
 					case "--search":
 					//NEED TO IMPLIMENT WITH QUOTED SEARCH STRING
@@ -83,20 +83,13 @@ define([ //list of dependencies to load for this module
 						window.open(searchUrl, '_blank');
 						return; //might want to change if we don't want stand alone function
 						break;
-					case "--calc":
+					case "--wolfram":
 						inp = cleanupInp(cmdInfo, inp);
 
-						var wolfram = define(['require', 'wolfram'], function (require) {
-					    	var wolfram = require('wolfram').createClient("6JXTUY-T4HRKH26ER", opts);
-
-				    		wolfram.query(inp, function (err, result) {
-								if (err) throw err;
-								console.log("Result: %j", result);
-							});
+						chatSockets.wolframQuery(inp, function(result){
+							console.log(result);
 						});
-
 				    	
-
 						// var wolfram = require('wolfram').createClient("6JXTUY-T4HRKH26ER", opts);
 
 						// wolfram.query(inp, function (err, result) {
