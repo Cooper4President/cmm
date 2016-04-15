@@ -95,9 +95,6 @@ define([ //list of dependencies to load for this module
 			inp = removeBrackets(inp, targetStr[0])
 		}
 
-		inp = cleanupInp(cmdInfo, inp);
-		words = cleanupWords(cmdInfo, words);
-
 		//Need to remove command and args from the inp string and words array
 		returnData.inp = inp;	
 
@@ -166,4 +163,4 @@ define([ //list of dependencies to load for this module
 	    image.style.color = arg;
 	    return (image.style.color !== "rgb(255, 255, 255)");
 	}
-}
+});

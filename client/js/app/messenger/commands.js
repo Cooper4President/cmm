@@ -8,10 +8,12 @@ define([ //list of dependencies to load for this module
 	'lodash',//second arguement _
 	'misc/date', //third aguement date
 	'misc/help', //etc...
+	'messenger/bin/wolfram',
+	'messenger/bin/font',
 	'./chatInfo', 
 	'misc/user',
 	'./chatSockets'
-	], function($, _, date, help, chatInfo, user, chatSockets){ //references to the modules in order of dependencies
+	], function($, _, date, help, wolfram, font, chatInfo, user, chatSockets){ //references to the modules in order of dependencies
 	//when you return something in a module, you are simply stating what are the public functions of this module
 	//this returns a function, as this is the only function that this modele requires, it can also be anything that
 	//can be returned (such as an object, which most modules in this case return)
@@ -45,15 +47,28 @@ define([ //list of dependencies to load for this module
 
 				//Handle each command
 				switch(cmdInfo.cmdName){
+					case "--help":
+						help(chatId);
+						break;
+					case "--date":
+						var today = date;
+						inp = _.replace(inp, cmd, today); //replacing date command input with date
+						break;
+					case "--clear":
+						container.empty();
+						break;
 					case "--font":
-						var fontInfo = setFont(words, cmdInfo, inp);
+						var fontInfo = font(words, cmdInfo, inp);
 						if(fontInfo.isError){
 							return {error: fontInfo.errorMsg};
 						}
 						else{
 							inp = fontInfo.inp;
 							words = fontInfo.words;
+							inp = cleanupInp(cmdInfo, inp);
+							words = cleanupWords(cmdInfo, words);
 						}
+						
 						break;
 					case "--picture":
 						//url is next arguement
@@ -84,15 +99,8 @@ define([ //list of dependencies to load for this module
 						return; //might want to change if we don't want stand alone function
 						break;
 					case "--wolfram":
-						var wolframData;
 						inp = cleanupInp(cmdInfo, inp);
-						$.ajax({
-							succcess: chatSockets.wolframQuery(inp, function(result)){
-								console.log(result);
-								container.append(result[1].subpods[0].text);
-								// envelope.image = result[1].subpods[0].image;	
-							};
-						});
+						wolfram(chatId, inp);
 						break;
 					default:
 						var err = "Command " + cmdInfo.cmdName + " not found. Type --help for help";
@@ -138,169 +146,32 @@ define([ //list of dependencies to load for this module
 		return commands;
 	}
 
-	function setFont(words, cmdInfo, inp){
-		var returnData = {};
-		var fontAttributes = {
-			isGlobal: false,
-			isSelection: false,
-			isBold: false,
-			isItalic: false,
-			isColor: false,
-			isSize: false,
-			color: "black",
-			size: "3"
-		};
-
-		fontCmdIndex = _.indexOf(words, cmdInfo.cmdName);
-		var startWord = nextValidWord(words, fontCmdIndex);
-
-		numArgs = cmdInfo.argList.length;
-
-		var targetStr;
-		var targetRegex;
-
-		for(var i = 0; i<numArgs; i++){
-			var arg =  cmdInfo.argList[i];
-
-			switch(arg){
-				case "&word":
-					if(startWord == ""){
-						returnData.isError = true;
-						returnData.errorMsg = "Error: No valid word available following " + cmdInfo.cmdName + " command. Type --help for help."
-						return returnData;
-					}
-					targetRegex = new RegExp(cmdInfo.cmdName + ".*" + startWord);
-					break;
-				case "&message":
-					targetRegex = new RegExp(".*");
-					break;
-				case "&selection":
-					//The ? makes the regex non-greedy, so it will just match the first set of brackets brackets
-					fontAttributes.isSelection = true;
-					targetRegex = new RegExp("\{.*?\}");
-					break;
-				case "&all":
-					fontAttributes.isGlobal = true;
-					break;
-				case "&bold":
-					fontAttributes.isBold = true;
-					break;
-				case "&italics":
-					//fall through to italic case, so both are accepted
-				case "&italic":
-					fontAttributes.isItalic = true;
-					break;
-				default:
-					arg = arg.replace('&', '');
-					_.trim(arg);
-					if(arg.match(/^[1-7]$/)){
-						fontAttributes.isSize = true;
-						fontAttributes.size = arg;
-					}
-					else if(isValidColor(arg)){
-						fontAttributes.isColor = true;
-						fontAttributes.color = arg;
-					}
-					else{
-						returnData.isError = true;
-						returnData.errorMsg = "&" + arg + " is not a valid argument for " + cmdInfo.cmdName + ". Type --help for help.";
-						return returnData;	
-					}
-					break;
-
-					//Wolfram Alpha App id: 6JXTUY-T4HRKH26ER
-					//Password: cm5psl@TTT
-			}
-		}
-
-		if(fontAttributes.isGlobal){
-			globalFontAttributes = fontAttributes;
-		}
-
-		if(!targetRegex){
-			targetRegex = new RegExp(cmdInfo.cmdName + ".*" + startWord + ".*");
-		}
-
-		targetStr = inp.match(targetRegex);
-
-		var fontStr = addFontTags(fontAttributes, targetStr);
-		inp = inp.replace(targetStr, fontStr);
-
-		if(fontAttributes.isSelection){
-			inp = removeBrackets(inp, targetStr[0])
-		}
-
-		inp = cleanupInp(cmdInfo, inp);
-		words = cleanupWords(cmdInfo, words);
-
-		//Need to remove command and args from the inp string and words array
-		returnData.inp = inp;	
-
-		returnData.words = words;
-
-		return returnData;
-	}
 
 	function addFontTags(fontAttributes, fontStr){
-		if(fontAttributes.isBold){
-			fontStr = "<b>" + fontStr + "</b>";
-		}
-
-		if(fontAttributes.isItalic){
-			fontStr = "<i>" + fontStr + "</i>";
-		}
-
-		if(fontAttributes.isColor || fontAttributes.isSize){
-			var fontTag = "<font ";
-			if(fontAttributes.isColor){
-				fontTag = fontTag + "color=\"" + fontAttributes.color + "\" ";
-			}
-			if(fontAttributes.isSize){
-				fontTag = fontTag + "size=\"" + fontAttributes.size + "\" ";
-			}
-
-			fontTag = fontTag + ">";
-
-			fontStr = fontTag + fontStr + "</font>";
-		}
-
-		return fontStr;
+	if(fontAttributes.isBold){
+		fontStr = "<b>" + fontStr + "</b>";
 	}
 
-	function removeBrackets(inp, targetStr){
-		//Need to remove brackets from selected text
-		var removedBrackets = targetStr;
-		removedBrackets = removedBrackets.replace(/^\{/,'');
-		removedBrackets = removedBrackets.replace(/\}$/,'');
-		inp = inp.replace(targetStr, removedBrackets);
-		return inp;
+	if(fontAttributes.isItalic){
+		fontStr = "<i>" + fontStr + "</i>";
 	}
 
-	function nextValidWord(words, startIndex){
-		for(var i = startIndex; i < words.length; i++){
-			if(!words[i].match(/^(&|-{2})/)){
-				return words[i];
-			}
+	if(fontAttributes.isColor || fontAttributes.isSize){
+		var fontTag = "<font ";
+		if(fontAttributes.isColor){
+			fontTag = fontTag + "color=\"" + fontAttributes.color + "\" ";
 		}
-		return "";
+		if(fontAttributes.isSize){
+			fontTag = fontTag + "size=\"" + fontAttributes.size + "\" ";
+		}
+
+		fontTag = fontTag + ">";
+
+		fontStr = fontTag + fontStr + "</font>";
 	}
 
-	//Creates a temporay image element, tries to set the color of it, and if it fails then the argument is not a valid color.
-	//Modified function a StackOverflow post: http://stackoverflow.com/questions/6386090/validating-css-color-names
-	function isValidColor(arg) {
-	    //Alter the following conditions according to your need.
-	    if (arg === "") { return false; }
-	    if (arg === "inherit") { return false; }
-	    if (arg === "transparent") { return false; }
-
-	    var image = document.createElement("img");
-	    image.style.color = "rgb(0, 0, 0)";
-	    image.style.color = arg;
-	    if (image.style.color !== "rgb(0, 0, 0)") { return true; }
-	    image.style.color = "rgb(255, 255, 255)";
-	    image.style.color = arg;
-	    return (image.style.color !== "rgb(255, 255, 255)");
-	}
+	return fontStr;
+}
 
 	//function to remove command and arguments from the message input
 	function cleanupInp(cmdInfo, inp){
