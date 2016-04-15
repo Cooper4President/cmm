@@ -60,7 +60,7 @@ function cmmsql(database) {
     db.serialize(function(){
 	createtable(null,'mainroom','time','user, messsage',defaultcallback);
 	createtable(null,'users','user','password',defaultcallback);
-	createtable(null,'rooms','room','priv,creator',defaultcallback);
+	createtable(null,'rooms','id','room,priv,creator',defaultcallback);
 	selfrepair();
     });
 
@@ -192,6 +192,30 @@ commented out due to lack of functionality
 	    cb(error,result);
 	});
     }
+
+    addassociate=function(username,who,blocked,cb){
+	if (cb==null){
+	    cb=defaultcallback;
+	}
+	var error=null;
+	var result=null;
+	db.run('INSERT into '+who+'friends (friend,blocked) VALUES(?,?)',[username,blocked],function(err,res){
+	    if (err){
+		error=err; // the catch all for errors
+		if (err.errno=13){
+		    error=[{Error: 'User '+username+' is already known by'+who,code: '1'}];
+		}
+	    } else {
+		if (blocked='true'){
+		    result=username+' was blocked by '+who;
+		}else{
+		    result=username+' was added to '+who+' friend list';
+		}
+	    }
+	    cb(error,result);
+	});
+    }
+
     
     //##################### Externally Accessible ######################
     
@@ -409,27 +433,11 @@ commented out due to lack of functionality
 	});
     }
 
-    cmmsql.prototype.addfriend=function(friend,who,blocked,cb){
+    cmmsql.prototype.addfriend=function(friend,who,cb){
 	if (cb==null){
 	    cb=defaultcallback;
 	}
-	var error=null;
-	var result=null;
-	db.run('INSERT into '+who+'friends (friend,blocked) VALUES(?,?)',[friend,blocked],function(err,res){
-	    if (err){
-		error=err; // the catch all for errors
-		if (err.errno=13){
-		    error=[{Error: 'User '+friend+' is already in '+who+' friend list',code: '1'}];
-		}
-	    } else {
-		if (blocked='true'){
-		    result=friend+' was blocked by '+who;
-		}else{
-		    result=friend+' was added to '+who+' friend list';
-		}
-	    }
-	    cb(error,result);
-	});
+	addassociate(friend,who,true,cb);
     }
 
     cmmsql.prototype.isblocked=function(username,who,cb){
@@ -513,6 +521,7 @@ commented out due to lack of functionality
 
     
     cmmsql.prototype.setban=function(room,who,user,banned,cb){
+	// user cannot be banned from a room until they join it.
 	if (cb==null) {
 	    cb=defaultcallback;
 	}
@@ -532,7 +541,7 @@ commented out due to lack of functionality
 		return;
 	    }
 	    if(res==banned){
-		error=[{Error: 'User '+who+' already has banned state of '+banned, code:'4'}];
+		error=[{Error: 'User '+user+' already has banned state of '+banned, code:'4'}];
 	    } else {
 		db.run('UPDATE '+room+'users SET banned==? where user==?',[banned,who],function(err,res){
 		    if (err){
@@ -548,6 +557,21 @@ commented out due to lack of functionality
 	if (cb==null) {
 	    cb=defaultcallback;
 	}
+	var error;
+	var result
+	db.all('SELECT blocked from '+who+'friends WHERE user==?',[username],function(err1,res1){
+	    if (res1!=undefined && res1[0]!=undefined){
+		if (blocked==res1[0].blocked){
+		    error=[{error: 'user '+username+'already has blocked state: '+blocked, code:'4'}];
+		} else {
+		    db.run('UPDATE '+who+'friends SET blocked==? WHERE user==?',[blocked,username],function(err2,res2){
+			cb(err2,res2);
+		    });
+		}
+	    } else {
+		this.addassociate(username,who,blocked,cb);
+	    }
+	});
     }
     
     cmmsql.prototype.kickout=function(roomname,userkicked,kicker,cb){
