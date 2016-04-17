@@ -10,10 +10,11 @@ define([ //list of dependencies to load for this module
 	'misc/help', //etc...
 	'messenger/bin/wolfram',
 	'messenger/bin/font',
-	'./chatInfo', 
+	'./chatInfo',
 	'misc/user',
-	'./chatSockets'
-	], function($, _, date, help, wolfram, font, chatInfo, user, chatSockets){ //references to the modules in order of dependencies
+	'./chatSockets',
+	'hbs!templates/message'
+	], function($, _, date, help, wolfram, font, chatInfo, user, chatSockets, message){ //references to the modules in order of dependencies
 	//when you return something in a module, you are simply stating what are the public functions of this module
 	//this returns a function, as this is the only function that this modele requires, it can also be anything that
 	//can be returned (such as an object, which most modules in this case return)
@@ -21,17 +22,17 @@ define([ //list of dependencies to load for this module
 
 	globalFontAttributes = {};
 
-	return function(chatId, inp){ 
-		//this is the main object to store command data
+	return function(chatId, inp){
+		// this is the main object to store command data
 		var envelope = {
 			username: user.name
-		}
-		
+		};
+
 		//The chat container
 		var container = $("#"+chatId).find('.chat-container');
 
 		//Strip any existing html tags that the user might have entered, to prevent malicious script injections
-		inp = inp.replace(/(<([^>]+)>)/ig,"")
+		inp = inp.replace(/(<([^>]+)>)/ig,"");
 
 		//match the -- delimiter to find all commands in the input
 		if(_.includes(inp , '--')){
@@ -108,7 +109,6 @@ define([ //list of dependencies to load for this module
 						break;
 				}
 			}
-
 			inp = _.trim(inp);
 		}
 

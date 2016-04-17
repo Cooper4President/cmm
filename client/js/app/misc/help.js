@@ -22,5 +22,5 @@ define(['jquery', 'hbs!templates/message'], function($, message){
 				console.log("Error with help");
 			}
 		});
-	}
-});	
+	};
+});

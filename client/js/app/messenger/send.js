@@ -19,7 +19,7 @@ define([
 		})[0].receivers;
 	}
 	//checks if chat box is overflowed
-	function checkScrollbar(chatId){ 
+	function checkScrollbar(chatId){
 		var container = $("#"+chatId).find('.container');
 		var elt, hasOverflow = (elt = container).innerWidth() > elt[0].scrollWidth;
 		if(hasOverflow) container.scrollTop(container[0].scrollHeight);
@@ -44,7 +44,7 @@ define([
 			container.append(message(commands(id, inp))); //since the command module only returns a function we call it like this
 			
 			//check scroll bar and clear field
-			checkScrollbar(id);							
+			checkScrollbar(id);
 			cmd.val("");
 		}
 		cmd.focus();
