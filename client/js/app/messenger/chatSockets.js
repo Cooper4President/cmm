@@ -74,7 +74,7 @@ define([
             socket.on('wolfram success', function(result) {
                 console.log(result);
                 callback(result);
-                socket.removeListener('wolfram success');
+                socket.removeListener('wolfram success'); //remove listener after use
             });
         }
     };
