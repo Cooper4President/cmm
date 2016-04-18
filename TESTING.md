@@ -21,9 +21,13 @@
 	To run natively you must have Node.js (https://nodejs.org/en/download/) downloaded onto your machine and able 
 	to use the 'node' command in the console. Once that is done you can clone this repository 
 	(git clone https://github.com/Cooper4President/cmm.git) and the cd into the repository in your console.
-	From there you can run the local server by running 'node server-main.js' in the console, then point your
+	Once done run these commands
+	
+	npm install -g bower && npm install && bower install && node server-main.js
+	
+ Then point your
 	browser to http://localhost:3000/indexTest.html for account and login testing and http://localhost:3000/chatTest.html
-	for command testing. If you wish to look at the source code that generated these tests, 
+	for command testing, both inside the client folder. If you wish to look at the source code that generated these tests, 
 	look at indexTest.js and chatTest.js. The modules for the chat testing is located in client/app/testing path in the cmm 
 	project directory. 
 
