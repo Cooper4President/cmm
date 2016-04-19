@@ -31,12 +31,24 @@ define([
         alert(msgData.sender + ' sent you a message:\n' + msgData.msg);
     });
 
+    socket.on('user list deliver', function(userList){
+      //userList - list of all registered usernames
+      
+      //TEMPORARY: placeholder for actual functionality
+      alert('User list received from server');
+    });
+
 
 
     return {
         //request server for log of messages from a chatroom
         requestChatRoomLog: function(chatRoomId) {
             socket.emit('chat log request', chatRoomId);
+        },
+
+        //request server for list of all registered users
+        requestUserList: function() {
+          socket.emit('user list request');
         },
 
         //request server to create a new chatroom

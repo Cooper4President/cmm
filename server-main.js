@@ -236,7 +236,7 @@ function registerEventFuncs(socket, socketId, clientIp) {
         strToHash += roomInfo.chatReceivers[key];
       }
       var chatRoomId = crypto.createHash('md5').update(strToHash).digest('hex');
-      
+
       //user who is creating the chatroom
       var chatCreator = activeSockets[socketId].username;
 
@@ -245,6 +245,15 @@ function registerEventFuncs(socket, socketId, clientIp) {
         function(err, result) {
           //tell the client the room has been created
           socket.emit('room create success', chatRoomId);
+        });
+      });
+
+      //called when a user requests the list of all registered usernames
+      socket.on('user list request', function() {
+        //get userlist from database
+        db.listusers('mainroom', function(err, usersInDb) {
+          //send userlist to the client
+          socket.emit('user list deliver', usersInDb);
         });
       });
 
