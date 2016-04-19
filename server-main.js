@@ -149,6 +149,14 @@ function registerEventFuncs(socket, socketId, clientIp) {
     });
   });
 
+  //occurs when the client requests to add a user to another user's friend list
+  socket.on('friend add', function(addFriendData){
+    //send information to the database
+    db.addfriend(addFriendData.friend, addFriendData.user, function(err, result){
+      //done
+    });
+  });
+
   //occurs when client requests a user's friend list
   socket.on('friend list request', function(username){
     //get friend list from the database
