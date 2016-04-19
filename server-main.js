@@ -230,10 +230,13 @@ function registerEventFuncs(socket, socketId, clientIp) {
       //roomInfo.chatReceivers - list of usernames who are to be included in room
       //roomInfo.isPrivate - true/false whether the room should be set to private
 
-      //TEMPORARY. Generate random hash to be the unique room id
-      var randStr = Math.random().toString();
-      var chatRoomId = crypto.createHash('md5').update(randStr).digest('hex');
-
+      //Generate hash of receiver names to act as the unique ID
+      var strToHash = "";
+      for (var key in roomInfo.chatReceivers){
+        strToHash += roomInfo.chatReceivers[key];
+      }
+      var chatRoomId = crypto.createHash('md5').update(strToHash).digest('hex');
+      
       //user who is creating the chatroom
       var chatCreator = activeSockets[socketId].username;
 
