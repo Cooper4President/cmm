@@ -7,6 +7,24 @@
 {{#if wolfram}}
 	<div>{{{wolfram}}}</div>
 {{/if}}
+{{#if google}}
+<div>
+<object data = {{google.url}}></object>
+<script>
+  (function() {
+    var cx = '002463612160728276092:tk8fmbtix2g';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:searchresults-only></gcse:searchresults-only>
+</div>
+{{/if}}
 {{#if image}}
 	<img class='img' src='{{image.url}}' width='{{image.width}}' >
 {{/if}}

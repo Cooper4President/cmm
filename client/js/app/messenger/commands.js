@@ -10,11 +10,12 @@ define([ //list of dependencies to load for this module
 	'misc/help', //etc...
 	'messenger/bin/wolfram',
 	'messenger/bin/font',
+	'messenger/bin/google',
 	'./chatInfo',
 	'misc/user',
 	'./chatSockets',
 	'hbs!templates/message'
-	], function($, _, date, help, wolfram, font, chatInfo, user, chatSockets, message){ //references to the modules in order of dependencies
+	], function($, _, date, help, wolfram, font, google, chatInfo, user, chatSockets, message){ //references to the modules in order of dependencies
 	//when you return something in a module, you are simply stating what are the public functions of this module
 	//this returns a function, as this is the only function that this modele requires, it can also be anything that
 	//can be returned (such as an object, which most modules in this case return)
@@ -102,6 +103,10 @@ define([ //list of dependencies to load for this module
 					case "--wolfram":
 						inp = cleanupInp(cmdInfo, inp);
 						wolfram(chatId, inp);
+						break;
+					case "--google":
+						inp = cleanupInp(cmdInfo, inp);
+						google(chatId, inp);
 						break;
 					default:
 						var err = "Command " + cmdInfo.cmdName + " not found. Type --help for help";
