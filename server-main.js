@@ -115,6 +115,7 @@ function registerEventFuncs(socket, socketId, clientIp) {
                     token + ' for username: ' + activeUsers[token]);
                 break;
             }
+
         }
     });
 
