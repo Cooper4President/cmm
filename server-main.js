@@ -125,7 +125,7 @@ function registerEventFuncs(socket, socketId, clientIp){
     var chatSenderUsername = activeSockets[socketId].username;
 
     //TESTING
-    console.log(chatSenderUsername + ' submitted to chat id: ' + msgData.id +
+    console.log(chatSenderUsername + ' submitted to chat id: ' + msgData.chatRoomId +
     ' \nthis message: ' + msgData.msg);
     console.log('rec ' + msgData.receivers);
 
