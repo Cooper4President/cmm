@@ -227,28 +227,23 @@ function registerEventFuncs(socket, socketId, clientIp) {
 
     //used when a user requests to create a new chatroom
     socket.on('room create request', function(roomInfo) {
-        //roomInfo.chatReceivers - list of usernames who are to be included in room
-        //roomInfo.isPrivate - true/false whether the room should be set to private
+      //roomInfo.chatReceivers - list of usernames who are to be included in room
+      //roomInfo.isPrivate - true/false whether the room should be set to private
 
-        //TEMPORARY. Generate random hash to be the unique room id
-        var randStr = Math.random().toString();
-        var chatRoomId = crypto.createHash('md5').update(randStr).digest('hex');
+      //TEMPORARY. Generate random hash to be the unique room id
+      var randStr = Math.random().toString();
+      var chatRoomId = crypto.createHash('md5').update(randStr).digest('hex');
 
-        //user who is creating the chatroom
-        var chatCreator = activeSockets[socketId].username;
+      //user who is creating the chatroom
+      var chatCreator = activeSockets[socketId].username;
 
-        //tell the database to create a new chatroom with these users
-        db.createroom(chatRoomId, roomInfo.chatReceivers, chatCreator, roomInfo.isPrivate,
-            function(err, result) {
-                if (!err) {
-                    //tell the client the room has been created
-                    socket.emit('room create success', chatRoomId);
-                } else {
-                    //error creating room, maybe it already exists?
-                    console.log('error creating room');
-                }
-            });
-    });
+      //tell the database to create a new chatroom with these users
+      db.createroom(chatRoomId, roomInfo.chatReceivers, chatCreator, roomInfo.isPrivate,
+        function(err, result) {
+          //tell the client the room has been created
+          socket.emit('room create success', chatRoomId);
+        });
+      });
 
     //called when socket is disconnected
     socket.on('disconnect', function() {
