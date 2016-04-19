@@ -31,9 +31,18 @@ define([
         alert(msgData.sender + ' sent you a message:\n' + msgData.msg);
     });
 
-    socket.on('user list deliver', function(userList){
+    socket.on('friend list deliver', function(friendData){
+      //friendData.user - username of the person who 'owns' this friend list
+      //friendData.friends - list of friend's usernames
+
+      //TEMPORARY: placeholder for actual functionality
+      alert('Friend list received for user: ' + friendData.user);
+    });
+
+    //occurs when the server delivers the list of registered usernames
+    socket.on('user list deliver', function(userList) {
       //userList - list of all registered usernames
-      
+
       //TEMPORARY: placeholder for actual functionality
       alert('User list received from server');
     });
@@ -44,6 +53,11 @@ define([
         //request server for log of messages from a chatroom
         requestChatRoomLog: function(chatRoomId) {
             socket.emit('chat log request', chatRoomId);
+        },
+
+        //request server for list of a user's friends
+        requestFriendList: function(username){
+          socket.emit('friend list request');
         },
 
         //request server for list of all registered users
