@@ -38,7 +38,7 @@ define([
 
             //send the message to the server
             var testing = getReceivers(id);
-            chatSockets.sendChatMsg(id, testing, inp);
+            chatSockets.sendChatMsg($(chatId).data('roomId'), testing, inp);
 
             //run message as a command and post it to respective chat window
             container.append(message(commands(id, inp))); //since the command module only returns a funciton we call it like this

@@ -13,7 +13,7 @@ define(['jquery', 'lodash', 'messenger/chatInfo', 'menu/menu'], function($, _, c
                 var cont = _.sumBy(chatInfo.center, function(n) {
                     return n.width();
                 });
-                var scale = $('body').width() / cont;
+                var scale = $(window).width() / cont;
 
                 //scales viewable windows to fit screen
                 var shift = _.union(chatInfo.center, chatInfo.right);
@@ -28,5 +28,5 @@ define(['jquery', 'lodash', 'messenger/chatInfo', 'menu/menu'], function($, _, c
                 });
             }
         });
-    }
+    };
 });
