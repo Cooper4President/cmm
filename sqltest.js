@@ -105,3 +105,6 @@ sql.isbanned('craigpub','user3',function(err,res){
 sql.isowner('craigpub','bob',function(err,res){
     console.log('bob is not owner of craig pub. Owner='+res);
 });
+
+
+sql.createroom('a-b',[],'user0','false');

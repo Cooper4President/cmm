@@ -179,10 +179,10 @@ commented out due to lack of functionality
 	}
 	var error=null;
 	var result=null;
-	
-	db.run('INSERT into '+roomname+'users (user,owner,banned) VALUES (?,?,?)',[username,isowner,'false'],function(err){
+	var rn=roomname+'users'
+	db.run('INSERT into '+rn+' (user,owner,banned) VALUES (?,?,?)',[username,isowner,'false'],function(err){
 	    if (err){
-		error=err; // temp fix
+		error='addusertoroom error:'+err; // temp fix
 		if (err.errno==19){
 		    error=[{Error:username+' is already in the room '+roomname,code:'2'}];
 		}
@@ -216,6 +216,17 @@ commented out due to lack of functionality
 	});
     }
 
+    exitroom=function(err,room,who,cb){
+	if (cb==null){
+	    cb=defaultcallback;
+	}
+	var error=null;
+	var result=null;
+
+
+
+    }
+	
     
     //##################### Externally Accessible ######################
     
@@ -272,6 +283,7 @@ commented out due to lack of functionality
 		    createtable(null,roomname,'time','user,message',dcb);
 		    createtable(null,roomname+'users','user','owner,banned',function(err,res){
 			addusertoroom(null,roomname,creator,'true',creator,dcb);
+			
 			userlist.forEach(function(value,index,array){
 			    addusertoroom(null,roomname,value,'false',creator,dcb);
 			});
@@ -582,7 +594,7 @@ commented out due to lack of functionality
     }
 
     cmmsql.prototype.leaveroom=function(roomname,username,cb){
-	if (cb==null) {
+ 	if (cb==null) {
 	    cb=defaultcallback;
 	}
 	
