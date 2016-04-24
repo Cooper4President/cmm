@@ -11,6 +11,14 @@ define([
         //send authentication token to server
         chatSockets.sendAuthToken();
 
+        chatSockets.requestUsers(function(users){
+            console.log(users);
+        });
+
+        chatSockets.requestActiveUsers(function(users){
+            console.log(users);
+        });
+
         //menu button handler
         menu.init();
 

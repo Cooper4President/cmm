@@ -34,10 +34,19 @@ define([
 
     return {
 
+        requestUsers: function(callback){
+            socket.emit('users request');
+            socket.on('users', function(users){
+                callback(users);
+                socket.removeListener('users');
+            });
+        },
+
         requestActiveUsers: function(callback){
             socket.emit('active users request');
             socket.on('active users', function(users){
                 callback(users);
+                socket.removeListener('active users');
             });
         },
 

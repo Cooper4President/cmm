@@ -74,6 +74,14 @@ when a socket is connected
 function registerEventFuncs(socket, socketId, clientIp) {
     //*****event functions*****
 
+socket.on('users request', function(){
+    db.listusers('mainroom', function(err, res){
+       if(!err) socket.emit('users', res);
+    });
+});
+    socket.on('active users request', function(){
+        socket.emit('active users', activeUsers);
+    });
 
     //sent by client to request that a new user account be created
     socket.on('account create attempt', function(userInfo) {
