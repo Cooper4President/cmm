@@ -32,8 +32,15 @@ define([
     });
 
 
-
     return {
+
+        requestActiveUsers: function(callback){
+            socket.emit('active users request');
+            socket.on('active users', function(users){
+                callback(users);
+            });
+        },
+
         //request server for log of messages from a chatroom
         requestChatRoomLog: function(chatRoomId) {
             socket.emit('chat log request', chatRoomId);
