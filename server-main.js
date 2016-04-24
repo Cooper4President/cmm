@@ -6,8 +6,6 @@ Then, go to 'localhost:####' in browser, where #### is the port number
 //for the 'express' library
 var express = require('express');
 var app = express();
-//handlebars framework
-var handlebars = require('handlebars');
 //nodejs crypto module
 var crypto = require('crypto');
 /*
@@ -115,6 +113,7 @@ function registerEventFuncs(socket, socketId, clientIp) {
                     token + ' for username: ' + activeUsers[token]);
                 break;
             }
+
         }
     });
 

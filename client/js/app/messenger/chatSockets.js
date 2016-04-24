@@ -58,6 +58,7 @@ define([
             //occurs when the server has created a new chatroom and sent the unique id
             socket.on('room create success', function(chatRoomId) {
                 createRoom(chatRoomId);
+                socket.removeListener('room create success');
             });
         },
 
