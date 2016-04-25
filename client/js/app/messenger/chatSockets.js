@@ -31,12 +31,46 @@ define([
         alert(msgData.sender + ' sent you a message:\n' + msgData.msg);
     });
 
+    socket.on('friend list deliver', function(friendData){
+      //friendData.user - username of the person who 'owns' this friend list
+      //friendData.friends - list of friend's usernames
+
+      //TEMPORARY: placeholder for actual functionality
+      alert('Friend list received for user: ' + friendData.user);
+    });
+
+    //occurs when the server delivers the list of registered usernames
+    socket.on('user list deliver', function(userList) {
+      //userList - list of all registered usernames
+
+      //TEMPORARY: placeholder for actual functionality
+      alert('User list received from server');
+    });
+
 
 
     return {
+
+      //tell the server to add a user to another user's friend list
+      addFriend: function(username, friendUsername){
+        //username - username of the 'owner' of the friends list
+        //friendUsername - user to be added to the friends list
+        
+        socket.emit('friend add', {user: username, friend: friendUsername});
+      }
         //request server for log of messages from a chatroom
         requestChatRoomLog: function(chatRoomId) {
             socket.emit('chat log request', chatRoomId);
+        },
+
+        //request server for list of a user's friends
+        requestFriendList: function(username){
+          socket.emit('friend list request');
+        },
+
+        //request server for list of all registered users
+        requestUserList: function() {
+          socket.emit('user list request');
         },
 
         //request server to create a new chatroom
