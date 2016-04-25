@@ -193,7 +193,7 @@ commented out due to lack of functionality
 	});
     }
 
-    addassociate=function(username,who,blocked,cb){
+    function addassociate(username,who,blocked,cb){
 	if (cb==null){
 	    cb=defaultcallback;
 	}
@@ -216,17 +216,24 @@ commented out due to lack of functionality
 	});
     }
 
-    exitroom=function(err,room,who,cb){
+    function exitroom(err,room,who,cb){
 	if (cb==null){
 	    cb=defaultcallback;
 	}
 	var error=null;
 	var result=null;
-
-
+	db.run('DELETE FROM '+room+'users WHERE user==?',[who],function(err,res){
+	    if (err){
+		error=err;
+		
+	    } else {
+		result='User '+who+' removed from room '+room;
+	    }
+	    cb(error,result);
+	});
 
     }
-	
+
     
     //##################### Externally Accessible ######################
     
@@ -280,16 +287,28 @@ commented out due to lack of functionality
 		    cb(error,result)
 		    return;
 		} else {
-		    createtable(null,roomname,'time','user,message',dcb);
-		    createtable(null,roomname+'users','user','owner,banned',function(err,res){
-			addusertoroom(null,roomname,creator,'true',creator,dcb);
-			
-			userlist.forEach(function(value,index,array){
-			    addusertoroom(null,roomname,value,'false',creator,dcb);
-			});
+		    createtable(null,roomname,'time','user,message',function(err,res){
+			if (err){
+			    error=[{Error:'Room '+roomname+' cannot be created',code:'4'}];
+			} else {
+			    createtable(null,roomname+'users','user','owner,banned',function(err,res){
+				if (err){
+				    error=[{Error:'Room '+roomname+' cannot be created',code:'4'}];
+				} else {
+				    addusertoroom(null,roomname,creator,'true',creator,dcb);
+				    userlist.forEach(function(value,index,array){
+					addusertoroom(null,roomname,value,'false',creator,dcb);
+				    });
+				}
+			    });
+			}
 		    });
-		    result='Room '+roomname+' created';
-		    cb(error,result);
+		    if (error){
+			db.run('DELETE FROM rooms WHERE room==?',[roomname]);
+		    } else {
+			result='Room '+roomname+' created';
+			cb(error,result);
+		    }
 		}
 	    });
 	    
@@ -528,7 +547,7 @@ commented out due to lack of functionality
     
 
     
-// ##################### to be implemented ####################
+// ##################### to be implemented/tested ####################
 
 
     
@@ -581,23 +600,27 @@ commented out due to lack of functionality
 		    });
 		}
 	    } else {
-		this.addassociate(username,who,blocked,cb);
+		addassociate(username,who,blocked,cb);
 	    }
 	});
     }
     
-    cmmsql.prototype.kickout=function(roomname,userkicked,kicker,cb){
+    cmmsql.prototype.kickout=function(roomname,kicked,kicker,cb){
 	if (cb==null) {
 	    cb=defaultcallback;
 	}
-	
+	this.isowner(roomname,kicker,function(err,res){
+	    if (res=='true'){
+		exitroom(null,roomname,kicked,cb);
+	    }
+	});
     }
 
     cmmsql.prototype.leaveroom=function(roomname,username,cb){
  	if (cb==null) {
 	    cb=defaultcallback;
 	}
-	
+	exitroom(null,roomname.username,cb);
     }
 
 
@@ -605,7 +628,15 @@ commented out due to lack of functionality
 	if (cb==null) {
 	    cb=defaultcallback;
 	}
-	
+	error=null;
+	result=null;
+	db.run('DELETE FROM '+who+'friends WHERE user==?',[username],function(err,res){
+	    if (err){
+		error=err;
+	    } else {
+		result='User '+username+' was removed from '+who+' friend list';
+	    }
+	});
     }
 
 
