@@ -131,7 +131,7 @@ function registerEventFuncs(socket, socketId, clientIp) {
     for (var i in msgData.receivers) {
       for (var j in activeSockets) {
         if (msgData.receivers[i] === activeSockets[j].username) {
-          socket.emit('chat deliver', { chatRoomId: msgData.chatRoomId, sender: chatSenderUsername, msg: msgData.msg });
+          io.to(j).emit('chat deliver', { chatRoomId: msgData.chatRoomId, sender: chatSenderUsername, msg: msgData.msg });
 
           break;
         }

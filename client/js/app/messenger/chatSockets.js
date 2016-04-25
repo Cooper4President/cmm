@@ -55,9 +55,9 @@ define([
       addFriend: function(username, friendUsername){
         //username - username of the 'owner' of the friends list
         //friendUsername - user to be added to the friends list
-        
+
         socket.emit('friend add', {user: username, friend: friendUsername});
-      }
+      },
         //request server for log of messages from a chatroom
         requestChatRoomLog: function(chatRoomId) {
             socket.emit('chat log request', chatRoomId);
