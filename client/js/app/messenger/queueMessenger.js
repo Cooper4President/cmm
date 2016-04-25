@@ -9,9 +9,10 @@ define([
     'hbs!templates/messenger',
     './chatEvents',
     'misc/user',
-    './shifter'
+    './shifter',
+    './chatSockets'
 
-], function($, _, chatInfo, messenger, chatEvents, user, shifter) {
+], function($, _, chatInfo, messenger, chatEvents, user, shifter, chatSockets) {
 
 
     //scales to add if chats are within chats per window threshold
@@ -79,25 +80,32 @@ define([
     }
 
     //sets up chat window to be added
-    return function() {
+    return function(rec) {
         chatInfo.count++;
         chatInfo.id++;
-        var
+        var 
             chatId = "chat-" + chatInfo.id,
-            context = {
-                id: chatId,
-                friends: user.friends
-            },
-            html = $(messenger(context)).css({ //get hmtl element of chat window
-                'width': chatInfo.defaultWidth(),
-                'left': -chatInfo.defaultWidth()
+            context = {id: chatId},
+            group = false;
+        if(rec === undefined){
+            context.friends = user.friends;
+            group = true;
+        }else{
+            context.receivers = _.join(rec, ", ");
+            chatSockets.requestRoomId(rec, true, function(id) {
+                html.data('roomId', id);
             });
+        }
+        var html = $(messenger(context)).css({ //get hmtl element of chat window
+            'width': chatInfo.defaultWidth(),
+            'left': -chatInfo.defaultWidth()
+        });
         //checks whether to shift or scale to add
         if (chatInfo.count > chatInfo.chatsPerWindow) shiftToAdd(html);
         else scaleToAdd(html);
 
         //gives chat window events
-        chatEvents(html);
+        chatEvents(html, group);
         return chatId;
     };
 });

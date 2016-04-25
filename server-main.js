@@ -71,18 +71,7 @@ server.listen(portNum, function() {
 container to hold the socket event functions which are registered as callbacks
 when a socket is connected
 */
-function registerEventFuncs(socket, socketId, clientIp) {
-    //*****event functions*****
-
-socket.on('users request', function(){
-    db.listusers('mainroom', function(err, res){
-       if(!err) socket.emit('users', res);
-    });
-});
-    socket.on('active users request', function(){
-        socket.emit('active users', activeUsers);
-    });
-
+function registerEventFuncs(socket, socketId, clientIp) { 
     //sent by client to request that a new user account be created
     socket.on('account create attempt', function(userInfo) {
         //testing
@@ -106,7 +95,6 @@ socket.on('users request', function(){
                 socket.emit('account create success');
             }
         });
-
     });
 
     //authentication event (NOT to be confused with login event)
@@ -154,6 +142,23 @@ socket.on('users request', function(){
             } else {
                 //message logged to database successfully
             }
+        });
+    });
+
+    //occurs when the client requests to add a user to another user's friend list
+    socket.on('friend add', function(addFriendData) {
+        //send information to the database
+        db.addfriend(addFriendData.friend, addFriendData.user, function(err, result) {
+            //done
+        });
+    });
+
+    //occurs when client requests a user's friend list
+    socket.on('friend list request', function(username) {
+        //get friend list from the database
+        db.getfriends(username, function(err, friendList) {
+            //send data to the client
+            socket.emit('friend list deliver', { user: username, friends: friendList });
         });
     });
 
@@ -238,9 +243,12 @@ socket.on('users request', function(){
         //roomInfo.chatReceivers - list of usernames who are to be included in room
         //roomInfo.isPrivate - true/false whether the room should be set to private
 
-        //TEMPORARY. Generate random hash to be the unique room id
-        var randStr = Math.random().toString();
-        var chatRoomId = crypto.createHash('md5').update(randStr).digest('hex');
+        //Generate hash of receiver names to act as the unique ID
+        var strToHash = "";
+        for (var key in roomInfo.chatReceivers) {
+            strToHash += roomInfo.chatReceivers[key];
+        }
+        var chatRoomId = crypto.createHash('md5').update(strToHash).digest('hex');
 
         //user who is creating the chatroom
         var chatCreator = activeSockets[socketId].username;
@@ -248,14 +256,18 @@ socket.on('users request', function(){
         //tell the database to create a new chatroom with these users
         db.createroom(chatRoomId, roomInfo.chatReceivers, chatCreator, roomInfo.isPrivate,
             function(err, result) {
-                if (!err) {
-                    //tell the client the room has been created
-                    socket.emit('room create success', chatRoomId);
-                } else {
-                    //error creating room, maybe it already exists?
-                    console.log('error creating room');
-                }
+                //tell the client the room has been created
+                socket.emit('room create success', chatRoomId);
             });
+    });
+
+    //called when a user requests the list of all registered usernames
+    socket.on('user list request', function() {
+        //get userlist from database
+        db.listusers('mainroom', function(err, usersInDb) {
+            //send userlist to the client
+            socket.emit('user list deliver', usersInDb);
+        });
     });
 
     //called when socket is disconnected

@@ -149,18 +149,23 @@ define([
 
 
     //sets up events for chat window
-    return function(html) {
+    return function(html, group) {
 
-        receiverHandler(html);
+        if(group){
+            receiverHandler(html, group);
+            //initializes select2 plug in
+            $('.receivers').select2({
+                placeholder: "Select chat members"
+            });
+            html.find('.head').find('input').focus();
+        }else{
+            html.find('.cmd').focus();
+            menuAnimations.showButton();
+        } 
 
         //gives chat window resize property
         resize(html.attr('id'));
-        html.find('.head').find('input').focus();
 
-        //initializes select2 plug in
-        $('.receivers').select2({
-            placeholder: "Select chat members"
-        });
 
         //displays shifter if needed
         if (chatInfo.left.length > 0) shifter.showRight();

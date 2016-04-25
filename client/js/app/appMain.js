@@ -3,21 +3,16 @@ define([
     'messenger/chatSockets',
     'menu/menu',
     'misc/checkWindow',
-    'messenger/shifter'
-], function(chatSockets, menu, checkWindow, shifter) {
+    'messenger/shifter',
+    'menu/friendsList',
+
+    'select2'
+], function(chatSockets, menu, checkWindow, shifter, friendsList) {
     //main function
     return function() {
 
         //send authentication token to server
-        chatSockets.sendAuthToken();
-
-        chatSockets.requestUsers(function(users){
-            console.log(users);
-        });
-
-        chatSockets.requestActiveUsers(function(users){
-            console.log(users);
-        });
+        chatSockets.sendAuthToken().login();
 
         //menu button handler
         menu.init();
@@ -27,5 +22,11 @@ define([
 
         //initializes chat shifter
         shifter.init();
+
+        $('.friends').find('.search').select2({
+            placeholder: 'Search for friends'
+        });
+
+        friendsList.init();
     };
 });

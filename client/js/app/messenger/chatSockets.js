@@ -1,14 +1,16 @@
 /*
-	Defines sockets to communicate with server
+    Defines sockets to communicate with server
 */
 
 define([
     'jquery',
     'socket_io',
+    'hbs!templates/friendList',
+    'hbs!templates/userList',
 
     //jquery plug ins
     'jquery_cookie'
-], function($, io) {
+], function($, io, friendList, userList) {
     var socket = io();
 
 
@@ -31,28 +33,46 @@ define([
         alert(msgData.sender + ' sent you a message:\n' + msgData.msg);
     });
 
+    socket.on('friend list deliver', function(friendData) {
+        //friendData.user - username of the person who 'owns' this friend list
+        //friendData.friends - list of friend's usernames
 
-    return {
+        //TEMPORARY: placeholder for actual functionality
+        console.log(friendData);
+        $('.friends').find('.list').append(friendList(friendData));
+    });
 
-        requestUsers: function(callback){
-            socket.emit('users request');
-            socket.on('users', function(users){
-                callback(users);
-                socket.removeListener('users');
-            });
+    //occurs when the server delivers the list of registered usernames
+    socket.on('user list deliver', function(list) {
+        //list - list of all registered usernames
+        $('.search').append(userList(list));
+    });
+
+    var api = {
+
+        login: function(){
+            socket.emit('friends list request');
+            socket.emit('user list request');
+            return api;
         },
 
-        requestActiveUsers: function(callback){
+        requestActiveUsers: function(callback) {
             socket.emit('active users request');
-            socket.on('active users', function(users){
-                callback(users);
-                socket.removeListener('active users');
-            });
+            return api;
         },
 
+        //tell the server to add a user to another user's friend list
+        addFriend: function(username, friendUsername) {
+            //username - username of the 'owner' of the friends list
+            //friendUsername - user to be added to the friends list
+
+            socket.emit('friend add', { user: username, friend: friendUsername });
+            return api;
+        },
         //request server for log of messages from a chatroom
         requestChatRoomLog: function(chatRoomId) {
             socket.emit('chat log request', chatRoomId);
+            return api;
         },
 
         //request server to create a new chatroom
@@ -69,11 +89,13 @@ define([
                 createRoom(chatRoomId);
                 socket.removeListener('room create success');
             });
+            return api;
         },
 
         //send auth token to server
         sendAuthToken: function() {
             socket.emit('auth attempt', $.cookie('authToken'));
+            return api;
         },
 
         //called when user submits a chat message, to send it to server
@@ -87,7 +109,10 @@ define([
                 receivers: chatReceivers,
                 msg: chatMsg
             });
+            return api;
         }
     };
+
+    return api;
 
 });
