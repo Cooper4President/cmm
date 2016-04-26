@@ -1,3 +1,4 @@
+
 /*
     Defines sockets to communicate with server
 */
@@ -17,6 +18,12 @@ define([
     'notify'
 ], function($, _, io, friendList, userList, message, commands, user) {
     var socket = io();
+
+        //checks if chat box is overflowed
+    function checkScrollbar(container) {
+        var elt, hasOverflow = (elt = container).innerWidth() > elt[0].scrollWidth;
+        if (hasOverflow) container.scrollTop(container[0].scrollHeight);
+    }
 
 
     //occurs when the server responds to the request for room log
@@ -40,18 +47,26 @@ define([
         $('.chat').each(function(){
             if($(this).data('roomId') === msgData.chatRoomId){
                 found = true;
-                var 
-                    envelope = commands($(this).attr('id'), msgData.msg),
-                    container = $(this).find('.container');
-                envelope.username = msgData.sender;
-                container.append(message(envelope)); 
-                return;
+                var container = $(this).find('.container');
+                commands($(this).attr('id'), msgData.msg, function(envelope){
+                    envelope.username = msgData.sender;
+                    container.append(message(envelope)); //since the command module only returns a funciton we call it like this
+                    checkScrollbar(container);
+                });
             }
         });
         if(!found){
             inbox.notify(msgData.sender);
             $.notify(msgData.sender + " has sent you a message request");
         }
+    });
+
+    //occurs when a user on the friends list comes online
+    socket.on('friend online', function(friendName){
+      //friendName - username of the friend who just came online
+
+      //TEMPORARY: placeholder for actual functionality
+      alert('Your friend ' + friendName + ' is now online!');
     });
 
     socket.on('friend list deliver', function(friendData) {
@@ -153,6 +168,8 @@ define([
             });
             return api;
         }
+
+
     };
 
     return api;
