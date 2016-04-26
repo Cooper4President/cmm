@@ -115,193 +115,171 @@ function registerEventFuncs(socket, socketId, clientIp) {
 
     //called when a client submits a chat message to the server
     socket.on('chat submit', function(msgData) {
-            //user who is authenticated on this socket is the sender of the message
-            var chatSenderUsername = activeSockets[socketId].username;
+        //user who is authenticated on this socket is the sender of the message
+        var chatSenderUsername = activeSockets[socketId].username;
 
-            //TESTING
-            console.log(chatSenderUsername + ' submitted to chat id: ' + msgData.chatRoomId +
-                ' \nthis message: ' + msgData.msg);
-            console.log('rec ' + msgData.receivers);
+        //TESTING
+        console.log(chatSenderUsername + ' submitted to chat id: ' + msgData.chatRoomId +
+            ' \nthis message: ' + msgData.msg);
+        console.log('rec ' + msgData.receivers);
 
-            //send the message to the receiving users if they are logged in
-            for (var i in msgData.receivers) {
-                for (var j in activeSockets) {
-                    if (msgData.receivers[i] === activeSockets[j].username) {
-                        io.to(j).emit('chat deliver', { chatRoomId: msgData.chatRoomId, sender: chatSenderUsername, msg: msgData.msg });
+        //send the message to the receiving users if they are logged in
+        msgData.receivers.push(chatSenderUsername);
+        for (var i in msgData.receivers) {
+            for (var j in activeSockets) {
+                if (msgData.receivers[i] === activeSockets[j].username) {
+                    io.to(j).emit('chat deliver', { chatRoomId: msgData.chatRoomId, sender: chatSenderUsername, msg: msgData.msg });
 
-                        break;
-                    }
-                }
-            }
-        });
-
-        //called when a client submits a chat message to the server
-        socket.on('chat submit', function(msgData) {
-            //user who is authenticated on this socket is the sender of the message
-            var chatSenderUsername = activeSockets[socketId].username;
-
-            //TESTING
-            console.log(chatSenderUsername + ' submitted to chat id: ' + msgData.chatRoomId +
-                ' \nthis message: ' + msgData.msg);
-            console.log('rec ' + msgData.receivers);
-
-            //send the message to the receiving users if they are logged in
-            for (var i in msgData.receivers) {
-                for (var j in activeSockets) {
-                    if (msgData.receivers[i] === activeSockets[j].username) {
-                        socket.emit('chat deliver', { chatRoomId: msgData.chatRoomId, sender: chatSenderUsername, msg: msgData.msg });
-
-                        break;
-                    }
-                }
-            }
-
-            //log the message to the database
-            db.logroom(msgData.chatRoomId, chatSenderUsername, msgData.msg, function(err, result) {
-                if (err) {
-                    console.log('error logging message to database with chatRoomId: ' +
-                        msgData.chatRoomId);
-                } else {
-                    //message logged to database successfully
-                }
-            });
-        });
-
-        //occurs when the client requests to add a user to another user's friend list
-        socket.on('friend add', function(addFriendData) {
-            //send information to the database
-            db.addfriend(addFriendData.friend, addFriendData.user, function(err, result) {
-                //done
-            });
-        });
-
-        //occurs when client requests a user's friend list
-        socket.on('friend list request', function(username) {
-            //get friend list from the database
-            db.getfriends(username, function(err, friendList) {
-                //send data to the client
-                socket.emit('friend list deliver', { user: username, friends: friendList });
-            });
-        });
-
-        //login event (NOT to be confused with authentication event)
-        socket.on('login attempt', function(userInfo) {
-            console.log('user attempting to login...\n' +
-                'user: ' + userInfo.username + ' pass: ' + userInfo.password);
-
-            //query the database to check the user's account details
-            db.listusers('mainroom', function(err, usersInDb) {
-                //make sure that an account with the username exists
-                var usernameExists = false;
-                for (var key in usersInDb) {
-                    if (userInfo.username === usersInDb[key].user) {
-                        usernameExists = true;
-                        break;
-                    }
-                }
-                //username exists, so now we need to verify password
-                if (usernameExists) {
-                    //query the db for the password associated with the account
-                    db.getpassword(userInfo.username, function(err, correctPassword) {
-                        //password provided by client matches password in databse
-                        if (userInfo.password === correctPassword) {
-                            //TEMPORARY. Generate random hash to be the 'token' for this user session
-                            var randStr = Math.random().toString();
-                            var token = crypto.createHash('md5').update(randStr).digest('hex');
-                            //add user to list of active sessions
-                            activeUsers[token] = userInfo.username;
-
-
-                            console.log('user login. generated token: ' + token +
-                                ' for user: ' + userInfo.username);
-                            numActiveUsers++;
-                            console.log('total logged-in users: ' + numActiveUsers);
-
-                            //give client the token
-                            socket.emit('login success', token);
-                            //redirect client to chat page
-                            socket.emit('page load');
-                        }
-                        //client entered incorrect password
-                        else {
-                            //login failed
-                            socket.emit('login fail');
-                            console.log('login failed...\n' + 'user: ' + userInfo.username +
-                                ' pass: ' + userInfo.password);
-                        }
-                    });
-                }
-                //username does not exist in the database
-                else {
-                    //login failed because username does not exist in the database
-                    socket.emit('login fail');
-                    console.log('login failed...\n' + 'user: ' + userInfo.username +
-                        ' pass: ' + userInfo.password);
-                }
-            });
-
-        });
-
-        //used when a user requests to be logged out
-        socket.on('logout', function(token) {
-            console.log(activeUsers);
-            console.log('attempting to logout ' + token);
-            for (var key in activeUsers) {
-                //if user is in list of active users...
-                if (key == token) {
-                    //remove user from list of active users
-                    delete activeUsers[token];
-                    //set the socket status to not-authenticated
-                    activeSockets[socketId].authenticated = false;
-                    console.log(token + ' logged out');
-                    socket.emit('logout success');
                     break;
                 }
             }
-        });
-
-        //used when a user requests to create a new chatroom
-        socket.on('room create request', function(roomInfo) {
-            //roomInfo.chatReceivers - list of usernames who are to be included in room
-            //roomInfo.isPrivate - true/false whether the room should be set to private
-            var chatCreator = activeSockets[socketId].username;
-            console.log(roomInfo);
-            roomInfo.chatReceivers.push(chatCreator);
-            roomInfo.chatReceivers.sort();
-
-            //Generate hash of receiver names to act as the unique ID
-            var strToHash = "";
-            for (var key in roomInfo.chatReceivers) {
-                strToHash += roomInfo.chatReceivers[key];
+        }
+        //log the message to the database
+        db.logroom(msgData.chatRoomId, chatSenderUsername, msgData.msg, function(err, result) {
+            if (err) {
+                console.log('error logging message to database with chatRoomId: ' +
+                    msgData.chatRoomId);
+            } else {
+                //message logged to database successfully
             }
-            var chatRoomId = crypto.createHash('md5').update(strToHash).digest('hex');
+        });
+    });
 
-            //user who is creating the chatroom
+    //occurs when the client requests to add a user to another user's friend list
+    socket.on('friend add', function(addFriendData) {
+        //send information to the database
+        db.addfriend(addFriendData.friend, addFriendData.user, function(err, result) {
+            //done
+        });
+    });
 
-            //tell the database to create a new chatroom with these users
-            db.createroom(chatRoomId, roomInfo.chatReceivers, chatCreator, roomInfo.isPrivate,
-                function(err, result) {
-                    //tell the client the room has been created
-                    socket.emit('room create success', chatRoomId);
+    //occurs when client requests a user's friend list
+    socket.on('friend list request', function(username) {
+        //get friend list from the database
+        db.getfriends(username, function(err, friendList) {
+            //send data to the client
+            socket.emit('friend list deliver', { user: username, friends: friendList });
+        });
+    });
+
+    //login event (NOT to be confused with authentication event)
+    socket.on('login attempt', function(userInfo) {
+        console.log('user attempting to login...\n' +
+            'user: ' + userInfo.username + ' pass: ' + userInfo.password);
+
+        //query the database to check the user's account details
+        db.listusers('mainroom', function(err, usersInDb) {
+            //make sure that an account with the username exists
+            var usernameExists = false;
+            for (var key in usersInDb) {
+                if (userInfo.username === usersInDb[key].user) {
+                    usernameExists = true;
+                    break;
+                }
+            }
+            //username exists, so now we need to verify password
+            if (usernameExists) {
+                //query the db for the password associated with the account
+                db.getpassword(userInfo.username, function(err, correctPassword) {
+                    //password provided by client matches password in databse
+                    if (userInfo.password === correctPassword) {
+                        //TEMPORARY. Generate random hash to be the 'token' for this user session
+                        var randStr = Math.random().toString();
+                        var token = crypto.createHash('md5').update(randStr).digest('hex');
+                        //add user to list of active sessions
+                        activeUsers[token] = userInfo.username;
+
+
+                        console.log('user login. generated token: ' + token +
+                            ' for user: ' + userInfo.username);
+                        numActiveUsers++;
+                        console.log('total logged-in users: ' + numActiveUsers);
+
+                        //give client the token
+                        socket.emit('login success', token);
+                        //redirect client to chat page
+                        socket.emit('page load');
+                    }
+                    //client entered incorrect password
+                    else {
+                        //login failed
+                        socket.emit('login fail');
+                        console.log('login failed...\n' + 'user: ' + userInfo.username +
+                            ' pass: ' + userInfo.password);
+                    }
                 });
+            }
+            //username does not exist in the database
+            else {
+                //login failed because username does not exist in the database
+                socket.emit('login fail');
+                console.log('login failed...\n' + 'user: ' + userInfo.username +
+                    ' pass: ' + userInfo.password);
+            }
         });
 
-        //called when a user requests the list of all registered usernames
-        socket.on('user list request', function() {
-            //get userlist from database
-            db.listusers('mainroom', function(err, usersInDb) {
-                //send userlist to the client
-                socket.emit('user list deliver', usersInDb);
+    });
+
+    //used when a user requests to be logged out
+    socket.on('logout', function(token) {
+        console.log(activeUsers);
+        console.log('attempting to logout ' + token);
+        for (var key in activeUsers) {
+            //if user is in list of active users...
+            if (key == token) {
+                //remove user from list of active users
+                delete activeUsers[token];
+                //set the socket status to not-authenticated
+                activeSockets[socketId].authenticated = false;
+                console.log(token + ' logged out');
+                socket.emit('logout success');
+                break;
+            }
+        }
+    });
+
+    //used when a user requests to create a new chatroom
+    socket.on('room create request', function(roomInfo) {
+        //roomInfo.chatReceivers - list of usernames who are to be included in room
+        //roomInfo.isPrivate - true/false whether the room should be set to private
+        var chatCreator = activeSockets[socketId].username;
+        console.log(roomInfo);
+        roomInfo.chatReceivers.push(chatCreator);
+        roomInfo.chatReceivers.sort();
+
+        //Generate hash of receiver names to act as the unique ID
+        var strToHash = "";
+        for (var key in roomInfo.chatReceivers) {
+            strToHash += roomInfo.chatReceivers[key];
+        }
+        var chatRoomId = crypto.createHash('md5').update(strToHash).digest('hex');
+
+        //user who is creating the chatroom
+
+        //tell the database to create a new chatroom with these users
+        db.createroom(chatRoomId, roomInfo.chatReceivers, chatCreator, roomInfo.isPrivate,
+            function(err, result) {
+                //tell the client the room has been created
+                socket.emit('room create success', chatRoomId);
             });
-        });
+    });
 
-        //called when socket is disconnected
-        socket.on('disconnect', function() {
-            //remove socket from list of connected sockets
-            delete activeSockets[socketId];
-
-            numActiveSockets--;
-            console.log('socket disconnected: ' + clientIp);
-            console.log('total connected sockets: ' + numActiveSockets);
+    //called when a user requests the list of all registered usernames
+    socket.on('user list request', function() {
+        //get userlist from database
+        db.listusers('mainroom', function(err, usersInDb) {
+            //send userlist to the client
+            socket.emit('user list deliver', usersInDb);
         });
-    }
+    });
+
+    //called when socket is disconnected
+    socket.on('disconnect', function() {
+        //remove socket from list of connected sockets
+        delete activeSockets[socketId];
+
+        numActiveSockets--;
+        console.log('socket disconnected: ' + clientIp);
+        console.log('total connected sockets: ' + numActiveSockets);
+    });
+}

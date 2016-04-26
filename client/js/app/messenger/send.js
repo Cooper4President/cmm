@@ -14,7 +14,6 @@ define([
 
     //simple get receivers function
     function getReceivers(id) {
-        console.log(chatInfo.log);
         return _.filter(chatInfo.log, function(entry) {
             if (entry.id === id) return entry;
         })[0].receivers;
@@ -28,7 +27,7 @@ define([
 
     //public functions of the module must be returned. 
     //Send only has one public function so we can just return the function itself
-    return function(id, inp, stub) {
+    return function(id, inp) {
         var chatId = "#" + id;
         var container = $(chatId).find('.container');
         var cmd = $(chatId).find('.cmd');
@@ -38,13 +37,8 @@ define([
             chatInfo.updateChatLog(id, inp);
 
             //send the message to the server
-            var testing = getReceivers(id);
-            chatSockets.sendChatMsg($(chatId).data('roomId'), testing, inp);
-
-            //run message as a command and post it to respective chat window
-            var envelope = commands(id, inp);
-            envelope.username = stub;
-            container.append(message()); //since the command module only returns a funciton we call it like this
+            var rec = getReceivers(id);
+            chatSockets.sendChatMsg($(chatId).data('roomId'), rec, inp);
 
             //check scroll bar and clear field
             checkScrollbar(id);

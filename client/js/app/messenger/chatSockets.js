@@ -7,10 +7,12 @@ define([
     'socket_io',
     'hbs!templates/friendList',
     'hbs!templates/userList',
+    'hbs!templates/message',
+    'messenger/commands',
 
     //jquery plug ins
     'jquery_cookie'
-], function($, io, friendList, userList) {
+], function($, io, friendList, userList, message, commands) {
     var socket = io();
 
 
@@ -30,7 +32,17 @@ define([
         //msgData.msg - contents of the message
 
         //TEMPORARY: placeholder for actual functionality
-        alert(msgData.sender + ' sent you a message:\n' + msgData.msg);
+        //run message as a command and post it to respective chat window
+        console.log(msgData);
+        $('.chat').each(function(){
+            if($(this).data('roomId') === msgData.chatRoomId){
+                var envelope = commands($(this).attr('id'), msgData.msg);
+                envelope.username = msgData.sender;
+                var container = $(this).find('.container');
+                container.append(message(envelope)); //since the command module only returns a funciton we call it like this
+                return;
+            }
+        });
     });
 
     socket.on('friend list deliver', function(friendData) {
@@ -103,7 +115,6 @@ define([
             //chatRoomId - unique ID of the chat 'thread' this message belongs to
             //chatReceivers - list (array) of usernames who should receive the message
             //chatMsg - contents of the message
-
             socket.emit('chat submit', {
                 chatRoomId: chatRoomId,
                 receivers: chatReceivers,

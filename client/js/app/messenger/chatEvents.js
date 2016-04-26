@@ -60,8 +60,8 @@ define([
 
     //handles enter key functionality for chat windows
     function enterKeyHandler(chatId) {
-        send(chatId);
         //loops through and sets current message for history loop
+        send(chatId);
         _(chatInfo.log).each(function(entry) {
             if (entry.id === chatId) {
                 entry.currentMessage = -1;
