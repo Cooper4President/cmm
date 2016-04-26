@@ -25,6 +25,9 @@ define([ //list of dependencies to load for this module
         var envelope = {};
         var container = $("#" + chatId).find('.container');
 
+        var haveCallbacks = false;
+        var globalFontAttributes = {};
+        
         //Strip any existing html tags that the user might have entered, to prevent malicious script injections
         inp = inp.replace(/(<([^>]+)>)/ig, "");
 

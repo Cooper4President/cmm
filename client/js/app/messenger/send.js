@@ -39,6 +39,11 @@ define([
             var rec = getReceivers(id);
             chatSockets.sendChatMsg($(chatId).data('roomId'), rec, inp);
 
+            //run message as a command and post it to respective chat window
+            commands(id, inp, function(result) {
+                container.append(message(result)); //since the command module only returns a function we call it like this
+            });
+
             //check scroll bar and clear field
             checkScrollbar(id);
             cmd.val("");

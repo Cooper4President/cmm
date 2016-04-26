@@ -136,7 +136,9 @@ define([
                 callback(result);
                 socket.removeListener('wolfram success'); //remove listener after use
             });
+            return api;
         }
+
     };
 
     return api;
