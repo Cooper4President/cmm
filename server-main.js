@@ -1,46 +1,47 @@
-/*
+/**
 Run this with command 'node server-main.js'.
 Then, go to 'localhost:####' in browser, where #### is the port number
 */
 
-//for the 'express' library
+/** for the 'express' library */
 var express = require('express');
 var app = express();
-//nodejs crypto module
+/** nodejs crypto module */
 var crypto = require('crypto');
-/*
+/**
 tell express to use the 'client' folder as a source of static files such as
 index.html, index.css, etc...
 */
 app.use(express.static('client'));
-//create nodejs server
+/** create nodejs server*/
 var server = require('http').Server(app);
-//for the 'socket.io' library
+/** for the 'socket.io' library*/
 var io = require('socket.io')(server);
-//filesystem
+/** filesystem*/
 var fs = require('fs');
-//the sql database interface
+/** the sql database interface*/
 var cmmsql = require('./cmmsql.js');
-//create new object for the sql database
+/** create new object for the sql database*/
 var db = new cmmsql('cmm.db');
 
 
-//port number that the server listens on
+/** port number that the server listens on*/
 var portNum = 3000;
-//list of active session tokens and their associated usernames
-//usage: activeUsers[token] = username;
+/** list of active session tokens and their associated usernames*/
+/** usage: activeUsers[token] = username;*/
 var activeUsers = {};
 var numActiveUsers = 0;
-/*list of connected socket IDs, their authentication status, client IP address,
-and associated username (if authenticated)*/
-//usage: activeSockets[socketId].authenticated = true/false;
-//usage: activeSockets[socketId].clientIp = ipAddress;
-//usage: activeSockets[socketId].username = username;
+/** list of connected socket IDs, their authentication status, client IP address,
+and associated username (if authenticated)
+usage: activeSockets[socketId].authenticated = true/false;
+usage: activeSockets[socketId].clientIp = ipAddress;
+usage: activeSockets[socketId].username = username;
+*/
 var activeSockets = {};
 var numActiveSockets = 0;
 
 
-//this is called when a socket is connected
+/** this is called when a socket is connected
 io.on('connection', function(socket) {
     var socketId = socket.id;
     var clientIp = socket.request.connection.remoteAddress;
@@ -60,28 +61,26 @@ io.on('connection', function(socket) {
 });
 
 
-//start the server
+/** start the server
 server.listen(portNum, function() {
     console.log('server listening on port ' + portNum);
 });
 
 
 
-/*
+/**
 container to hold the socket event functions which are registered as callbacks
 when a socket is connected
 */
 function registerEventFuncs(socket, socketId, clientIp) {
-    //sent by client to request that a new user account be created
+    /** sent by client to request that a new user account be created */
     socket.on('account create attempt', function(userInfo) {
-        //testing
-        console.log('request to create new account with details:\n' + //THIS DOES GET CALLED
+        console.log('request to create new account with details:\n' +
             'user: ' + userInfo.username + ' pass: ' + userInfo.password);
 
 
-        //send request to database to create the new account
+        /** send request to database to create the new account */
         db.adduser(userInfo.username, userInfo.password, function(err, result) {
-            //console.log('doing stuff');
             if (err) {
                 //there was a problem creating the new account
                 //notify the client
@@ -97,7 +96,7 @@ function registerEventFuncs(socket, socketId, clientIp) {
         });
     });
 
-    //authentication event (NOT to be confused with login event)
+    /** authentication event (NOT to be confused with login event) */
     socket.on('auth attempt', function(token) {
         for (var key in activeUsers) {
             //if the token represents a currently logged-in user...
@@ -113,7 +112,7 @@ function registerEventFuncs(socket, socketId, clientIp) {
         }
     });
 
-    //called when a client submits a chat message to the server
+    /** called when a client submits a chat message to the server */
     socket.on('chat submit', function(msgData) {
         //user who is authenticated on this socket is the sender of the message
         var chatSenderUsername = activeSockets[socketId].username;
@@ -145,7 +144,7 @@ function registerEventFuncs(socket, socketId, clientIp) {
         });
     });
 
-    //occurs when the client requests to add a user to another user's friend list
+    /** occurs when the client requests to add a user to another user's friend list */
     socket.on('friend add', function(addFriendData) {
         //send information to the database
         db.addfriend(addFriendData.friend, addFriendData.user, function(err, result) {
@@ -178,7 +177,7 @@ function registerEventFuncs(socket, socketId, clientIp) {
         });
     });
 
-    //occurs when client requests a user's friend list
+    /** occurs when client requests a user's friend list */
     socket.on('friend list request', function(username) {
         //get friend list from the database
         db.getfriends(username, function(err, friendList) {
@@ -206,7 +205,7 @@ function registerEventFuncs(socket, socketId, clientIp) {
         });
     });
 
-    //login event (NOT to be confused with authentication event)
+    /** login event (NOT to be confused with authentication event) */
     socket.on('login attempt', function(userInfo) {
         console.log('user attempting to login...\n' +
             'user: ' + userInfo.username + ' pass: ' + userInfo.password);
@@ -278,7 +277,7 @@ function registerEventFuncs(socket, socketId, clientIp) {
 
     });
 
-    //used when a user requests to be logged out
+    /** used when a user requests to be logged out */
     socket.on('logout', function(token) {
         console.log(activeUsers);
         console.log('attempting to logout ' + token);
@@ -296,7 +295,7 @@ function registerEventFuncs(socket, socketId, clientIp) {
         }
     });
 
-    //used when a user requests to create a new chatroom
+    /** used when a user requests to create a new chatroom */
     socket.on('room create request', function(roomInfo) {
         //roomInfo.chatReceivers - list of usernames who are to be included in room
         //roomInfo.isPrivate - true/false whether the room should be set to private
@@ -322,7 +321,7 @@ function registerEventFuncs(socket, socketId, clientIp) {
             });
     });
 
-    //called when a user requests the list of all registered usernames
+    /** called when a user requests the list of all registered usernames */
     socket.on('user list request', function() {
         //get userlist from database
         db.listusers('mainroom', function(err, usersInDb) {
@@ -331,7 +330,7 @@ function registerEventFuncs(socket, socketId, clientIp) {
         });
     });
 
-    //called when socket is disconnected
+    /** called when socket is disconnected */
     socket.on('disconnect', function() {
         //remove socket from list of connected sockets
         delete activeSockets[socketId];
