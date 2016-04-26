@@ -10,12 +10,11 @@ define([ //list of dependencies to load for this module
     'misc/help', //etc...
     'messenger/bin/wolfram',
     'messenger/bin/font',
-    'messenger/bin/google',
     './chatInfo',
     'misc/user',
     './chatSockets',
     'hbs!templates/message'
-], function($, _, date, help, wolfram, font, google, chatInfo, user, chatSockets, message) { //references to the modules in order of dependencies
+], function($, _, date, help, wolfram, font, chatInfo, user, chatSockets, message) { //references to the modules in order of dependencies
     //when you return something in a module, you are simply stating what are the public functions of this module
     //this returns a function, as this is the only function that this modele requires, it can also be anything that
     //can be returned (such as an object, which most modules in this case return)
@@ -55,7 +54,13 @@ define([ //list of dependencies to load for this module
                         break;
                     case "--date":
                         var today = date;
-                        inp = _.replace(inp, cmd, today); //replacing date command input with date
+                        inp = inp.replace(cmdInfo.cmdName, today); //replacing date command input with date
+                        words = _.replace(cmdInfo.cmdName, today);
+                        break;
+                    case "--time":
+                        var d = new Date();
+                        inp = inp.replace(cmdInfo.cmdName, d.getHours() + ":" + d.getSeconds());
+                        words = _.replace(cmdInfo.cmdName, today);
                         break;
                     case "--clear":
                         container.empty();
@@ -68,9 +73,9 @@ define([ //list of dependencies to load for this module
                             inp = fontInfo.inp;
                             words = fontInfo.words;
                             inp = cleanupInp(cmdInfo, inp);
+                            inp = _.trim(inp);
                             words = cleanupWords(cmdInfo, words);
                         }
-
                         break;
                     case "--picture":
                         //url is next arguement
@@ -105,33 +110,22 @@ define([ //list of dependencies to load for this module
 
                         haveCallbacks = true;
                         wolfram(inp, function(result){
-                            //callQueue--;
-                            console.log(result);
-                            var img=new Image();
-                            var imgWidth;
-                            img.src=result;
+                            // console.log(result);
+                            var img = new Image();
+                            img.src = result.image;
                             img.onload = function(){
-                                alert(this.width);
+                                var imgWidth = this.width;
                                 envelope.image = {
-                                    url: result,
-                                    width: this.width //Math.min(0.8 * container.width(), img.naturalWidth)
+                                    url: result.image,
+                                    width: this.width + 'px'//Math.min(0.8 * container.width(), img.naturalWidth)
                                 };
-                                console.log(envelope);
+                                envelope.username = "Wolfram Alpha";
+                                envelope.message = "<b>Query: </b>" + inp + ", <b>Result Text: </b>" + result.text;
+                                // console.log(envelope);
                                 callback(envelope);
                             };
                         });
                         break;
-					case "--google":
-						inp = cleanupInp(cmdInfo, inp);
-                        inp = _.trim(inp);
-
-                        haveCallbacks=true;
-						google(inp, function(url){
-                            envelope.google = url;
-                            container.append(message({google: url}));
-                        });
-                        callback(envelope);
-						break;
                     default:
                         var err = "Command " + cmdInfo.cmdName + " not found. Type --help for help";
                         callback({ error: err });

@@ -1,13 +1,23 @@
 ===HELP===
 Useful Commands:
-
---date : Shows current date
 --clear : Clears chat window
+--date : Replaces the --date command with the current date
+
+--font : Changes the font according to arguments:
+    FONT TARGET
+    &selection : applies font to message enclosed by {}
+    &message : applies font to entire message
+    &all : applies font to this and all future messages
+    no selection : applies font to message content following --font command
+    FONT STYLES
+    &bold : makes font target bold
+    &italic : makes font target italic
+    &color : applies the HTML color to font target
+    &size : changes size of font target (1-7)
+
 --help : Shows this help window
---color < color > : Displays message in specified color
---fontsize (--font) < size > : Displays message in specified font size (default size is 3)
---bold : Displays message in bold
---italic(s) : Displays message in italics
---big : Displays message in one size larger font
---small : Displays message in one size smaller font
 --newtab : Opens new tab in browser
+--picture : Displays the picture of the url following the --picture command
+--search : Opens a google search window for the message contents
+--time : Replaces the --time command with the current time
+--wolfram : Performs a wolfram query for the message contents. Displays text and image of result
