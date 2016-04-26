@@ -35,7 +35,9 @@ define([
 
     socket.on('friend list deliver', function(friendData) {
         //friendData.user - username of the person who 'owns' this friend list
-        //friendData.friends - list of friend's usernames
+        //friendData.friends - list of 'friend' objects
+        //friendData.friends[#].username - username of the friend
+        //friendData.friends[#].isOnline - true/false whether the user is online
 
         //TEMPORARY: placeholder for actual functionality
         console.log(friendData);
@@ -53,11 +55,6 @@ define([
         login: function(){
             socket.emit('friends list request');
             socket.emit('user list request');
-            return api;
-        },
-
-        requestActiveUsers: function(callback) {
-            socket.emit('active users request');
             return api;
         },
 

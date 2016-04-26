@@ -177,11 +177,30 @@ function registerEventFuncs(socket, socketId, clientIp) {
 
         //occurs when client requests a user's friend list
         socket.on('friend list request', function(username) {
-            //get friend list from the database
-            db.getfriends(username, function(err, friendList) {
-                //send data to the client
-                socket.emit('friend list deliver', { user: username, friends: friendList });
-            });
+          //get friend list from the database
+          db.getfriends(username, function(err, friendList) {
+            var friendObjList = {};
+
+            for(var key in friendList){
+              var friendObj = {};
+              friendObj.username = key;
+              friendObj.isOnline = false;
+
+              //check to see if the friend is online
+              for(var t in activeUsers){
+                if(activeUsers[t] === key){
+                  friendObj.isOnline = true;
+                  break;
+                }
+              }
+
+              //add friend object to list
+              friendObjList.push(friendObj);
+            }
+
+            //send data to the client
+            socket.emit('friend list deliver', { user: username, friends: friendObjList });
+          });
         });
 
         //login event (NOT to be confused with authentication event)
