@@ -83,12 +83,18 @@ define([ //list of dependencies to load for this module
                         var imgUrl = words[i + 1];
                         if (imgUrl) {
                             //this is how you manually store data for the pictue
-                            envelope.image = {
-                                url: imgUrl,
-                                width: 0.8 * container.width()
+                            haveCallbacks = true;
+                            var img = new Image();
+                            img.src = imgUrl;
+                            img.onload = function(){
+                                envelope.image = {
+                                    url: imgUrl,
+                                    width: this.width + 'px'//Math.min(0.8 * container.width(), img.naturalWidth)
+                                };
+                                envelope.message = "";
+                                callback(envelope);
                             };
 
-                            inp = _.replace(inp, imgUrl, '');
                         } else {
                             //to write an error, simply return this error object with the error
                             callback({ error: "Error: Invalid picture url" });
@@ -115,7 +121,6 @@ define([ //list of dependencies to load for this module
                             var img = new Image();
                             img.src = result.image;
                             img.onload = function(){
-                                var imgWidth = this.width;
                                 envelope.image = {
                                     url: result.image,
                                     width: this.width + 'px'//Math.min(0.8 * container.width(), img.naturalWidth)
