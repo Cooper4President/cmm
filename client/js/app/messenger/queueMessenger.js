@@ -91,6 +91,7 @@ define([
             context.friends = user.friends;
             group = true;
         }else{
+            chatInfo.newChatLogEntry(chatId, rec);
             context.receivers = _.join(rec, ", ");
             chatSockets.requestRoomId(rec, true, function(id) {
                 html.data('roomId', id);

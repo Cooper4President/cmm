@@ -150,7 +150,6 @@ define([
 
     //sets up events for chat window
     return function(html, group) {
-
         if(group){
             receiverHandler(html, group);
             //initializes select2 plug in
@@ -161,6 +160,7 @@ define([
         }else{
             html.find('.cmd').focus();
             menuAnimations.showButton();
+            keyDownHandler(html);
         } 
 
         //gives chat window resize property

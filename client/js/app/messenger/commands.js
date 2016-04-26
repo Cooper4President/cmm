@@ -9,17 +9,13 @@ define([ //list of dependencies to load for this module
     'misc/date', //third aguement date
     'misc/help', //etc...
     './chatInfo',
-    'misc/user'
-], function($, _, date, help, chatInfo, user) { //references to the modules in order of dependencies
+], function($, _, date, help, chatInfo) { //references to the modules in order of dependencies
     //when you return something in a module, you are simply stating what are the public functions of this module
     //this returns an function, as this is the only function that this modele requires, it can also be anything that
     //can be returned (such as an object, which most modules in this case return)
     return function(chatId, inp) {
         //this is the main object to store command data
-        var envelope = {
-            username: user.name
-        };
-
+        var envelope = {};
         var container = $("#" + chatId).find('.container');
         //match the -- delimiter to find all commands in the input
         if (_.includes(inp, '--')) {
