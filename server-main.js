@@ -41,7 +41,7 @@ var activeSockets = {};
 var numActiveSockets = 0;
 
 
-/** this is called when a socket is connected
+/** this is called when a socket is connected */
 io.on('connection', function(socket) {
     var socketId = socket.id;
     var clientIp = socket.request.connection.remoteAddress;
