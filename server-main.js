@@ -157,8 +157,27 @@ function registerEventFuncs(socket, socketId, clientIp) {
     socket.on('friend list request', function(username) {
         //get friend list from the database
         db.getfriends(username, function(err, friendList) {
+            var friendObjList = {};
+
+            for (var key in friendList) {
+                var friendObj = {};
+                friendObj.username = key;
+                friendObj.isOnline = false;
+
+                //check to see if the friend is online
+                for (var t in activeUsers) {
+                    if (activeUsers[t] === key) {
+                        friendObj.isOnline = true;
+                        break;
+                    }
+                }
+
+                //add friend object to list
+                friendObjList.push(friendObj);
+            }
+
             //send data to the client
-            socket.emit('friend list deliver', { user: username, friends: friendList });
+            socket.emit('friend list deliver', { user: username, friends: friendObjList });
         });
     });
 
