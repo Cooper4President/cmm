@@ -28,6 +28,7 @@ define([
 
         //initializes menu functions
         init: function() {
+            //inbox.notify('bob').notify('bill').notify('alex');
             this.setUp();
             menuAnimations.showMenu();
             var toolTipOptions = {
@@ -48,6 +49,7 @@ define([
             $(".menu").tooltip(toolTipOptions).click(function(event) {
                 menuAnimations.showMenu().hideButton();
                 friendsList.hideFriendsList();
+                inbox.hideInbox();
             });
 
             //delegates escape out of menu by pressing escape
@@ -63,7 +65,8 @@ define([
             });
 
             $('.inbox-button').click(function(event){
-                inbox.notify();
+                menuAnimations.hideMenu().showButton();
+                inbox.showInbox();
             });
 
             $('.friends-button').click(function(event){
@@ -80,6 +83,11 @@ define([
             //delegates logout button
             $('.logout-button').click(function(event) {
                 menuSockets.logout();
+            });
+
+            $('.notifyjs-corner').click(function(event){
+                menuAnimations.hideMenu().showButton();
+                inbox.showInbox();
             });
         }
     };

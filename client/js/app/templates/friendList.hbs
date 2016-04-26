@@ -1,8 +1,12 @@
-{{#each friends}}
+{{#each this}}
 <div class="item">
     <div class="header">
-        <div class="name">{{this}}</div>
+        <div class="name">{{username}}</div>
+        {{#if isOnline}}
         <div class="status">Online!</div>
+        {{else}}
+        <div class="status">Offline</div>
+        {{/if}}
     </div>
     <div class="footer">
         <div class="chat-start button">Chat</div>

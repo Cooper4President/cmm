@@ -88,7 +88,7 @@ define([
             context = {id: chatId},
             group = false;
         if(rec === undefined){
-            context.friends = user.friends;
+            context.friends = user.people;
             group = true;
         }else{
             chatInfo.newChatLogEntry(chatId, rec);

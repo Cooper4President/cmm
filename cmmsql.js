@@ -202,11 +202,11 @@ function cmmsql(database) {
         db.run('INSERT into ' + who + 'friends (friend,blocked) VALUES(?,?)', [username, blocked], function(err, res) {
             if (err) {
                 error = err; // the catch all for errors
-                if (err.errno = 13) {
+                if (err.errno === 13) {
                     error = [{ Error: 'User ' + username + ' is already known by' + who, code: '1' }];
                 }
             } else {
-                if (blocked = 'true') {
+                if (blocked === true) {
                     result = username + ' was blocked by ' + who;
                 } else {
                     result = username + ' was added to ' + who + ' friend list';
@@ -468,7 +468,7 @@ function cmmsql(database) {
         if (cb == null) {
             cb = defaultcallback;
         }
-        addassociate(friend, who, true, cb);
+        addassociate(friend, who, false, cb);
     }
 
     cmmsql.prototype.isblocked = function(username, who, cb) {

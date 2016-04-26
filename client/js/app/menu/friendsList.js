@@ -4,10 +4,11 @@ define([
 	'hbs!templates/friendList', 
 	'messenger/queueMessenger',
 	'./menuAnimations',
+	'messenger/chatSockets',
 
 	//jquery pluins
 	'jqueryui'
-	], function($, user, friendList, queueMessenger, menuAnimations){
+	], function($, user, friendList, queueMessenger, menuAnimations, chatSockets){
 	var api = {
 
 		hideFriendsList: function(){
@@ -38,7 +39,8 @@ define([
 			var _this = this;
 			var search = $('.friends').find('.search');
 			$('.friends').find('.add-friend-button').tooltip(toolTipOptions).click(function(event){
-				$('.friends').find('.list').prepend(friendList({friends: search.val()}));
+				chatSockets.addFriend(user.name, search.val());
+				$('.friends').find('.list').prepend(friendList([{username: search.val(), isOnline: false}]));
 				search.val(null).trigger('change');
 				$('.friends').find('.chat-start').unbind('click').click(function(event){
 					var elm = $(this).closest('.item').find('.name').html();

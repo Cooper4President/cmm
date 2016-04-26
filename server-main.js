@@ -72,6 +72,10 @@ container to hold the socket event functions which are registered as callbacks
 when a socket is connected
 */
 function registerEventFuncs(socket, socketId, clientIp) {
+
+    socket.on('user request', function(){
+        socket.emit('user info deliver', activeSockets[socketId].username);
+    });
     //sent by client to request that a new user account be created
     socket.on('account create attempt', function(userInfo) {
         //testing
@@ -148,8 +152,10 @@ function registerEventFuncs(socket, socketId, clientIp) {
     //occurs when the client requests to add a user to another user's friend list
     socket.on('friend add', function(addFriendData) {
         //send information to the database
+        console.log('adding friend ' + addFriendData.friend);
         db.addfriend(addFriendData.friend, addFriendData.user, function(err, result) {
-            //done
+            if(err) console.log(err);
+            else console.log(result);
         });
     });
 
@@ -241,7 +247,6 @@ function registerEventFuncs(socket, socketId, clientIp) {
 
     //used when a user requests to be logged out
     socket.on('logout', function(token) {
-        console.log(activeUsers);
         console.log('attempting to logout ' + token);
         for (var key in activeUsers) {
             //if user is in list of active users...
@@ -288,7 +293,11 @@ function registerEventFuncs(socket, socketId, clientIp) {
         //get userlist from database
         db.listusers('mainroom', function(err, usersInDb) {
             //send userlist to the client
-            socket.emit('user list deliver', usersInDb);
+            var users = usersInDb;
+            users.forEach(function(elm){
+                if(activeSockets[socketId].username === elm.user) users.splice(users.indexOf(elm), 1);
+            });
+            socket.emit('user list deliver', users);
         });
     });
 

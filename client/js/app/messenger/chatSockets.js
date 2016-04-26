@@ -4,15 +4,18 @@
 
 define([
     'jquery',
+    'lodash',
     'socket_io',
     'hbs!templates/friendList',
     'hbs!templates/userList',
     'hbs!templates/message',
     'messenger/commands',
+    'misc/user',
 
     //jquery plug ins
-    'jquery_cookie'
-], function($, io, friendList, userList, message, commands) {
+    'jquery_cookie',
+    'notify'
+], function($, _, io, friendList, userList, message, commands, user) {
     var socket = io();
 
 
@@ -33,16 +36,22 @@ define([
 
         //TEMPORARY: placeholder for actual functionality
         //run message as a command and post it to respective chat window
-        console.log(msgData);
+        var found = false;
         $('.chat').each(function(){
             if($(this).data('roomId') === msgData.chatRoomId){
-                var envelope = commands($(this).attr('id'), msgData.msg);
+                found = true;
+                var 
+                    envelope = commands($(this).attr('id'), msgData.msg),
+                    container = $(this).find('.container');
                 envelope.username = msgData.sender;
-                var container = $(this).find('.container');
-                container.append(message(envelope)); //since the command module only returns a funciton we call it like this
+                container.append(message(envelope)); 
                 return;
             }
         });
+        if(!found){
+            inbox.notify(msgData.sender);
+            $.notify(msgData.sender + " has sent you a message request");
+        }
     });
 
     socket.on('friend list deliver', function(friendData) {
@@ -53,13 +62,34 @@ define([
 
         //TEMPORARY: placeholder for actual functionality
         console.log(friendData);
-        $('.friends').find('.list').append(friendList(friendData));
+        $('.friends').find('.list').empty().append(friendList(friendData));
+        user.friends = friendData;
+        if(user.people !== []) user.people = _.difference(user.people, user.friends);
     });
 
     //occurs when the server delivers the list of registered usernames
     socket.on('user list deliver', function(list) {
         //list - list of all registered usernames
         $('.search').append(userList(list));
+        user.people = list;
+        if(user.friends !== []) user.people = _.difference(user.people, user.friends);
+    });
+
+    socket.on('user info deliver', function(name){
+        user.name = name;
+    });
+
+    socket.on('friend add success', function(friendData){
+        console.log(friendData);
+        $('.friends').find('.list').empty().append(friendList(friendData));
+        friendData.friends.forEach(function(name){
+            user.friends.push(name);
+        });
+        $('.friends').find('.chat-start').unbind('click').click(function(event){
+            var elm = $(this).closest('.item').find('.name').html();
+            queueMessenger([elm]);
+            friendsList.hideFriendsList();
+        });
     });
 
     var api = {
@@ -67,6 +97,7 @@ define([
         login: function(){
             socket.emit('friends list request');
             socket.emit('user list request');
+            socket.emit('user request');
             return api;
         },
 
@@ -74,8 +105,11 @@ define([
         addFriend: function(username, friendUsername) {
             //username - username of the 'owner' of the friends list
             //friendUsername - user to be added to the friends list
-
+            console.log(username);
             socket.emit('friend add', { user: username, friend: friendUsername });
+            _.pull(user.people, friendUsername);
+            $('.search').empty().append(userList(list));
+            user.friends.push(friendUsername);
             return api;
         },
         //request server for log of messages from a chatroom
