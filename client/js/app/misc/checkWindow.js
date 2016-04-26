@@ -1,5 +1,6 @@
-/*
-	Checks window to make sure elements are aligned properly
+/**
+*	Checks window to make sure elements are aligned properly
+*    @author Oliver Ehrhardt
 */
 
 define(['jquery', 'lodash', 'messenger/chatInfo', 'menu/menu'], function($, _, chatInfo, menu) {

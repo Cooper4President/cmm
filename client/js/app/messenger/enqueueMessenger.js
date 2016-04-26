@@ -1,5 +1,6 @@
-/*
-	Defines how to handle chat window closing
+/**
+*	Defines how to handle chat window closing
+* @author Oliver Ehrhardt
 */
 
 define([
@@ -10,7 +11,10 @@ define([
     'menu/menuAnimations'
 ], function($, _, chatInfo, shifter, menuAnimations) {
 
-    //removes window based off current configuration of chat windows
+    /**
+    *    removes window based off current configuration of chat windows
+    *    @param html jquery object of window to remove
+    */
     return function(html) {
 
         //shows menu button if not shown

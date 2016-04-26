@@ -1,13 +1,9 @@
 /**
- * Defines commands that can be run inside chat window
- * @constructor
- * @param {object} $ - Defines the jquery module dependency
- * @param {object} _ - Defines the lodash dependency
- * @param {object} date - Defines the date dependency
- * @param {object} help - Defines the help dependency
- * @param {object} wolfram - Defines the wolfram dependency
- * @param {object} font - Defines the font dependency
+ * commands.js parses commands out of a user input message, executes them, and returns an envelope with the resulting message data.
+ * @author Morgan Allen <moal8410@colorado.edu>
  */
+
+
 define([ //list of dependencies to load for this module
     'jquery', //first arguement $
     'lodash', //second arguement _
@@ -24,6 +20,17 @@ define([ //list of dependencies to load for this module
     var globalFontAttributes = {};
     var haveCallbacks = false;
 
+
+    /**
+     * Defines commands that can be run inside chat window
+     * @param {object} $ - Defines the jquery module dependency
+     * @param {object} _ - Defines the lodash dependency
+     * @param {object} date - Defines the date dependency
+     * @param {object} help - Defines the help dependency
+     * @param {object} wolfram - Defines the wolfram dependency
+     * @param {object} font - Defines the font dependency
+     * @return {object} envelope - Returns an envelope js object with the final message/image and other data
+     */
     return function(chatId, inp, callback) {
 
         //this is the main object to store command data
@@ -152,9 +159,9 @@ define([ //list of dependencies to load for this module
     };
 
     /**
-     * Returns an object with every command and its related arguments.
-     * @constructor
+     * Parses through commands and builds an object with all commands and args from the message
      * @param {array} words - An array of the words of the input message
+     * @return {object} commands - Returns an object with every command and its related arguments.
      */
     function parseCommands(words) {
         var commands = [];
@@ -178,7 +185,12 @@ define([ //list of dependencies to load for this module
         return commands;
     }
 
-
+    /**
+     * Fucntion to add html font tags to a given string, according to the fontAttributes object. 
+     * @param {object} fontAttributes - A javascript object containing values for font attributes.
+     * @param {string} fontStr - A string (from the message) that will have font tags applied to it
+     * @return {string} fontStr - Returns the fontStr with html font tags added
+     */
     function addFontTags(fontAttributes, fontStr) {
         if (fontAttributes.isBold) {
             fontStr = "<b>" + fontStr + "</b>";
@@ -205,7 +217,12 @@ define([ //list of dependencies to load for this module
         return fontStr;
     }
 
-    //function to remove command and arguments from the message input
+    /**
+     * function to remove command and arguments from the message input
+     * @param {object} cmdInfo - A javascript object containing the command name and argument list
+     * @param {string} inp - The raw input string entered into chat box by the user
+     * @return {string} fontStr - Returns the inp with all of the commands and args removed
+     */
     function cleanupInp(cmdInfo, inp) {
         inp = inp.replace(cmdInfo.cmdName, '');
         for (var i = 0; i < cmdInfo.argList.length; i++) {
@@ -214,6 +231,12 @@ define([ //list of dependencies to load for this module
         return inp;
     }
 
+    /**
+     * function to remove command and arguments from the message words array
+     * @param {object} cmdInfo - A javascript object containing the command name and argument list
+     * @param {array} words - A space delimited array of the words entered by user
+     * @return {string} words - Returns the words array with all of the commands and args removed
+     */
     function cleanupWords(cmdInfo, words) {
         words.splice(words.indexOf(cmdInfo.cmdName), 1);
         for (var i = 0; i < cmdInfo.argList.length; i++) {

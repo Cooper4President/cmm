@@ -80,6 +80,10 @@ define([
     }
 
     //sets up chat window to be added
+    /*
+        Adds a new chat window.
+        @param rec optional list of receivers for new chat window
+    */
     return function(rec) {
         chatInfo.count++;
         chatInfo.id++;
