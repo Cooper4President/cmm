@@ -134,17 +134,8 @@ define([
                 msg: chatMsg
             });
             return api;
-        },
-
-        wolframQuery: function(inp, callback) {
-            socket.emit('wolfram', inp);
-            socket.on('wolfram success', function(result) {
-                console.log(result);
-                callback(result);
-                socket.removeListener('wolfram success'); //remove listener after use
-            });
-            return api;
         }
+
 
     };
 
