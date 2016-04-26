@@ -7,7 +7,7 @@ define(['jquery', 'hbs!templates/message', '../chatSockets'], function($, messag
     return function(inp, callback) {
         chatSockets.wolframQuery(inp, function(result) {
             console.log(result);
-            callback(result[1].subpods[0].text);
+            callback(result[1].subpods[0].image);
         });
     };
 });

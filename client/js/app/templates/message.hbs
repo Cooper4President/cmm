@@ -9,7 +9,6 @@
 {{/if}}
 {{#if google}}
 <div>
-<object data = {{google.url}}></object>
 <script>
   (function() {
     var cx = '002463612160728276092:tk8fmbtix2g';
@@ -22,11 +21,11 @@
     s.parentNode.insertBefore(gcse, s);
   })();
 </script>
-<gcse:searchresults-only></gcse:searchresults-only>
+<gcse:search-resultsonly></gcse:search-resultsonly>
 </div>
 {{/if}}
 {{#if image}}
-	<img class='img' src='{{image.url}}' width='{{image.width}}' >
+	<img class='img' src='{{image.url}}'>
 {{/if}}
 {{#if message}}
 	<div>{{username}}: {{{message}}}</div>

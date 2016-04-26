@@ -42,6 +42,7 @@ define([
 
             //run message as a command and post it to respective chat window
             commands(id, inp, function(result) {
+            	console.log(result);
                 container.append(message(result)); //since the command module only returns a function we call it like this
             });
 

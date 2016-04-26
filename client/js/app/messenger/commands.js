@@ -94,24 +94,43 @@ define([ //list of dependencies to load for this module
                         break;
                     case "--search":
                         //NEED TO IMPLIMENT WITH QUOTED SEARCH STRING
-                        var searchStr = _.trim(inp.replace(cmdInfo.cmdName, '').replace(/\s+/g, '+'), '+');
-                        var searchUrl = 'https://www.google.com/search?q=' + searchStr;
+                        inp = cleanupInp(cmdInfo, inp);
+                        var searchUrl = 'https://www.google.com/search?q=' + encodeURIComponent(inp);
                         window.open(searchUrl, '_blank');
                         callback(null);
                         return; //might want to change if we don't want stand alone functin
                     case "--wolfram":
                         inp = cleanupInp(cmdInfo, inp);
+                        inp = _.trim(inp);
+
                         haveCallbacks = true;
-                        wolfram(inp, function(result) {
+                        wolfram(inp, function(result){
                             //callQueue--;
                             console.log(result);
-                            envelope.message = result;
-                            callback(envelope);
+                            var img=new Image();
+                            var imgWidth;
+                            img.src=result;
+                            img.onload = function(){
+                                alert(this.width);
+                                envelope.image = {
+                                    url: result,
+                                    width: this.width //Math.min(0.8 * container.width(), img.naturalWidth)
+                                };
+                                console.log(envelope);
+                                callback(envelope);
+                            };
                         });
                         break;
 					case "--google":
 						inp = cleanupInp(cmdInfo, inp);
-						google(chatId, inp);
+                        inp = _.trim(inp);
+
+                        haveCallbacks=true;
+						google(inp, function(url){
+                            envelope.google = url;
+                            container.append(message({google: url}));
+                        });
+                        callback(envelope);
 						break;
                     default:
                         var err = "Command " + cmdInfo.cmdName + " not found. Type --help for help";
