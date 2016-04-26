@@ -37,7 +37,7 @@ define([
         console.log(msgData);
         $('.chat').each(function(){
             if($(this).data('roomId') === msgData.chatRoomId){
-                var envelope = commands($(this).attr('id'), msgData.msg);
+                var envelope = commands($(this).attr('id'), msgData.msg, envelope);
                 envelope.username = msgData.sender;
                 var container = $(this).find('.container');
                 container.append(message(envelope)); //since the command module only returns a funciton we call it like this
