@@ -1,8 +1,13 @@
-/*
-	Defines commands that can be run inside chat window
-*/
-
-
+/**
+ * Defines commands that can be run inside chat window
+ * @constructor
+ * @param {object} $ - Defines the jquery module dependency
+ * @param {object} _ - Defines the lodash dependency
+ * @param {object} date - Defines the date dependency
+ * @param {object} help - Defines the help dependency
+ * @param {object} wolfram - Defines the wolfram dependency
+ * @param {object} font - Defines the font dependency
+ */
 define([ //list of dependencies to load for this module
     'jquery', //first arguement $
     'lodash', //second arguement _
@@ -27,7 +32,7 @@ define([ //list of dependencies to load for this module
 
         var haveCallbacks = false;
         var globalFontAttributes = {};
-        
+
         //Strip any existing html tags that the user might have entered, to prevent malicious script injections
         inp = inp.replace(/(<([^>]+)>)/ig, "");
 
@@ -141,6 +146,11 @@ define([ //list of dependencies to load for this module
         if (!haveCallbacks) callback(envelope);
     };
 
+    /**
+     * Returns an object with every command and its related arguments.
+     * @constructor
+     * @param {array} words - An array of the words of the input message
+     */
     function parseCommands(words) {
         var commands = [];
         var cmdCount = 0;
