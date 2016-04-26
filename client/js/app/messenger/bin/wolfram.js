@@ -2,10 +2,10 @@
     Prompts help info for user
 */
 
-define(['jquery', 'hbs!templates/message', '../chatSockets'], function($, message, chatSockets) {
+define(['jquery', 'hbs!templates/message', 'misc/commandSockets'], function($, message, commandSockets) {
 
     return function(inp, callback) {
-        chatSockets.wolframQuery(inp, function(result) {
+        commandSockets.wolframQuery(inp, function(result) {
             console.log(result);
             var data = {
                 text: result[1].subpods[0].text,
