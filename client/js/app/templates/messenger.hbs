@@ -1,12 +1,19 @@
 <div id="{{id}}" class="chat">
 	<div class="element">
 		<div class="head">
+			{{#if friends}}
 			<select class="receivers" multiple="multiple">
-				{{#each friends}}
+				<optgroup label="Friends">
+					{{#each friends}}
 					<option value="{{name}}">{{name}}</option>
-				{{/each}}
+					{{/each}}
+				</optgroup>	
 			</select>
 			<div class="submit fa fa-envelope-o"></div>
+			{{/if}}
+			{{#if receivers}}
+			<div class="title">{{receivers}}</div>
+			{{/if}}
 			<div class="remove-messenger fa fa-times"></div>
 		</div>
 		<div class='box'>

@@ -1,6 +1,7 @@
-requirejs.config({
+require.config({
     baseUrl: 'js/app',
     paths: {
+        QUnit: '../bower_components/qunit/qunit/qunit',
         jquery: '../bower_components/jquery/dist/jquery',
         socket_io: '//cdn.socket.io/socket.io-1.4.5',
         hbs: '../bower_components/require-handlebars-plugin/hbs',
@@ -11,12 +12,20 @@ requirejs.config({
         select2: '../bower_components/select2/dist/js/select2.min'
     },
     shim: {
-        autogrow: ['jquery'],
-        jquery_cookie: ['jquery'],
-        jqueryui: ['jquery']
+        'QUnit': {
+            exports: 'QUnit',
+            init: function() {
+                QUnit.config.autoload = false;
+                QUnit.config.autostart = false;
+            }
+        }
     }
 });
 
-requirejs(['appMain'], function(main) {
-    main();
+requirejs(['jquery', 'QUnit', 'testing/commandTesting'], function($, QUnit, commandTesting) {
+
+    commandTesting();
+
+    QUnit.load();
+    QUnit.start();
 });

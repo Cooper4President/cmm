@@ -31,26 +31,18 @@ define([
         var chatId = "#" + id;
         var container = $(chatId).find('.container');
         var cmd = $(chatId).find('.cmd');
-        if (inp === undefined) var inp = cmd.val();
-        if (inp != "") {
+        if (inp === undefined) inp = cmd.val();
+        if (inp !== "") {
             //update chatlog with new message
             chatInfo.updateChatLog(id, inp);
 
-            //send the message to the server
-            var testing = getReceivers(id);
-            chatSockets.sendChatMsg(id, testing, inp);
-
-            //run message as a command and post it to respective chat window
-            commands(id, inp, function(result) {
-            	console.log(result);
-                container.append(message(result)); //since the command module only returns a function we call it like this
-            });
+            var rec = getReceivers(id);
+            chatSockets.sendChatMsg($(chatId).data('roomId'), rec, inp);
 
             //check scroll bar and clear field
             checkScrollbar(id);
             cmd.val("");
         }
         cmd.focus();
-        return;
     };
 });

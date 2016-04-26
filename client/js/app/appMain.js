@@ -1,23 +1,32 @@
 define([
-	//'menu/receiver', 
-	'messenger/chatSockets',
-	'menu/menu',
-	'misc/checkWindow',
-	'messenger/shifter'
-	], function(chatSockets, menu, checkWindow, shifter){
-	//main function
-	return function(){
+    //'menu/receiver', 
+    'messenger/chatSockets',
+    'menu/menu',
+    'misc/checkWindow',
+    'messenger/shifter',
+    'menu/friendsList',
+
+    'select2'
+], function(chatSockets, menu, checkWindow, shifter, friendsList) {
+    //main function
+    return function() {
 
         //send authentication token to server
-        chatSockets.sendAuthToken();
+        chatSockets.sendAuthToken().login();
 
-		//menu button handler
-		menu.init();
+        //menu button handler
+        menu.init();
 
-		//resizes chat(s) on window resize
-		checkWindow();
+        //resizes chat(s) on window resize
+        checkWindow();
 
-		//initializes chat shifter
-		shifter.init();
-	}
+        //initializes chat shifter
+        shifter.init();
+
+        $('.friends').find('.search').select2({
+            placeholder: 'Search for friends'
+        });
+
+        friendsList.init();
+    };
 });

@@ -6,8 +6,6 @@ Then, go to 'localhost:####' in browser, where #### is the port number
 //for the 'express' library
 var express = require('express');
 var app = express();
-//handlebars framework
-//var handlebars = require('handlebars');
 //nodejs crypto module
 var crypto = require('crypto');
 /*
@@ -26,9 +24,8 @@ var cmmsql = require('./cmmsql.js');
 //create new object for the sql database
 var db = new cmmsql('cmm.db');
 
-//for wolfram alpha api, used in --calculate command
+//for wolfram alpha api, used in --wolfram command
 var wolfram = require('wolfram-alpha').createClient("6JXTUY-T4HRKH26ER");
-
 
 //port number that the server listens on
 var portNum = 3000;
@@ -77,39 +74,31 @@ container to hold the socket event functions which are registered as callbacks
 when a socket is connected
 */
 function registerEventFuncs(socket, socketId, clientIp) {
-    //*****event functions*****
-
-
     //sent by client to request that a new user account be created
     socket.on('account create attempt', function(userInfo) {
         //testing
-        console.log('request to create new account with details:\n' +
+        console.log('request to create new account with details:\n' + //THIS DOES GET CALLED
             'user: ' + userInfo.username + ' pass: ' + userInfo.password);
+
 
         //send request to database to create the new account
         db.adduser(userInfo.username, userInfo.password, function(err, result) {
+            //console.log('doing stuff');
             if (err) {
                 //there was a problem creating the new account
                 //notify the client
+                console.log('account creation failed');
                 socket.emit('account create fail');
             } else {
+                contact = 'success';
                 //new account created successfully in database
                 //notify the client
+                console.log('account successfully created');
                 socket.emit('account create success');
             }
         });
-
-
     });
-    socket.on('wolfram', function(inp) {
-        wolfram.query(inp, function(err, result) {
-            if (err) socket.emit("wolfram error");
-            else {
-                console.log(result);
-                socket.emit("wolfram success", result);
-            }
-        });
-    });
+
     //authentication event (NOT to be confused with login event)
     socket.on('auth attempt', function(token) {
         for (var key in activeUsers) {
@@ -122,6 +111,7 @@ function registerEventFuncs(socket, socketId, clientIp) {
                     token + ' for username: ' + activeUsers[token]);
                 break;
             }
+
         }
     });
 
@@ -131,21 +121,21 @@ function registerEventFuncs(socket, socketId, clientIp) {
         var chatSenderUsername = activeSockets[socketId].username;
 
         //TESTING
-        console.log(chatSenderUsername + ' submitted to chat id: ' + msgData.id +
+        console.log(chatSenderUsername + ' submitted to chat id: ' + msgData.chatRoomId +
             ' \nthis message: ' + msgData.msg);
         console.log('rec ' + msgData.receivers);
 
         //send the message to the receiving users if they are logged in
+        msgData.receivers.push(chatSenderUsername);
         for (var i in msgData.receivers) {
             for (var j in activeSockets) {
                 if (msgData.receivers[i] === activeSockets[j].username) {
-                    socket.emit('chat deliver', { chatRoomId: msgData.chatRoomId, sender: chatSenderUsername, msg: msgData.msg });
+                    io.to(j).emit('chat deliver', { chatRoomId: msgData.chatRoomId, sender: chatSenderUsername, msg: msgData.msg });
 
                     break;
                 }
             }
         }
-
         //log the message to the database
         db.logroom(msgData.chatRoomId, chatSenderUsername, msgData.msg, function(err, result) {
             if (err) {
@@ -154,6 +144,42 @@ function registerEventFuncs(socket, socketId, clientIp) {
             } else {
                 //message logged to database successfully
             }
+        });
+    });
+
+    //occurs when the client requests to add a user to another user's friend list
+    socket.on('friend add', function(addFriendData) {
+        //send information to the database
+        db.addfriend(addFriendData.friend, addFriendData.user, function(err, result) {
+            //done
+        });
+    });
+
+    //occurs when client requests a user's friend list
+    socket.on('friend list request', function(username) {
+        //get friend list from the database
+        db.getfriends(username, function(err, friendList) {
+            var friendObjList = {};
+
+            for (var key in friendList) {
+                var friendObj = {};
+                friendObj.username = key;
+                friendObj.isOnline = false;
+
+                //check to see if the friend is online
+                for (var t in activeUsers) {
+                    if (activeUsers[t] === key) {
+                        friendObj.isOnline = true;
+                        break;
+                    }
+                }
+
+                //add friend object to list
+                friendObjList.push(friendObj);
+            }
+
+            //send data to the client
+            socket.emit('friend list deliver', { user: username, friends: friendObjList });
         });
     });
 
@@ -184,6 +210,7 @@ function registerEventFuncs(socket, socketId, clientIp) {
                         //add user to list of active sessions
                         activeUsers[token] = userInfo.username;
 
+
                         console.log('user login. generated token: ' + token +
                             ' for user: ' + userInfo.username);
                         numActiveUsers++;
@@ -193,7 +220,21 @@ function registerEventFuncs(socket, socketId, clientIp) {
                         socket.emit('login success', token);
                         //redirect client to chat page
                         socket.emit('page load');
-                    }
+
+                        //notify user's friends that they are now online
+                        for(var key in activeSockets){
+                          if(activeSockets[key].username != null){
+                            db.getfriends(activeSockets[key].username, function(err, friendList){
+                              for(var friendName in friendList){
+                                if(friendName === userInfo.username){
+                                  io.to(key).emit('friend online', friendName);
+                                  break;
+                                }
+                              }
+                            });
+                          }
+                        }
+                      }
                     //client entered incorrect password
                     else {
                         //login failed
@@ -216,6 +257,8 @@ function registerEventFuncs(socket, socketId, clientIp) {
 
     //used when a user requests to be logged out
     socket.on('logout', function(token) {
+        console.log(activeUsers);
+        console.log('attempting to logout ' + token);
         for (var key in activeUsers) {
             //if user is in list of active users...
             if (key == token) {
@@ -223,7 +266,8 @@ function registerEventFuncs(socket, socketId, clientIp) {
                 delete activeUsers[token];
                 //set the socket status to not-authenticated
                 activeSockets[socketId].authenticated = false;
-
+                console.log(token + ' logged out');
+                socket.emit('logout success');
                 break;
             }
         }
@@ -233,25 +277,35 @@ function registerEventFuncs(socket, socketId, clientIp) {
     socket.on('room create request', function(roomInfo) {
         //roomInfo.chatReceivers - list of usernames who are to be included in room
         //roomInfo.isPrivate - true/false whether the room should be set to private
+        var chatCreator = activeSockets[socketId].username;
+        console.log(roomInfo);
+        roomInfo.chatReceivers.push(chatCreator);
+        roomInfo.chatReceivers.sort();
 
-        //TEMPORARY. Generate random hash to be the unique room id
-        var randStr = Math.random().toString();
-        var chatRoomId = crypto.createHash('md5').update(randStr).digest('hex');
+        //Generate hash of receiver names to act as the unique ID
+        var strToHash = "";
+        for (var key in roomInfo.chatReceivers) {
+            strToHash += roomInfo.chatReceivers[key];
+        }
+        var chatRoomId = crypto.createHash('md5').update(strToHash).digest('hex');
 
         //user who is creating the chatroom
-        var chatCreator = activeSockets[socketId].username;
 
         //tell the database to create a new chatroom with these users
         db.createroom(chatRoomId, roomInfo.chatReceivers, chatCreator, roomInfo.isPrivate,
             function(err, result) {
-                if (!err) {
-                    //tell the client the room has been created
-                    socket.emit('room create success', chatRoomId);
-                } else {
-                    //error creating room, maybe it already exists?
-                    console.log('error creating room');
-                }
+                //tell the client the room has been created
+                socket.emit('room create success', chatRoomId);
             });
+    });
+
+    //called when a user requests the list of all registered usernames
+    socket.on('user list request', function() {
+        //get userlist from database
+        db.listusers('mainroom', function(err, usersInDb) {
+            //send userlist to the client
+            socket.emit('user list deliver', usersInDb);
+        });
     });
 
     //called when socket is disconnected
@@ -262,5 +316,15 @@ function registerEventFuncs(socket, socketId, clientIp) {
         numActiveSockets--;
         console.log('socket disconnected: ' + clientIp);
         console.log('total connected sockets: ' + numActiveSockets);
+    });
+
+    socket.on('wolfram', function(inp) {
+        wolfram.query(inp, function(err, result) {
+            if (err) socket.emit("wolfram error");
+            else {
+                console.log(result);
+                socket.emit("wolfram success", result);
+            }
+        });
     });
 }

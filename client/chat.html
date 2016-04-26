@@ -1,26 +1,39 @@
-<!DOCTYPE>
+<!DOCTYPE html>
 <html>
-	<head>
-		<title>chat--</title>
-		<script data-main="app" src="js/bower_components/requirejs/require.js"></script>
-		<link rel="stylesheet" type="text/css" href="css/prefix/chat-prefix.css">
-		<link rel="stylesheet" type="text/css" href="css/prefix/menu-prefix.css">
-		<link rel="stylesheet" type="text/css" href="js/bower_components/jquery-ui/themes/base/jquery-ui.css">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-		<link rel="stylesheet" href="js/bower_components/select2/dist/css/select2.min.css">	
-	</head>
-	<body>
-		<div class="menu fa fa-bars"></div>
-		<div class="shifters">
-			<div class="shift-left fa fa-caret-right"></div>
-			<div class="shift-right fa fa-caret-left"></div>
-		</div>
-		<div class="menu-options">
-			<div class="settings-button fa fa-cog menu-item" title="Settings"></div>
-			<div class="add-messenger-button fa fa-plus-square-o menu-item" title="Add Messenger"></div>
-			<div class="logout-button fa fa-sign-out menu-item" title="Logout"></div>
-		</div>
-		<div class="messenger-container"></div>
-		<div class="backdrop"></div>
-	</body>
+
+<head>
+    <title>chat--</title>
+    <script data-main="app" src="js/bower_components/requirejs/require.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/prefix/chat-prefix.css">
+    <link rel="stylesheet" type="text/css" href="css/prefix/menu-prefix.css">
+    <link rel="stylesheet" type="text/css" href="js/bower_components/jquery-ui/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="js/bower_components/select2/dist/css/select2.min.css">
+</head>
+
+<body>
+    <div class="menu fa fa-bars" title="Menu"></div>
+    <div class="shifters">
+        <div class="shift-left fa fa-caret-right"></div>
+        <div class="shift-right fa fa-caret-left"></div>
+    </div>
+    <div class="friends">
+    <div class="search-area">
+        <select class="search" multiple="multiple"></select>
+        <div class="add-friend-button fa fa-plus" title="Add Friends"></div>        
+    </div>
+        <div class="list"></div>
+    </div>
+    <div class="menu-options">
+        <div class="inbox-button menu-item fa-stack fa-3x" title="Inbox">
+            <span class="fa fa-inbox fa-stack-1x"></span>
+        </div>
+        <div class="add-messenger-button fa fa-plus-square-o menu-item" title="Add Messenger"></div>
+        <div class="friends-button fa fa-users menu-item" title="Friends"></div>
+        <div class="logout-button fa fa-sign-out menu-item" title="Logout"></div>
+    </div>
+    <div class="messenger-container"></div>
+    <div class="backdrop"></div>
+</body>
+
 </html>
