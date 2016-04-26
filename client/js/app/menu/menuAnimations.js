@@ -1,5 +1,6 @@
-/*
-	Defines animations for menu events
+/**
+*	Defines animations for menu events
+*   @author Oliver Ehrhardt
 */
 
 define([

@@ -1,5 +1,6 @@
-/*
-	Only works on text manipulation commands, Look at User Acceptance Tests for other commands
+/**
+*	Only works on text manipulation commands, Look at User Acceptance Tests for other commands
+* @author Oliver Ehrhardt
 */
 
 define(['QUnit', 'messenger/commands', 'misc/date', 'misc/user'], function(QUnit, commands, date, user) {

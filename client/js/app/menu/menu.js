@@ -1,5 +1,6 @@
-/*
-	Module defines event handlers for options
+/**
+*	Module defines event handlers for options
+*   @author Oliver Ehrhardt
 */
 
 define([

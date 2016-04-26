@@ -1,6 +1,7 @@
 
-/*
-    Defines sockets to communicate with server
+/**
+*    Defines sockets to communicate with server
+*   @author Oliver Ehrhardt
 */
 
 define([

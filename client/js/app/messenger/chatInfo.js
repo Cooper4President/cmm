@@ -1,5 +1,6 @@
-/*
-	Stores chat window related information
+/**
+*	Stores chat window related information
+*   @author Oliver Ehrhardt
 */
 
 define(['lodash'], function(_) {

@@ -1,6 +1,8 @@
-/*
-	defines chat events for chat windows
+/**
+*	defines chat events for chat windows
+*   @author Oliver Ehrhardt
 */
+
 
 define([
     'jquery',
