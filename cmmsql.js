@@ -51,7 +51,11 @@ Error Codes
 
 */
 
-
+/** cmmsql(database) creates a new database interface for cmm using the file passed as database
+* @constructor
+*
+* All accessible functions anticipate a callback will be provided which accepts two parameters (error, result). If no callback is provided the default is to print to console.log()
+*/
 function cmmsql(database) {
     var sqlite3 = require("sqlite3").verbose();
     var db = new sqlite3.Database(database);
@@ -236,7 +240,7 @@ function cmmsql(database) {
 
 
     //##################### Externally Accessible ######################
-
+/** Adds a user to the database cb is the callback function it is passed two parameters (error,result) */
     cmmsql.prototype.adduser = function(username, password, cb) {
         var error = null;
         var result = null;
@@ -258,6 +262,7 @@ function cmmsql(database) {
         });
     }
 
+    /** sends a list of users in room to the calback provided in cb */
     cmmsql.prototype.listusers = function(room, cb) {
         if (cb == null) {
             cb = defaultcallback;
@@ -269,7 +274,7 @@ function cmmsql(database) {
         listcolumn(null, room + 'users', 'user', cb);
     }
 
-
+/** Creates a new chatroom and adds all the users in userlist the room is created by creator and can be specified as private using 'true' or public with 'false' as the priv parameter. It passes error and result to the callback (cb)*/ 
     cmmsql.prototype.createroom = function(roomname, userlist, creator, priv, cb) {
         var dcb = defaultcallback;
         if (cb == null) {
@@ -315,7 +320,7 @@ function cmmsql(database) {
         });
     }
 
-
+/** Appends a message to the chatroom log associated with a user and adds a time stamp for appropriate sorting. */
     cmmsql.prototype.logroom = function(roomname, username, message, cb) {
         if (cb == null) {
             cb = defaultcallback;
@@ -328,6 +333,7 @@ function cmmsql(database) {
 
     }
 
+    /** passes the room log for the given room to the callback */
     cmmsql.prototype.getroomlog = function(roomname, cb) {
         if (cb == null) {
             cb = defaultcallback;
@@ -335,6 +341,7 @@ function cmmsql(database) {
         listcolumn(null, roomname, '*', cb);
     }
 
+    /** adds a user to a chat room only if it is public or a owner of the room adds them. errors and results are sent to the callback. */
     cmmsql.prototype.joinroom = function(roomname, username, isowner, who, cb) {
         if (cb == null) {
             cb = defaultcallback;
@@ -407,6 +414,7 @@ function cmmsql(database) {
         });
     }
 
+    /** sends a simple plain text 'true' or 'false' to the callback weather the user provided is an owner of the room*/
     cmmsql.prototype.isowner = function(roomname, username, cb) {
         if (cb == null) {
             cb = defaultcallback;
@@ -425,6 +433,7 @@ function cmmsql(database) {
         });
     }
 
+    /** sends the stored password for the user provided to the callback */
     cmmsql.prototype.getpassword = function(username, cb) {
         if (cb == null) {
             cb = defaultcallback;
@@ -444,6 +453,7 @@ function cmmsql(database) {
         });
     }
 
+    /** Sends plain text 'true' or 'false' to the callback weather the user is banned from the room, with te result sent to the provided callback */
     cmmsql.prototype.isbanned = function(room, user, cb) {
         if (cb == null) {
             cb = defaultcallback;
@@ -464,6 +474,7 @@ function cmmsql(database) {
         });
     }
 
+    /** adds a friend to the users (who) friand list with the result sent to the provided callback*/
     cmmsql.prototype.addfriend = function(friend, who, cb) {
         if (cb == null) {
             cb = defaultcallback;
@@ -471,6 +482,7 @@ function cmmsql(database) {
         addassociate(friend, who, false, cb);
     }
 
+    /** sends a plain text 'true' or 'false' to the callback if the user is blocked by who */
     cmmsql.prototype.isblocked = function(username, who, cb) {
         if (cb == null) {
             cb = defaultcallback;
@@ -491,6 +503,7 @@ function cmmsql(database) {
         });
     }
 
+    /** sends a friend list of the provided user to the provided callback, if the user does not exist an error is passed. */
     cmmsql.prototype.getfriends = function(who, cb) {
         if (cb == null) {
             cb = defaultcallback;
@@ -508,6 +521,7 @@ function cmmsql(database) {
         });
     }
 
+    /** adds a custom defined command to the users private command list. command is the command used to call and method is the set of commands to run */
     cmmsql.prototype.addcommand = function(command, method, who, cb) {
         if (cb == null) {
             cb = defaultcallback;
@@ -527,6 +541,7 @@ function cmmsql(database) {
         });
     }
 
+    /** sends the method of the command to the provided callback */
     cmmsql.prototype.getcommand = function(command, who, cb) {
         if (cb == null) {
             cb = defaultcallback;
@@ -547,10 +562,10 @@ function cmmsql(database) {
 
 
 
-    // ##################### to be implemented/tested ####################
+    // ##################### to be tested ####################
 
 
-
+/** sets the ban state of a the provided user for the room if who has the privilages to change it. */
     cmmsql.prototype.setban = function(room, who, user, banned, cb) {
         // user cannot be banned from a room until they join it.
         if (cb == null) {
@@ -584,6 +599,7 @@ function cmmsql(database) {
         });
     }
 
+    /** Sets the block state of username for the user who */
     cmmsql.prototype.setblock = function(username, who, blocked, cb) {
         if (cb == null) {
             cb = defaultcallback;
@@ -605,6 +621,7 @@ function cmmsql(database) {
         });
     }
 
+    /** kicks a kicked out of a room if kicker has necessary privilages. */
     cmmsql.prototype.kickout = function(roomname, kicked, kicker, cb) {
         if (cb == null) {
             cb = defaultcallback;
@@ -616,6 +633,7 @@ function cmmsql(database) {
         });
     }
 
+    /** removes user from the room */
     cmmsql.prototype.leaveroom = function(roomname, username, cb) {
         if (cb == null) {
             cb = defaultcallback;
@@ -623,7 +641,7 @@ function cmmsql(database) {
         exitroom(null, roomname.username, cb);
     }
 
-
+/** removes username from who friendlist */
     cmmsql.prototype.removefriend = function(username, who, cb) {
         if (cb == null) {
             cb = defaultcallback;
