@@ -61,7 +61,7 @@ io.on('connection', function(socket) {
 });
 
 
-/** start the server
+/** start the server */
 server.listen(portNum, function() {
     console.log('server listening on port ' + portNum);
 });
@@ -152,6 +152,7 @@ function registerEventFuncs(socket, socketId, clientIp) {
 
             //now send the updated friends list to the user
             db.getfriends(activeSockets[socketId].username, function(err, friendList) {
+              console.log(friendList);
                 var friendObjList = {};
 
                 for (var key in friendList) {
