@@ -45,6 +45,14 @@ define([
         });
     });
 
+    //occurs when a user on the friends list comes online
+    socket.on('friend online', function(friendName){
+      //friendName - username of the friend who just came online
+
+      //TEMPORARY: placeholder for actual functionality
+      alert('Your friend ' + friendName + ' is now online!');
+    });
+
     socket.on('friend list deliver', function(friendData) {
         //friendData.user - username of the person who 'owns' this friend list
         //friendData.friends - list of 'friend' objects

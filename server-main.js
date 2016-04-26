@@ -218,7 +218,21 @@ function registerEventFuncs(socket, socketId, clientIp) {
                         socket.emit('login success', token);
                         //redirect client to chat page
                         socket.emit('page load');
-                    }
+
+                        //notify user's friends that they are now online
+                        for(var key in activeSockets){
+                          if(activeSockets[key].username != null){
+                            db.getfriends(activeSockets[key].username, function(err, friendList{
+                              for(var friendName in friendList){
+                                if(friendName === userInfo.username){
+                                  io.to(key).emit('friend online', friendName);
+                                  break;
+                                }
+                              }
+                            }));
+                          }
+                        }
+                      }
                     //client entered incorrect password
                     else {
                         //login failed
