@@ -1,5 +1,4 @@
 /** @memberOf jQuery */
-
 /** @module wolfram */
 
 /**

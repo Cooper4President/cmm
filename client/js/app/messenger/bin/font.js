@@ -1,7 +1,5 @@
 /** @memberOf jQuery */
-
 /** @module font */
-
 /**
  *
  * @fileOverview font.js parses out the --font command, applies the appropriate html font tags, and returns the message to commands.js
