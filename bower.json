@@ -11,7 +11,8 @@
     "jquery": "^2.2.1",
     "jquery-ui": "^1.11.4",
     "select2": "^4.0.2",
-    "notifyjs": "^0.4.2"
+    "notifyjs": "^0.4.2",
+    "libxmljs": "^0.17.1"
   },
   "devDependencies": {
     "qunit": "^1.23.0"
