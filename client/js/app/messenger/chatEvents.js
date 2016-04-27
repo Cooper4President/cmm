@@ -1,8 +1,27 @@
-/**
-*	defines chat events for chat windows
-*   @author Oliver Ehrhardt
-*/
 
+/** @memberOf jQuery */
+/** @module chatEvents */
+/**
+ * @fileOverview defines chat events for chat window
+ * @author Oliver Ehrhardt
+ */
+
+/**
+ * Dependencies of the commands module 
+ * @function
+ * @name Module Dependencies
+ * @param {Object} $ - Defines the jquery module dependency
+ * @param {Object} _ - Defines the lodash dependency
+ * @param {Object} chatInfo
+ * @param {Object} enqueueMessenger
+ * @param {Object} sort 
+ * @param {Object} resize 
+ * @param (Object) menuAnimations
+ * @param (Object) shifter
+ * @param (Object) misc
+ * @param (Object) chatSockets
+ * @return {Functions} - Returns the inner return function
+ */
 
 define([
     'jquery',
