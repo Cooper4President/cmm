@@ -18,6 +18,10 @@ define([
     var socket = io();
 
         //checks if chat box is overflowed
+    /**
+     * @param  {object} container with the scroll bar that needs checking
+     * @return {null}
+     */
     function checkScrollbar(container) {
         var elt, hasOverflow = (elt = container).innerWidth() > elt[0].scrollWidth;
         if (hasOverflow) container.scrollTop(container[0].scrollHeight);
@@ -34,6 +38,10 @@ define([
     });
 
     //occurs when the server delivers a chat message to the client
+    /**
+     * @param  {object} contains data about the nature of the message
+     * @return {null}
+     */
     socket.on('chat deliver', function(msgData) {
         //msgData.chatRoomId - unique ID of the chat 'thread' this message belongs to
         //msgData.sender - username of who sent the message

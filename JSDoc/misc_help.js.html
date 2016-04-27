@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: messenger/bin/wolfram.js</title>
+    <title>JSDoc: Source: misc/help.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: messenger/bin/wolfram.js</h1>
+    <h1 class="page-title">Source: misc/help.js</h1>
 
     
 
@@ -26,42 +26,57 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/** @memberOf jQuery */
-
-/** @module wolfram */
-
+            <pre class="prettyprint source linenums"><code>
+/** @memberOf jQuery */
+/** @module help */
 /**
- * @fileOverview wolfram.js opens the wolframQuery socket to query wolfram alpha for the result of the message string
+ *
+ * @fileOverview module appends the help.txt file to the chat window
  * @author Morgan Allen &lt;moal8410@colorado.edu>
  */
 
+
 /**
- * Dependencies of the wolfram module 
+ * Dependencies of the helpmodule 
  * @function
  * @name Module Dependencies
  * @param {Object} $ - Defines the jquery module dependency
  * @param {Object} message - Defines the message handlebars template
- * @param {Object} commandSockets - Defines the commandSockets module where the wolframQuery socket is defined
- * @return {Functions} - Returns the inner return function
+ * @return {Function} - Returns the inner return function
  */
-define(['jquery', 'hbs!templates/message', 'misc/commandSockets'], function($, message, commandSockets) {
+define(['jquery', 'hbs!templates/message'], function($, message) {
     /**
-     * Module performs a wolfram alpha query, and then parses and returns part of the result object array
+     * Appends the help data to the chat container
+     * @function
+     * @param {Integer} chatId - the id of the chat container
+     * @param {data} - the data from the help.txt file
+     */
+    function append(chatId, data) {
+        $("#" + chatId).find('.container').append(message({
+            help: data
+        }));
+    }
+    
+    /**
+     * Return function performs an ajax call to get the data from help.txt
      * @function
      * @name ReturnFunction
-     * @param {String} inp - The raw user input string
-     * @param {AnonymousFunction} callback - callback function once the commands have been executed and finished
-     * @return {Object} data - Returns the text and image of the wolfram alpha query result
+     * @param {Integer} chatId - the id of the chat container
      */
-
-    return function(inp, callback) {
-        commandSockets.wolframQuery(inp, function(result) {
-            console.log(result);
-            var data = {
-                text: result[1].subpods[0].text,
-                image: result[1].subpods[0].image
-            };
-            callback(data);
+    return function(chatId) {
+        //ajax call gets help info from help.txt
+        $.ajax({
+            context: this,
+            url: 'help.txt',
+            dataType: 'text',
+            success: function(data) {
+                console.log('sent data');
+                data = data.replace(/\n/g, '&lt;br />');
+                append(chatId, data);
+            },
+            error: function(data) {
+                console.log("Error with help");
+            }
         });
     };
 });
