@@ -4,6 +4,7 @@
     },
     "source": {
         // "include": ["../client/js/app/messenger/"],
+	"exclude": ["../client/js/bower_components/"],
         "includePattern": ".+\\.js(doc|x)?$",
         "excludePattern": "(^|\\/|\\\\)_"
     },
