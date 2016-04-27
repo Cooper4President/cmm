@@ -114,6 +114,12 @@ function registerEventFuncs(socket, socketId, clientIp) {
         }
     });
 
+    socket.on('chat log request', function(chatRoomId){
+      db.getroomlog(chatRoomId, function(err, chatRoomLog){
+        socket.emit('chat log deliver', {chatRoomId: chatRoomLog, logData: chatRoomId });  
+      });
+    });
+
     /** called when a client submits a chat message to the server */
     socket.on('chat submit', function(msgData) {
         //user who is authenticated on this socket is the sender of the message
