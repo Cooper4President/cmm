@@ -56,8 +56,7 @@ define([
         });
 
         if(!found){
-            $.notify(msgData.sender + ' wishes to chat with you!');
-            $('.notifyjs-corner').data('roomId', msgData.chatRoomId);
+            $.notify(msgData.sender + ' wishes to chat with you!', "info", { clickToHide: true});
         }
     });
 
