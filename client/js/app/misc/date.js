@@ -1,7 +1,11 @@
-/*
-	Module returns today's date formatted
-*/
 
+/** @memberOf jQuery */
+/** @module date */
+/**
+ *
+ * @fileOverview date module returns today's date formatted
+ * @author Morgan Allen <moal8410@colorado.edu>
+ */
 define(function() {
     var today = new Date();
     var dd = today.getDate();
