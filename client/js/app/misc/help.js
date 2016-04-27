@@ -8,7 +8,6 @@ define(['jquery', 'hbs!templates/message'], function($, message) {
             help: data
         }));
     }
-
     return function(chatId) {
         //ajax call gets help info from help.txt
         $.ajax({
@@ -24,5 +23,5 @@ define(['jquery', 'hbs!templates/message'], function($, message) {
                 console.log("Error with help");
             }
         });
-    }
+    };
 });
