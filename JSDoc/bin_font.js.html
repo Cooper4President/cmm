@@ -1,11 +1,39 @@
-/** @memberOf jQuery */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: bin/font.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: bin/font.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/** @memberOf jQuery */
 
 /** @module font */
 
 /**
  *
  * @fileOverview font.js parses out the --font command, applies the appropriate html font tags, and returns the message to commands.js
- * @author Morgan Allen <moal8410@colorado.edu>
+ * @author Morgan Allen &lt;moal8410@colorado.edu>
  */
 
 define([ //list of dependencies to load for this module
@@ -52,11 +80,11 @@ define([ //list of dependencies to load for this module
 		var targetStr;
 		var targetRegex;
 
-		for(var i = 0; i<numArgs; i++){
+		for(var i = 0; i&lt;numArgs; i++){
 			var arg =  cmdInfo.argList[i];
 
 			switch(arg){
-				case "&word":
+				case "&amp;word":
 					if(startWord == ""){
 						returnData.isError = true;
 						returnData.errorMsg = "Error: No valid word available following " + cmdInfo.cmdName + " command. Type --help for help."
@@ -64,27 +92,27 @@ define([ //list of dependencies to load for this module
 					}
 					targetRegex = new RegExp(cmdInfo.cmdName + ".*" + startWord);
 					break;
-				case "&message":
+				case "&amp;message":
 					targetRegex = new RegExp(".*");
 					break;
-				case "&selection":
+				case "&amp;selection":
 					//The ? makes the regex non-greedy, so it will just match the first set of brackets brackets
 					fontAttributes.isSelection = true;
 					targetRegex = new RegExp("\{.*?\}");
 					break;
-				case "&all":
+				case "&amp;all":
 					fontAttributes.isGlobal = true;
 					break;
-				case "&bold":
+				case "&amp;bold":
 					fontAttributes.isBold = true;
 					break;
-				case "&italics":
+				case "&amp;italics":
 					//fall through to italic case, so both are accepted
-				case "&italic":
+				case "&amp;italic":
 					fontAttributes.isItalic = true;
 					break;
 				default:
-					arg = arg.replace('&', '');
+					arg = arg.replace('&amp;', '');
 					_.trim(arg);
 					if(arg.match(/^[1-7]$/)){
 						fontAttributes.isSize = true;
@@ -96,7 +124,7 @@ define([ //list of dependencies to load for this module
 					}
 					else{
 						returnData.isError = true;
-						returnData.errorMsg = "&" + arg + " is not a valid argument for " + cmdInfo.cmdName + ". Type --help for help.";
+						returnData.errorMsg = "&amp;" + arg + " is not a valid argument for " + cmdInfo.cmdName + ". Type --help for help.";
 						return returnData;	
 					}
 					break;
@@ -141,15 +169,15 @@ define([ //list of dependencies to load for this module
      */
 	function addFontTags(fontAttributes, fontStr){
 		if(fontAttributes.isBold){
-			fontStr = "<b>" + fontStr + "</b>";
+			fontStr = "&lt;b>" + fontStr + "&lt;/b>";
 		}
 
 		if(fontAttributes.isItalic){
-			fontStr = "<i>" + fontStr + "</i>";
+			fontStr = "&lt;i>" + fontStr + "&lt;/i>";
 		}
 
 		if(fontAttributes.isColor || fontAttributes.isSize){
-			var fontTag = "<font ";
+			var fontTag = "&lt;font ";
 			if(fontAttributes.isColor){
 				fontTag = fontTag + "color=\"" + fontAttributes.color + "\" ";
 			}
@@ -159,7 +187,7 @@ define([ //list of dependencies to load for this module
 
 			fontTag = fontTag + ">";
 
-			fontStr = fontTag + fontStr + "</font>";
+			fontStr = fontTag + fontStr + "&lt;/font>";
 		}
 
 		return fontStr;
@@ -168,7 +196,7 @@ define([ //list of dependencies to load for this module
     /**
      * @function
      * @name removeBrackets
-     * Function to remove brackets from an inp string when the user included the &selection {selected text} argument
+     * Function to remove brackets from an inp string when the user included the &amp;selection {selected text} argument
      * @param {string} inp - A string (from the message) that will have selection brackets removed from it
      * @param {String} targetStr - the target string which the selection brackets enclose
      * @return {string} inp - Returns the fontStr with html font tags added
@@ -190,8 +218,8 @@ define([ //list of dependencies to load for this module
 	 * @return {String} nextValidWord - returns the next valid word
 	*/
 	function nextValidWord(words, startIndex){
-		for(var i = startIndex; i < words.length; i++){
-			if(!words[i].match(/^(&|-{2})/)){
+		for(var i = startIndex; i &lt; words.length; i++){
+			if(!words[i].match(/^(&amp;|-{2})/)){
 				return words[i];
 			}
 		}
@@ -220,4 +248,26 @@ define([ //list of dependencies to load for this module
 	    image.style.color = arg;
 	    return (image.style.color !== "rgb(255, 255, 255)");
 	}
-});
+});</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-commands.html">commands</a></li><li><a href="module-font.html">font</a></li><li><a href="module-wolfram.html">wolfram</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Apr 27 2016 12:49:05 GMT-0600 (MDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
