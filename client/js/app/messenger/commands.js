@@ -1,12 +1,23 @@
+/** @memberOf jQuery */
+
+/** @module commands */
+
 /**
- * Defines commands that can be run inside chat window
- * @constructor
- * @param {object} $ - Defines the jquery module dependency
- * @param {object} _ - Defines the lodash dependency
- * @param {object} date - Defines the date dependency
- * @param {object} help - Defines the help dependency
- * @param {object} wolfram - Defines the wolfram dependency
- * @param {object} font - Defines the font dependency
+ * @fileOverview commands.js parses commands out of a user input message, executes them, and returns an envelope with the resulting message data.
+ * @author Morgan Allen <moal8410@colorado.edu>
+ */
+
+/**
+ * Dependencies of the commands module 
+ * @function
+ * @name Module Dependencies
+ * @param {Object} $ - Defines the jquery module dependency
+ * @param {Object} _ - Defines the lodash dependency
+ * @param {Object} date - Defines the date dependency
+ * @param {Object} help - Defines the help dependency
+ * @param {Object} wolfram - Defines the wolfram dependency
+ * @param {Object} font - Defines the font dependency
+ * @return {Functions} - Returns the inner return function
  */
 define([ //list of dependencies to load for this module
     'jquery', //first arguement $
@@ -20,10 +31,18 @@ define([ //list of dependencies to load for this module
     //this returns a function, as this is the only function that this modele requires, it can also be anything that
     //can be returned (such as an object, which most modules in this case return)
 
-
     var globalFontAttributes = {};
     var haveCallbacks = false;
 
+    /**
+     * Defines commands that can be run inside chat window
+     * @function
+     * @name ReturnFunction
+     * @param {Integer} chatId - the id of the chat window
+     * @param {String} inp - The raw user input string
+     * @param {AnonymousFunction} callback - callback function once the commands have been executed and finished
+     * @return {Object} envelope - Returns an envelope js object with the final message/image and other data
+     */
     return function(chatId, inp, callback) {
 
         //this is the main object to store command data
@@ -152,9 +171,11 @@ define([ //list of dependencies to load for this module
     };
 
     /**
-     * Returns an object with every command and its related arguments.
-     * @constructor
+     * @function
+     * @name parseCommands
+     * Parses through commands and builds an object with all commands and args from the message
      * @param {array} words - An array of the words of the input message
+     * @return {Object} commands - Returns an object with every command and its related arguments.
      */
     function parseCommands(words) {
         var commands = [];
@@ -177,8 +198,14 @@ define([ //list of dependencies to load for this module
         }
         return commands;
     }
-
-
+    /**
+     * @function
+     * @name addFontTags
+     * Function to add html font tags to a given string, according to the fontAttributes object.
+     * @param {Object} fontAttributes - A javascript object containing values for font attributes.
+     * @param {string} fontStr - A string (from the message) that will have font tags applied to it
+     * @return {string} fontStr - Returns the fontStr with html font tags added
+     */
     function addFontTags(fontAttributes, fontStr) {
         if (fontAttributes.isBold) {
             fontStr = "<b>" + fontStr + "</b>";
@@ -205,7 +232,14 @@ define([ //list of dependencies to load for this module
         return fontStr;
     }
 
-    //function to remove command and arguments from the message input
+    /**
+     * @function
+     * @name cleanupInp
+     * function to remove command and arguments from the message input
+     * @param {Object} cmdInfo - A javascript object containing the command name and argument list
+     * @param {string} inp - The raw input string entered into chat box by the user
+     * @return {string} fontStr - Returns the inp with all of the commands and args removed
+     */
     function cleanupInp(cmdInfo, inp) {
         inp = inp.replace(cmdInfo.cmdName, '');
         for (var i = 0; i < cmdInfo.argList.length; i++) {
@@ -214,6 +248,14 @@ define([ //list of dependencies to load for this module
         return inp;
     }
 
+    /**
+     * @function
+     * @name cleanupWords
+     * function to remove command and arguments from the message words array
+     * @param {Object} cmdInfo - A javascript object containing the command name and argument list
+     * @param {array} words - A space delimited array of the words entered by user
+     * @return {string} words - Returns the words array with all of the commands and args removed
+     */
     function cleanupWords(cmdInfo, words) {
         words.splice(words.indexOf(cmdInfo.cmdName), 1);
         for (var i = 0; i < cmdInfo.argList.length; i++) {
@@ -222,3 +264,4 @@ define([ //list of dependencies to load for this module
         return words;
 	}
 });
+

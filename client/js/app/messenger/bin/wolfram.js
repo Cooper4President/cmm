@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /** @memberOf jQuery */
 
 /** @module wolfram */
@@ -26,14 +25,7 @@ define(['jquery', 'hbs!templates/message', 'misc/commandSockets'], function($, m
      * @param {AnonymousFunction} callback - callback function once the commands have been executed and finished
      * @return {Object} data - Returns the text and image of the wolfram alpha query result
      */
-=======
-/*
-    Prompts help info for user
-*/
 
-define(['jquery', 'hbs!templates/message', 'misc/commandSockets'], function($, message, commandSockets) {
-
->>>>>>> cd8374e9dd71769009059c3da9566ec583415e17
     return function(inp, callback) {
         commandSockets.wolframQuery(inp, function(result) {
             console.log(result);
