@@ -24,6 +24,8 @@ var cmmsql = require('./cmmsql.js');
 /** create new object for the sql database*/
 var db = new cmmsql('cmm.db');
 
+//for wolfram alpha api, used in --wolfram command
+var wolfram = require('wolfram-alpha').createClient("6JXTUY-T4HRKH26ER");
 
 /** port number that the server listens on*/
 var portNum = 3000;
@@ -246,7 +248,7 @@ function registerEventFuncs(socket, socketId, clientIp) {
 
                         //notify user's friends that they are now online
                         for(var key in activeSockets){
-                          if(activeSockets[key].username != null){
+                          if(activeSockets[key].username !== null){
                             db.getfriends(activeSockets[key].username, function(err, friendList){
                               for(var friendName in friendList){
                                 if(friendName === userInfo.username){
@@ -368,5 +370,15 @@ function registerEventFuncs(socket, socketId, clientIp) {
         numActiveSockets--;
         console.log('socket disconnected: ' + clientIp);
         console.log('total connected sockets: ' + numActiveSockets);
+    });
+
+    socket.on('wolfram', function(inp) {
+        wolfram.query(inp, function(err, result) {
+            if (err) socket.emit("wolfram error");
+            else {
+                console.log(result);
+                socket.emit("wolfram success", result);
+            }
+        });
     });
 }

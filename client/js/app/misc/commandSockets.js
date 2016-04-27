@@ -25,6 +25,7 @@ define(['jquery', 'socket_io'], function($, io){
      * @param {AnonymousFunction} callback - callback function once the commands have been executed and finished
      * @return {Object} returns the wolfram alpha query callback
      */
+
 	return {
         wolframQuery: function(inp, callback) {
             socket.emit('wolfram', inp);

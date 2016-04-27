@@ -1,5 +1,5 @@
 /*
-	gives chat window resize property
+    gives chat window resize property
 */
 
 define(['jquery'], function($) {

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /** @memberOf jQuery */
 
 /** @module font */
@@ -8,11 +9,14 @@
  * @author Morgan Allen <moal8410@colorado.edu>
  */
 
+=======
+>>>>>>> cd8374e9dd71769009059c3da9566ec583415e17
 define([ //list of dependencies to load for this module
 	'jquery', //first arguement $
 	'lodash',//second arguement _
 	], function($, _){
 
+<<<<<<< HEAD
 	/**
 	 * Dependencies of the font module 
 	 * @function
@@ -31,6 +35,8 @@ define([ //list of dependencies to load for this module
      * @param {String} inp - The input string from the user
      * @return {Object} returnData - Returns the inp string and the words array to commands.js so that it can be added to the envelope
      */
+=======
+>>>>>>> cd8374e9dd71769009059c3da9566ec583415e17
 	return function(words, cmdInfo, inp){
 		var returnData = {};
 		var fontAttributes = {
@@ -131,6 +137,7 @@ define([ //list of dependencies to load for this module
 		return returnData;
 	}
 
+<<<<<<< HEAD
     /**
      * @function
      * @name addFontTags
@@ -139,6 +146,8 @@ define([ //list of dependencies to load for this module
      * @param {string} fontStr - A string (from the message) that will have font tags applied to it
      * @return {string} fontStr - Returns the fontStr with html font tags added
      */
+=======
+>>>>>>> cd8374e9dd71769009059c3da9566ec583415e17
 	function addFontTags(fontAttributes, fontStr){
 		if(fontAttributes.isBold){
 			fontStr = "<b>" + fontStr + "</b>";
@@ -165,6 +174,7 @@ define([ //list of dependencies to load for this module
 		return fontStr;
 	}
 
+<<<<<<< HEAD
     /**
      * @function
      * @name removeBrackets
@@ -173,6 +183,8 @@ define([ //list of dependencies to load for this module
      * @param {String} targetStr - the target string which the selection brackets enclose
      * @return {string} inp - Returns the fontStr with html font tags added
      */
+=======
+>>>>>>> cd8374e9dd71769009059c3da9566ec583415e17
 	function removeBrackets(inp, targetStr){
 		//Need to remove brackets from selected text
 		var removedBrackets = targetStr;
@@ -181,6 +193,7 @@ define([ //list of dependencies to load for this module
 		inp = inp.replace(targetStr, removedBrackets);
 		return inp;
 	}
+<<<<<<< HEAD
 	/**
 	 * @function
 	 * Function to find the next valid word (that is not a function or an argument) from the words array
@@ -189,6 +202,9 @@ define([ //list of dependencies to load for this module
 	 * @param {Integer} startIndex - the index in the words array from which the next valid word will be found
 	 * @return {String} nextValidWord - returns the next valid word
 	*/
+=======
+
+>>>>>>> cd8374e9dd71769009059c3da9566ec583415e17
 	function nextValidWord(words, startIndex){
 		for(var i = startIndex; i < words.length; i++){
 			if(!words[i].match(/^(&|-{2})/)){
@@ -198,6 +214,7 @@ define([ //list of dependencies to load for this module
 		return "";
 	}
 
+<<<<<<< HEAD
 	/**
 	 * @function
 	 * Creates a temporay image element, tries to set the color of it, and if it fails then the argument is not a valid color.
@@ -206,6 +223,10 @@ define([ //list of dependencies to load for this module
 	 * @return (Bool} Returns whether the arg was a valid html color
 	*/
 	
+=======
+	//Creates a temporay image element, tries to set the color of it, and if it fails then the argument is not a valid color.
+	//Modified function a StackOverflow post: http://stackoverflow.com/questions/6386090/validating-css-color-names
+>>>>>>> cd8374e9dd71769009059c3da9566ec583415e17
 	function isValidColor(arg) {
 	    //Alter the following conditions according to your need.
 	    if (arg === "") { return false; }
