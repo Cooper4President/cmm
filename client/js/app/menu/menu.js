@@ -7,11 +7,10 @@ define([
     './menuAnimations',
     'messenger/queueMessenger',
     './menuSockets',
-    './friendsList',
-    './inbox',
+    'messenger/chatSockets',
     //jquery plug ins
     'jqueryui'
-], function($, menuAnimations, queueMessenger, menuSockets, friendsList, inbox) {
+], function($, menuAnimations, queueMessenger, menuSockets, chatSockets) {
 
     return {
         //sets up menu options to be evenly across length of window
@@ -47,7 +46,6 @@ define([
             //delegates menu click
             $(".menu").tooltip(toolTipOptions).click(function(event) {
                 menuAnimations.showMenu().hideButton();
-                friendsList.hideFriendsList();
             });
 
             //delegates escape out of menu by pressing escape
@@ -57,18 +55,17 @@ define([
                 }
             });
 
+            // $.notify();
+            $(document).on('click', '.notifyjs-corner', function(event){
+                menuAnimations.hideMenu().showButton();
+                var rec = $(event.target).html().match(/^\w+/);
+                queueMessenger(rec);
+                chatSockets.requestChatRoomLog($('.notifyjs-corner').data('roomId'));
+            });
+
             //delegates escape out of menu by clicking background
             $('.backdrop').click(function(event) {
                 menuAnimations.hideMenu().showButton();
-            });
-
-            $('.inbox-button').click(function(event){
-                inbox.notify();
-            });
-
-            $('.friends-button').click(function(event){
-                menuAnimations.hideMenu().showButton();
-                friendsList.showFriendsList();
             });
 
             //delegates add messenger menu option click event

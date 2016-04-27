@@ -4,10 +4,9 @@ define([
     'menu/menu',
     'misc/checkWindow',
     'messenger/shifter',
-    'menu/friendsList',
 
     'select2'
-], function(chatSockets, menu, checkWindow, shifter, friendsList) {
+], function(chatSockets, menu, checkWindow, shifter) {
     //main function
     return function() {
 
@@ -23,10 +22,6 @@ define([
         //initializes chat shifter
         shifter.init();
 
-        $('.friends').find('.search').select2({
-            placeholder: 'Search for friends'
-        });
 
-        friendsList.init();
     };
 });

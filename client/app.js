@@ -8,7 +8,8 @@ requirejs.config({
         lodash: '../bower_components/lodash/lodash',
         autogrow: '../bower_components/autogrow/autogrow',
         jquery_cookie: '../bower_components/jquery.cookie/jquery.cookie',
-        select2: '../bower_components/select2/dist/js/select2.min'
+        select2: '../bower_components/select2/dist/js/select2.min',
+        notify: '../bower_components/notifyjs/dist/notify'
     },
     shim: {
         autogrow: ['jquery'],

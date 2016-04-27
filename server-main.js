@@ -326,8 +326,37 @@ function registerEventFuncs(socket, socketId, clientIp) {
     socket.on('user list request', function() {
         //get userlist from database
         db.listusers('mainroom', function(err, usersInDb) {
-            //send userlist to the client
-            socket.emit('user list deliver', usersInDb);
+           usersInDb.forEach(function(elm){
+                var users = usersInDb.slice();
+                users.splice(users.indexOf(elm), 1);
+                for(var key in activeSockets){
+                    if(elm.user === activeSockets[key].username){
+                        console.log('sending '+elm.user+' user list ');
+                        console.log(users);
+                        io.to(key).emit('user list deliver', users);
+                    }
+                }
+            });
+            // console.log(usersInDb);
+            // var users = usersInDb;
+            // users.forEach(function(obj){
+            //     if(obj.user === activeSockets[socketId].username ) users.splice(users.indexOf(obj), 1);
+            // });
+            // console.log(users);
+            // //send userlist to the client
+            // socket.emit('user list deliver', users);
+            // usersInDb.forEach(function(ent){
+            //     for(var key in activeSockets){
+            //         console.log('current user ' + activeSockets[socketId].username);
+            //         if(key !== socketId && activeSockets[key].username !== null){
+            //             var u = usersInDb;
+            //             u.splice(users.indexOf(activeSockets[key].username), 1);
+            //             io.to(key).emit('user list deliver', u);
+            //         }else{
+            //             console.log('do not send to ' + activeSockets[key].username);
+            //         }
+            //     }
+            // });
         });
     });
 

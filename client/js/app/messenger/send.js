@@ -18,12 +18,6 @@ define([
             if (entry.id === id) return entry;
         })[0].receivers;
     }
-    //checks if chat box is overflowed
-    function checkScrollbar(chatId) {
-        var container = $("#" + chatId).find('.container');
-        var elt, hasOverflow = (elt = container).innerWidth() > elt[0].scrollWidth;
-        if (hasOverflow) container.scrollTop(container[0].scrollHeight);
-    }
 
     //public functions of the module must be returned. 
     //Send only has one public function so we can just return the function itself
@@ -41,7 +35,6 @@ define([
             chatSockets.sendChatMsg($(chatId).data('roomId'), rec, inp);
 
             //check scroll bar and clear field
-            checkScrollbar(id);
             cmd.val("");
         }
         cmd.focus();
