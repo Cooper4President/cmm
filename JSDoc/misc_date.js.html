@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: misc/commandSockets.js</title>
+    <title>JSDoc: Source: misc/date.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: misc/commandSockets.js</h1>
+    <h1 class="page-title">Source: misc/date.js</h1>
 
     
 
@@ -27,44 +27,23 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/** @memberOf jQuery */
-/** @module commandSockets */
+/** @module date */
 /**
- * @fileOverview Checks window to make sure elements are aligned properly
- * @author Oliver Ehrhardt
- * @author Morgan Allen
-*/
-
-
-/**
- * Dependencies of the commandSockets module 
- * @function
- * @name Module Dependencies
- * @param {Object} $ - Defines the jquery module dependency
- * @param {Object} io - defines the socket.io module dependency
- * @return {Functions} - Returns the inner return function
+ *
+ * @fileOverview date module returns today's date formatted
+ * @author Morgan Allen &lt;moal8410@colorado.edu>
  */
-define(['jquery', 'socket_io'], function($, io){
-	var socket = io();
-    /**
-     * Defines the query from the wolfram socket to the wolfram alpha servers
-     * @function
-     * @name ReturnFunction
-     * @param {String} inp - The raw user input string
-     * @param {AnonymousFunction} callback - callback function once the commands have been executed and finished
-     * @return {Object} returns the wolfram alpha query callback
-     */
-	return {
-        wolframQuery: function(inp, callback) {
-            socket.emit('wolfram', inp);
-            socket.on('wolfram success', function(result) {
-                console.log(result);
-                callback(result);
-                socket.removeListener('wolfram success'); //remove listener after use
-            });
-        }
-	};
-
-});</code></pre>
+define(function() {
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth() + 1; //January is 0!
+    var yyyy = today.getFullYear();
+    if (dd &lt; 10) dd = '0' + dd;
+    if (mm &lt; 10) mm = '0' + mm;
+    var today = mm + '/' + dd + '/' + yyyy;
+    return today;
+});
+</code></pre>
         </article>
     </section>
 

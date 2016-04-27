@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: wolfram</title>
+    <title>JSDoc: Module: help</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: wolfram</h1>
+    <h1 class="page-title">Module: help</h1>
 
     
 
@@ -61,16 +61,16 @@
 
     
 
-    <h4 class="name" id="~ModuleDependencies"><span class="type-signature">(inner) </span>Module Dependencies<span class="signature">($, message, commandSockets)</span><span class="type-signature"> &rarr; {Functions}</span></h4>
+    <h4 class="name" id="~ModuleDependencies"><span class="type-signature">(inner) </span>Module Dependencies<span class="signature">($, message)</span><span class="type-signature"> &rarr; {function}</span></h4>
 
     
-    <p class="summary"><p>Dependencies of the wolfram module</p>.</p>
+    <p class="summary"><p>Dependencies of the helpmodule</p>.</p>
     
 
 
 
 <div class="description">
-    <p>Dependencies of the wolfram module</p>
+    <p>Dependencies of the helpmodule</p>
 </div>
 
 
@@ -149,29 +149,6 @@
         </tr>
 
     
-
-        <tr>
-            
-                <td class="name"><code>commandSockets</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Defines the commandSockets module where the wolframQuery socket is defined</p></td>
-        </tr>
-
-    
     </tbody>
 </table>
 
@@ -209,7 +186,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="messenger_bin_wolfram.js.html">messenger/bin/wolfram.js</a>, <a href="messenger_bin_wolfram.js.html#line10">line 10</a>
+        <a href="misc_help.js.html">misc/help.js</a>, <a href="misc_help.js.html#line10">line 10</a>
     </li></ul></dd>
     
 
@@ -249,7 +226,7 @@
     </dt>
     <dd>
         
-<span class="param-type">Functions</span>
+<span class="param-type">function</span>
 
 
     </dd>
@@ -264,16 +241,16 @@
 
     
 
-    <h4 class="name" id="~ReturnFunction"><span class="type-signature">(inner) </span>ReturnFunction<span class="signature">(inp, callback)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    <h4 class="name" id="~ReturnFunction"><span class="type-signature">(inner) </span>ReturnFunction<span class="signature">(chatId)</span><span class="type-signature"></span></h4>
 
     
-    <p class="summary"><p>Module performs a wolfram alpha query, and then parses and returns part of the result object array</p>.</p>
+    <p class="summary"><p>Return function performs an ajax call to get the data from help.txt</p>.</p>
     
 
 
 
 <div class="description">
-    <p>Module performs a wolfram alpha query, and then parses and returns part of the result object array</p>
+    <p>Return function performs an ajax call to get the data from help.txt</p>
 </div>
 
 
@@ -309,13 +286,13 @@
 
         <tr>
             
-                <td class="name"><code>inp</code></td>
+                <td class="name"><code>chatId</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">Integer</span>
 
 
             
@@ -325,30 +302,7 @@
 
             
 
-            <td class="description last"><p>The raw user input string</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>callback</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">AnonymousFunction</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>callback function once the commands have been executed and finished</p></td>
+            <td class="description last"><p>the id of the chat container</p></td>
         </tr>
 
     
@@ -389,7 +343,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="messenger_bin_wolfram.js.html">messenger/bin/wolfram.js</a>, <a href="messenger_bin_wolfram.js.html#line20">line 20</a>
+        <a href="misc_help.js.html">misc/help.js</a>, <a href="misc_help.js.html#line30">line 30</a>
     </li></ul></dd>
     
 
@@ -412,28 +366,6 @@
 
 
 
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>data - Returns the text and image of the wolfram alpha query result</p>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Object</span>
-
-
-    </dd>
-</dl>
-
-    
 
 
 
